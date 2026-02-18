@@ -1,30 +1,20 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { Home, Wallet, BarChart3, Target, Settings } from 'lucide-react'
+import { NavLink, Outlet } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { to: '/', icon: Home, label: '홈' },
-  { to: '/structure', icon: Wallet, label: '구조' },
-  { to: '/budget', icon: Target, label: '예산' },
-  { to: '/transactions', icon: BarChart3, label: '내역' },
+  { to: '/', icon: '📊', label: '대시보드' },
+  { to: '/structure', icon: '🏗️', label: '구조 설계' },
+  { to: '/data', icon: '📥', label: '데이터 입력' },
 ]
 
 export default function Layout() {
-  const navigate = useNavigate()
-
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="border-b px-4 py-3 flex items-center justify-between">
+      <header className="border-b px-4 py-3">
         <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
           💸 돈플로우
         </h1>
-        <button
-          onClick={() => navigate('/settings')}
-          className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-        >
-          <Settings className="w-5 h-5" />
-        </button>
       </header>
 
       {/* Main */}
@@ -35,10 +25,11 @@ export default function Layout() {
       {/* Bottom Nav — 3 tabs */}
       <nav className="fixed bottom-0 left-0 right-0 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
         <div className="flex justify-around max-w-4xl mx-auto">
-          {navItems.map(({ to, icon: Icon, label }) => (
+          {navItems.map(({ to, icon, label }) => (
             <NavLink
               key={to}
               to={to}
+              end={to === '/'}
               className={({ isActive }) =>
                 cn(
                   'flex flex-col items-center py-2 px-3 text-xs gap-1 transition-colors flex-1',
@@ -46,7 +37,7 @@ export default function Layout() {
                 )
               }
             >
-              <Icon className="w-5 h-5" />
+              <span className="text-lg">{icon}</span>
               {label}
             </NavLink>
           ))}
