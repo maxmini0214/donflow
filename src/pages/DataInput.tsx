@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import Papa from 'papaparse'
+import * as XLSX from 'xlsx'
 import { Upload, ClipboardPaste, Sparkles, Check, ChevronDown, ChevronUp, Search, HelpCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -43,7 +44,7 @@ export default function DataInput() {
       {/* Tab Switcher */}
       <div className="flex gap-2">
         {([
-          { key: 'csv' as Tab, icon: '📄', label: 'CSV 업로드' },
+          { key: 'csv' as Tab, icon: '📄', label: 'CSV / 엑셀 업로드' },
           { key: 'paste' as Tab, icon: '📋', label: '알림 붙여넣기' },
           { key: 'history' as Tab, icon: '📜', label: '거래 목록' },
         ]).map(t => (
@@ -84,7 +85,7 @@ function CsvGuide() {
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium hover:bg-secondary/50 transition-colors"
       >
-        <span>❓ CSV 어디서 받나요?</span>
+        <span>❓ CSV / 엑셀 파일 어디서 받나요?</span>
         {open ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
       </button>
       {open && (
@@ -95,7 +96,7 @@ function CsvGuide() {
               <span className="text-muted-foreground">{g.steps}</span>
             </div>
           ))}
-          <p className="text-xs text-primary font-medium pt-1">💡 어떤 카드사/앱이든 자동 인식!</p>
+          <p className="text-xs text-primary font-medium pt-1">💡 CSV 또는 엑셀(.xlsx) 파일 모두 지원 · 어떤 카드사/앱이든 자동 인식!</p>
         </div>
       )}
     </div>
@@ -228,31 +229,43 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
     return parsed
   }
 
+  const processData = async (data: Record<string, string>[]) => {
+    if (data.length === 0) return
+
+    const parsed = await parseRows(data, DATE_COLS, MERCHANT_COLS, AMOUNT_COLS)
+
+    if (parsed.length === 0 && data.length > 0) {
+      const headers = Object.keys(data[0])
+      setUnmappedHeaders(headers)
+      setRawData(data)
+    } else {
+      setRows(parsed)
+      setUnmappedHeaders(null)
+    }
+  }
+
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      encoding: 'UTF-8',
-      complete: async (results) => {
-        const data = results.data as Record<string, string>[]
-        if (data.length === 0) return
+    const ext = file.name.split('.').pop()?.toLowerCase()
 
-        const parsed = await parseRows(data, DATE_COLS, MERCHANT_COLS, AMOUNT_COLS)
-
-        if (parsed.length === 0 && data.length > 0) {
-          // Auto-detect failed → show manual mapper
-          const headers = Object.keys(data[0])
-          setUnmappedHeaders(headers)
-          setRawData(data)
-        } else {
-          setRows(parsed)
-          setUnmappedHeaders(null)
+    if (ext === 'xlsx' || ext === 'xls') {
+      const buf = await file.arrayBuffer()
+      const wb = XLSX.read(buf, { type: 'array' })
+      const ws = wb.Sheets[wb.SheetNames[0]]
+      const jsonData = XLSX.utils.sheet_to_json<Record<string, string>>(ws, { defval: '', raw: false })
+      await processData(jsonData)
+    } else {
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        encoding: 'UTF-8',
+        complete: async (results) => {
+          await processData(results.data as Record<string, string>[])
         }
-      }
-    })
+      })
+    }
   }
 
   const handleManualMap = async (dateCol: string, merchantCol: string, amountCol: string) => {
@@ -351,12 +364,12 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
         onClick={() => fileRef.current?.click()}
       >
         <Upload className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
-        <p className="text-sm font-medium">CSV 파일을 선택하세요</p>
+        <p className="text-sm font-medium">CSV / 엑셀 파일 업로드</p>
         <p className="text-xs text-muted-foreground mt-2">
           토스 · 뱅크샐러드 · 카카오뱅크 · 신한/삼성/국민/현대/하나/롯데카드
         </p>
       </div>
-      <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleFile} />
+      <input ref={fileRef} type="file" accept=".csv,.xlsx,.xls" className="hidden" onChange={handleFile} />
     </div>
   )
 }
