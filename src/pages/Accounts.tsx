@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { db, type Account } from '@/db'
 import { useAccounts } from '@/hooks/useDB'
 import { formatKRW } from '@/lib/utils'
+import { getBankPreset, BANK_PRESETS } from '@/lib/bankPresets'
 
 const ACCOUNT_TYPES = [
   { value: 'checking', label: '입출금', icon: '🏦' },
@@ -61,13 +62,14 @@ export default function Accounts() {
   const handleSave = async () => {
     if (!name) return
     const typeInfo = ACCOUNT_TYPES.find(t => t.value === type)!
+    const preset = getBankPreset(bankName)
     const data = {
       name,
       bankName,
       type,
       balance: parseInt(balance) || 0,
-      color: '#6366f1',
-      icon: typeInfo.icon,
+      color: preset?.color ?? '#6366f1',
+      icon: preset?.icon ?? typeInfo.icon,
       displayOrder: accounts.length,
       isActive: true,
       updatedAt: new Date(),
@@ -168,6 +170,20 @@ export default function Accounts() {
               </div>
               <div>
                 <label className="text-xs text-muted-foreground">은행/카드사</label>
+                <div className="flex gap-1.5 mb-1.5 flex-wrap">
+                  {Object.values(BANK_PRESETS).slice(0, 9).map(b => (
+                    <button
+                      key={b.name}
+                      type="button"
+                      onClick={() => setBankName(b.name)}
+                      className={`text-xs px-2 py-1 rounded-full transition-colors ${
+                        bankName === b.name ? 'ring-2 ring-primary bg-primary/20' : 'bg-secondary hover:bg-secondary/80'
+                      }`}
+                    >
+                      {b.icon} {b.name}
+                    </button>
+                  ))}
+                </div>
                 <Select value={bankName} onChange={e => setBankName(e.target.value)}>
                   <option value="">선택...</option>
                   {BANKS.map(b => <option key={b} value={b}>{b}</option>)}

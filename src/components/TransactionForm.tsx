@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { db, type Transaction } from '@/db'
-import { useCategories, useAccounts } from '@/hooks/useDB'
+import { useCategories, useAccounts, useRecentMerchants } from '@/hooks/useDB'
 import { classifyAndGetCategoryId, learnRule } from '@/utils/classifier'
+import { ensureDefaultWallet } from '@/lib/defaultWallet'
+import { detectChanges } from '@/services/changeDetection'
 import { Trash2 } from 'lucide-react'
 
 interface Props {
@@ -16,6 +18,7 @@ interface Props {
 export default function TransactionForm({ editId, onClose }: Props) {
   const categories = useCategories()
   const accounts = useAccounts()
+  const recentMerchants = useRecentMerchants()
 
   const [type, setType] = useState<'expense' | 'income'>('expense')
   const [amount, setAmount] = useState('')
@@ -53,11 +56,12 @@ export default function TransactionForm({ editId, onClose }: Props) {
 
   const handleSave = async () => {
     const amt = parseInt(amount)
-    if (!amt || !accountId) return
+    if (!amt) return
 
+    const resolvedAccountId = accountId ? Number(accountId) : await ensureDefaultWallet()
     const catId = categoryId ? Number(categoryId) : (categories.find(c => c.name === '기타')?.id ?? 1)
     const txData: Omit<Transaction, 'id'> = {
-      accountId: Number(accountId),
+      accountId: resolvedAccountId,
       amount: amt,
       type,
       categoryId: catId,
@@ -73,11 +77,13 @@ export default function TransactionForm({ editId, onClose }: Props) {
       await db.transactions.update(editId, { ...txData, updatedAt: new Date() })
     } else {
       await db.transactions.add(txData)
+      // Detect changes against recurring items
+      detectChanges(txData as any).catch(() => {})
     }
 
     // Update account balance
     if (!editId) {
-      const account = await db.accounts.get(Number(accountId))
+      const account = await db.accounts.get(resolvedAccountId)
       if (account) {
         const delta = type === 'income' ? amt : -amt
         await db.accounts.update(account.id!, { balance: account.balance + delta })
@@ -141,6 +147,23 @@ export default function TransactionForm({ editId, onClose }: Props) {
           {/* Merchant */}
           <div>
             <label className="text-xs text-muted-foreground">가맹점</label>
+            {!editId && recentMerchants.length > 0 && (
+              <div className="flex gap-1.5 mb-1.5 flex-wrap">
+                {recentMerchants.map(m => (
+                  <button
+                    key={m.merchantName}
+                    type="button"
+                    onClick={() => {
+                      setMerchant(m.merchantName)
+                      if (m.categoryId) setCategoryId(String(m.categoryId))
+                    }}
+                    className="text-xs px-2 py-1 rounded-full bg-secondary hover:bg-secondary/80 transition-colors"
+                  >
+                    {m.icon} {m.merchantName}
+                  </button>
+                ))}
+              </div>
+            )}
             <Input placeholder="스타벅스, 배달의민족..." value={merchantName} onChange={e => setMerchant(e.target.value)} />
           </div>
 
@@ -157,7 +180,7 @@ export default function TransactionForm({ editId, onClose }: Props) {
 
           {/* Account */}
           <div>
-            <label className="text-xs text-muted-foreground">계좌</label>
+            <label className="text-xs text-muted-foreground">계좌 (선택)</label>
             <Select value={accountId} onChange={e => setAccountId(e.target.value)}>
               <option value="">선택...</option>
               {accounts.map(a => (

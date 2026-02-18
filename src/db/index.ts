@@ -68,6 +68,45 @@ export interface AppSettings {
   value: string
 }
 
+export interface RecurringItem {
+  id?: number
+  name: string
+  amount: number
+  type: 'income' | 'expense'
+  frequency: 'monthly' | 'weekly' | 'yearly'
+  dayOfMonth?: number
+  categoryId?: number
+  accountId?: number
+  isActive: boolean
+  lastAmount?: number
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface ChangeAlert {
+  id?: number
+  type: 'price_change' | 'new_recurring' | 'income_change' | 'maturity'
+  title: string
+  description: string
+  oldAmount?: number
+  newAmount?: number
+  recurringId?: number
+  isResolved: boolean
+  suggestedAction?: string
+  createdAt: Date
+}
+
+export interface Insight {
+  id?: number
+  type: 'trend' | 'anomaly' | 'tip'
+  title: string
+  description: string
+  categoryId?: number
+  month: string
+  isRead: boolean
+  createdAt: Date
+}
+
 class DonFlowDB extends Dexie {
   accounts!: EntityTable<Account, 'id'>
   transactions!: EntityTable<Transaction, 'id'>
@@ -76,6 +115,9 @@ class DonFlowDB extends Dexie {
   salaryAllocations!: EntityTable<SalaryAllocation, 'id'>
   merchantRules!: EntityTable<MerchantRule, 'id'>
   appSettings!: EntityTable<AppSettings, 'id'>
+  recurringItems!: EntityTable<RecurringItem, 'id'>
+  changeAlerts!: EntityTable<ChangeAlert, 'id'>
+  insights!: EntityTable<Insight, 'id'>
 
   constructor() {
     super('DonFlowDB')
@@ -87,6 +129,18 @@ class DonFlowDB extends Dexie {
       salaryAllocations: '++id, accountId, displayOrder',
       merchantRules: '++id, merchantPattern',
       appSettings: '++id, &key',
+    })
+    this.version(3).stores({
+      accounts: '++id, name, type, isActive, displayOrder',
+      transactions: '++id, accountId, categoryId, date, type, csvHash',
+      categories: '++id, name, isIncome, isDefault, displayOrder',
+      budgets: '++id, categoryId, month, [categoryId+month]',
+      salaryAllocations: '++id, accountId, displayOrder',
+      merchantRules: '++id, merchantPattern',
+      appSettings: '++id, &key',
+      recurringItems: '++id, name, type, isActive',
+      changeAlerts: '++id, type, isResolved, createdAt',
+      insights: '++id, type, month, isRead',
     })
   }
 }

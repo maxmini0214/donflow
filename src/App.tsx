@@ -2,9 +2,13 @@ import { useEffect, Component, type ReactNode } from 'react'
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import Layout from '@/components/Layout'
 import Dashboard from '@/pages/Dashboard'
+import Structure from '@/pages/Structure'
 import Transactions from '@/pages/Transactions'
 import Accounts from '@/pages/Accounts'
 import Settings from '@/pages/Settings'
+import Onboarding from '@/components/Onboarding'
+import QuickAdd from '@/components/QuickAdd'
+import NotificationPaste from '@/components/NotificationPaste'
 import { seedCategories } from '@/db'
 
 class ErrorBoundary extends Component<{children: ReactNode}, {error: Error | null}> {
@@ -24,9 +28,13 @@ export default function App() {
   return (
     <ErrorBoundary>
       <HashRouter>
+        <Onboarding />
+        <QuickAdd />
+        <NotificationPaste />
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/structure" element={<Structure />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/accounts" element={<Accounts />} />
             <Route path="/settings" element={<Settings />} />
