@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { t } from '@/lib/i18n'
 import Papa from 'papaparse'
 import * as XLSX from 'xlsx'
 import { Upload, ClipboardPaste, Sparkles, Check, ChevronDown, ChevronUp, Search, HelpCircle } from 'lucide-react'
@@ -728,7 +729,7 @@ function TransactionList({
     <div className="space-y-3">
       <div className="relative">
         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-        <Input placeholder="검색..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
+        <Input placeholder={t('search')} value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
       </div>
 
       {filtered.length === 0 ? (
@@ -749,7 +750,7 @@ function TransactionList({
                       setEditingId(tx.id!); setEditCatId(String(tx.categoryId))
                     }}
                     className="text-lg hover:scale-110 transition-transform"
-                    title="카테고리 변경"
+                    title={t('changeCategory')}
                   >
                     {cat?.icon ?? '📌'}
                   </button>

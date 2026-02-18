@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
+import { t } from '@/lib/i18n'
 import { Pencil, Check, X, Plus, Trash2, ChevronUp, ChevronDown, Settings2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -343,7 +344,7 @@ export default function Structure() {
                   variant="ghost"
                   className="h-7 w-7"
                   onClick={() => openAddDialog(groupName)}
-                  title="이 그룹에 카테고리 추가"
+                  title={t('addCategoryToGroup')}
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </Button>
@@ -356,7 +357,7 @@ export default function Structure() {
                       deleteGroup(groupName)
                     }
                   }}
-                  title="그룹 삭제"
+                  title={t('deleteGroup')}
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </Button>
@@ -500,7 +501,7 @@ export default function Structure() {
             variant="outline"
             onClick={() => openAddDialog()}
           >
-            <Plus className="w-4 h-4" /> 카테고리 추가
+            <Plus className="w-4 h-4" /> {t('addCategory')}
           </Button>
           <Button
             className="w-full h-11 text-sm gap-2"
@@ -524,7 +525,7 @@ export default function Structure() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-sm mx-auto">
           <DialogHeader>
-            <DialogTitle>{editingCategory ? '카테고리 편집' : '카테고리 추가'}</DialogTitle>
+            <DialogTitle>{editingCategory ? t('editCategory') : t('addCategory')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             {/* Name */}
@@ -533,7 +534,7 @@ export default function Structure() {
               <Input
                 value={form.name}
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                placeholder="카테고리 이름"
+                placeholder={t('categoryName')}
                 autoFocus
               />
             </div>
@@ -620,7 +621,7 @@ export default function Structure() {
             <Input
               value={newGroupName}
               onChange={e => setNewGroupName(e.target.value)}
-              placeholder="그룹 이름 (예: 부업/수입)"
+              placeholder={t('groupNamePlaceholder')}
               autoFocus
               onKeyDown={e => e.key === 'Enter' && addGroup()}
             />
