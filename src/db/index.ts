@@ -79,12 +79,12 @@ class DonFlowDB extends Dexie {
 
   constructor() {
     super('DonFlowDB')
-    this.version(1).stores({
-      accounts: '++id, name, type, isActive',
+    this.version(2).stores({
+      accounts: '++id, name, type, isActive, displayOrder',
       transactions: '++id, accountId, categoryId, date, type, csvHash',
-      categories: '++id, name, isIncome, isDefault',
+      categories: '++id, name, isIncome, isDefault, displayOrder',
       budgets: '++id, categoryId, month, [categoryId+month]',
-      salaryAllocations: '++id, accountId',
+      salaryAllocations: '++id, accountId, displayOrder',
       merchantRules: '++id, merchantPattern',
       appSettings: '++id, &key',
     })

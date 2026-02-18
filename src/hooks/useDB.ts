@@ -3,11 +3,11 @@ import { db, type Account, type Transaction, type Category } from '@/db'
 import { getMonthRange } from '@/lib/utils'
 
 export function useAccounts() {
-  return useLiveQuery(() => db.accounts.orderBy('displayOrder').toArray()) ?? []
+  return useLiveQuery(() => db.accounts.toArray().then(a => a.sort((x, y) => x.displayOrder - y.displayOrder))) ?? []
 }
 
 export function useCategories() {
-  return useLiveQuery(() => db.categories.orderBy('displayOrder').toArray()) ?? []
+  return useLiveQuery(() => db.categories.toArray().then(a => a.sort((x, y) => x.displayOrder - y.displayOrder))) ?? []
 }
 
 export function useTransactions(monthKey?: string) {
