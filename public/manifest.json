@@ -1,0 +1,21 @@
+{
+  "name": "돈플로우 - DonFlow",
+  "short_name": "돈플로우",
+  "description": "개인 재정 관리 앱",
+  "start_url": "/donflow/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/donflow/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/donflow/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
