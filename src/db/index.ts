@@ -95,8 +95,8 @@ export const db = new DonFlowDB()
 
 // Seed default categories
 export async function seedCategories() {
-  const count = await db.categories.where('isDefault').equals(1).count()
-  if (count > 0) return
+  const existing = await db.categories.toArray()
+  if (existing.some(c => c.isDefault)) return
 
   await db.categories.bulkAdd([
     { name: '식비', icon: '🍚', color: '#EF4444', isIncome: false, isDefault: true, displayOrder: 1 },
