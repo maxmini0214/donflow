@@ -29,9 +29,55 @@ interface ClassifiedNotif extends ParsedTransaction {
 }
 
 // ─── Column detection candidates ───
-const DATE_COLS = ['이용일시', '이용일', '이용일자', '거래일', '거래일시', '날짜', '일자', '일시', 'date', '결제일', '승인일', '사용일', '거래일자', '승인일시', '매입일']
-const MERCHANT_COLS = ['가맹점', '가맹점명', '이용가맹점', '이용처', '적요', 'merchant', '내용', '사용처', '상호', '상호명', '거래처', '비고', '메모', '이용 내역', '거래내용']
-const AMOUNT_COLS = ['이용금액', '국내이용금액', '결제금액', '거래금액', '금액', 'amount', '결제', '이용금', '출금', '출금액', '승인금액', '지출금액', '사용금액', '결제 금액', '매출금액']
+const DATE_COLS = ['이용일시', '이용일', '이용일자', '거래일', '거래일시', '날짜', '일자', '일시', 'date', '결제일', '승인일', '사용일', '거래일자', '승인일시', '매입일', '결제일시', '거래 일시', '결제 일시', '날짜/시간', '시간', '거래시간']
+const MERCHANT_COLS = ['가맹점', '가맹점명', '이용가맹점', '이용처', '적요', 'merchant', '내용', '사용처', '상호', '상호명', '거래처', '비고', '메모', '이용 내역', '거래내용', '사용처명', '결제처', '사용 내역', '이용 가맹점', '결제내역', '거래처명', '카드사용처']
+const AMOUNT_COLS = ['이용금액', '국내이용금액', '결제금액', '거래금액', '금액', 'amount', '결제', '이용금', '출금', '출금액', '승인금액', '지출금액', '사용금액', '결제 금액', '매출금액', '카드결제금액', '출금금액', '지출', '수입', '입금액']
+
+// ─── Data-pattern based column detection ───
+interface DetectedColumns {
+  dateCol: string | null
+  merchantCol: string | null
+  amountCol: string | null
+}
+
+function detectColumnsByData(rows: Record<string, string>[]): DetectedColumns {
+  const result: DetectedColumns = { dateCol: null, merchantCol: null, amountCol: null }
+  if (rows.length === 0) return result
+
+  const headers = Object.keys(rows[0])
+  const sampleRows = rows.slice(0, Math.min(5, rows.length))
+
+  // Score each column
+  for (const col of headers) {
+    const samples = sampleRows.map(r => r[col]?.trim()).filter(Boolean)
+    if (samples.length === 0) continue
+
+    // Date: YYYY-MM-DD, YYYY.MM.DD, YYYY/MM/DD, or with time
+    const dateScore = samples.filter(s =>
+      /\d{4}[-./]\d{1,2}[-./]\d{1,2}/.test(s) ||
+      /\d{2}[-./]\d{1,2}[-./]\d{1,2}/.test(s) ||
+      /^\d{8}$/.test(s.replace(/\s/g, ''))
+    ).length / samples.length
+
+    // Amount: numbers with optional commas, minus, 원
+    const amountScore = samples.filter(s =>
+      /^-?[\d,]+\.?\d*원?$/.test(s.replace(/\s/g, ''))
+    ).length / samples.length
+
+    // Merchant: contains Korean text, not pure numbers/dates
+    const merchantScore = samples.filter(s =>
+      /[가-힣]/.test(s) &&
+      !/^\d{4}[-./]\d{1,2}[-./]\d{1,2}/.test(s) &&
+      !/^-?[\d,]+원?$/.test(s.replace(/\s/g, ''))
+    ).length / samples.length
+
+    if (dateScore >= 0.8 && !result.dateCol) result.dateCol = col
+    else if (amountScore >= 0.8 && !result.amountCol) result.amountCol = col
+    else if (merchantScore >= 0.8 && !result.merchantCol) result.merchantCol = col
+  }
+
+  return result
+}
 
 export default function DataInput() {
   const [tab, setTab] = useState<Tab>('csv')
@@ -195,6 +241,7 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
   const [done, setDone] = useState(false)
   const [unmappedHeaders, setUnmappedHeaders] = useState<string[] | null>(null)
   const [rawData, setRawData] = useState<Record<string, string>[]>([])
+  const [autoDetectMsg, setAutoDetectMsg] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
   const parseRows = async (
@@ -231,17 +278,38 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
 
   const processData = async (data: Record<string, string>[]) => {
     if (data.length === 0) return
+    setAutoDetectMsg(null)
 
+    // Stage 1: column name matching
     const parsed = await parseRows(data, DATE_COLS, MERCHANT_COLS, AMOUNT_COLS)
 
-    if (parsed.length === 0 && data.length > 0) {
-      const headers = Object.keys(data[0])
-      setUnmappedHeaders(headers)
-      setRawData(data)
-    } else {
+    if (parsed.length > 0) {
       setRows(parsed)
       setUnmappedHeaders(null)
+      return
     }
+
+    // Stage 2: data pattern detection
+    const detected = detectColumnsByData(data)
+    if (detected.dateCol && detected.amountCol) {
+      const dateCols = [detected.dateCol]
+      const merchantCols = detected.merchantCol ? [detected.merchantCol] : []
+      const amountCols = [detected.amountCol]
+      const patternParsed = await parseRows(data, dateCols, merchantCols, amountCols)
+
+      if (patternParsed.length > 0) {
+        setAutoDetectMsg(`✅ 자동 감지: 날짜=${detected.dateCol}, 가맹점=${detected.merchantCol ?? '없음'}, 금액=${detected.amountCol}`)
+        setRawData(data)
+        setRows(patternParsed)
+        setUnmappedHeaders(null)
+        return
+      }
+    }
+
+    // Stage 3: manual fallback
+    const headers = Object.keys(data[0])
+    setUnmappedHeaders(headers)
+    setRawData(data)
   }
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -310,7 +378,7 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
         <Check className="w-12 h-12 text-income mx-auto mb-3" />
         <p className="font-medium">임포트 완료!</p>
         <p className="text-sm text-muted-foreground mt-1">{rows.filter(r => r.selected).length}건 저장됨</p>
-        <Button className="mt-4" onClick={() => { setDone(false); setRows([]); setUnmappedHeaders(null) }}>
+        <Button className="mt-4" onClick={() => { setDone(false); setRows([]); setUnmappedHeaders(null); setAutoDetectMsg(null) }}>
           더 올리기
         </Button>
       </div>
@@ -320,6 +388,16 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
   if (rows.length > 0) {
     return (
       <div className="space-y-4">
+        {/* Auto-detect banner */}
+        {autoDetectMsg && (
+          <div className="flex items-center justify-between rounded-xl border border-green-500/30 bg-green-500/5 px-4 py-2.5">
+            <p className="text-xs font-medium text-green-600">{autoDetectMsg}</p>
+            <button
+              onClick={() => { setRows([]); setUnmappedHeaders(Object.keys(rawData[0] ?? {})); setAutoDetectMsg(null) }}
+              className="text-[10px] text-muted-foreground hover:text-foreground underline shrink-0 ml-2"
+            >수정</button>
+          </div>
+        )}
         {/* Preview table */}
         <CsvPreview rows={rows} />
 
