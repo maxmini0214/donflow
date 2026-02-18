@@ -5,6 +5,7 @@ import Dashboard from '@/pages/Dashboard'
 import Structure from '@/pages/Structure'
 import Transactions from '@/pages/Transactions'
 import Accounts from '@/pages/Accounts'
+import Budget from '@/pages/Budget'
 import Settings from '@/pages/Settings'
 import Onboarding from '@/components/Onboarding'
 import QuickAdd from '@/components/QuickAdd'
@@ -35,6 +36,7 @@ export default function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/structure" element={<Structure />} />
+            <Route path="/budget" element={<Budget />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/accounts" element={<Accounts />} />
             <Route path="/settings" element={<Settings />} />

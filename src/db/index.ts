@@ -96,6 +96,12 @@ export interface ChangeAlert {
   createdAt: Date
 }
 
+export interface MonthlyIncome {
+  id?: number
+  yearMonth: string
+  amount: number
+}
+
 export interface Insight {
   id?: number
   type: 'trend' | 'anomaly' | 'tip'
@@ -117,6 +123,7 @@ class DonFlowDB extends Dexie {
   appSettings!: EntityTable<AppSettings, 'id'>
   recurringItems!: EntityTable<RecurringItem, 'id'>
   changeAlerts!: EntityTable<ChangeAlert, 'id'>
+  monthlyIncomes!: EntityTable<MonthlyIncome, 'id'>
   insights!: EntityTable<Insight, 'id'>
 
   constructor() {
@@ -141,6 +148,19 @@ class DonFlowDB extends Dexie {
       recurringItems: '++id, name, type, isActive',
       changeAlerts: '++id, type, isResolved, createdAt',
       insights: '++id, type, month, isRead',
+    })
+    this.version(4).stores({
+      accounts: '++id, name, type, isActive, displayOrder',
+      transactions: '++id, accountId, categoryId, date, type, csvHash',
+      categories: '++id, name, isIncome, isDefault, displayOrder',
+      budgets: '++id, categoryId, month, [categoryId+month]',
+      salaryAllocations: '++id, accountId, displayOrder',
+      merchantRules: '++id, merchantPattern',
+      appSettings: '++id, &key',
+      recurringItems: '++id, name, type, isActive',
+      changeAlerts: '++id, type, isResolved, createdAt',
+      insights: '++id, type, month, isRead',
+      monthlyIncomes: '++id, &yearMonth',
     })
   }
 }

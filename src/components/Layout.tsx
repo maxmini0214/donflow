@@ -1,10 +1,11 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { Home, Wallet, BarChart3, Settings } from 'lucide-react'
+import { Home, Wallet, BarChart3, Target, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navItems = [
   { to: '/', icon: Home, label: '홈' },
   { to: '/structure', icon: Wallet, label: '구조' },
+  { to: '/budget', icon: Target, label: '예산' },
   { to: '/transactions', icon: BarChart3, label: '내역' },
 ]
 

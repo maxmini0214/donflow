@@ -112,6 +112,16 @@ export function useMonthlySalary() {
   }) ?? 0
 }
 
+export function useMonthlyIncome(monthKey: string) {
+  return useLiveQuery(async () => {
+    const record = await db.monthlyIncomes.where('yearMonth').equals(monthKey).first()
+    if (record) return record.amount
+    // Fallback to global salary setting
+    const setting = await db.appSettings.where('key').equals('monthlySalary').first()
+    return setting ? Number(setting.value) : 0
+  }, [monthKey]) ?? 0
+}
+
 export function useRecentMerchants() {
   return useLiveQuery(async () => {
     const txs = await db.transactions.orderBy('date').reverse().limit(50).toArray()

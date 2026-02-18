@@ -94,6 +94,33 @@ export default function Dashboard() {
         </p>
       </div>
 
+      {/* Budget Alert Banners */}
+      {hasBudgets && budgetComparison.filter(b => b.percentage >= 100).length > 0 && (
+        <div className="space-y-2">
+          {budgetComparison.filter(b => b.percentage >= 100).map(item => (
+            <div key={item.categoryId} className="rounded-xl bg-destructive/10 border border-destructive/20 p-3">
+              <p className="text-sm font-medium">⚠️ {item.categoryIcon} {item.categoryName} 예산 초과! ₩{formatNumber(item.diff)} 오버</p>
+            </div>
+          ))}
+        </div>
+      )}
+      {hasBudgets && budgetComparison.filter(b => b.percentage >= 80 && b.percentage < 100).length > 0 && (
+        <div className="space-y-2">
+          {budgetComparison.filter(b => b.percentage >= 80 && b.percentage < 100).map(item => (
+            <div key={item.categoryId} className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3">
+              <p className="text-sm font-medium">🟡 {item.categoryIcon} {item.categoryName} 예산 {item.percentage}% 소진 — 주의!</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Summary line */}
+      {hasBudgets && monthOffset === 0 && (
+        <div className="text-center text-sm text-muted-foreground">
+          이번 달 예산 대비 <span className="font-medium text-foreground">{totalBudget > 0 ? Math.round(expense / totalBudget * 100) : 0}%</span> 사용, {daysInMonth - dayOfMonth}일 남음
+        </div>
+      )}
+
       {/* Change Alerts Banner */}
       {alerts.length > 0 && (
         <button
