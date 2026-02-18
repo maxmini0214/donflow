@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -9,6 +9,8 @@ import {
 } from '@/hooks/useDB'
 import { formatKRW, formatNumber, getMonthKey } from '@/lib/utils'
 import { useNavigate } from 'react-router-dom'
+import { useLanguage } from '@/lib/i18n'
+import { loadDemoData, clearDemoData, isDemoLoaded } from '@/db/demoData'
 
 export default function Dashboard() {
   const [monthOffset, setMonthOffset] = useState(0)
@@ -22,6 +24,34 @@ export default function Dashboard() {
   const salary = useMonthlySalary()
   const categories = useCategories()
   const navigate = useNavigate()
+  const { t } = useLanguage()
+
+  const [isDemo, setIsDemo] = useState(false)
+  const [demoLoading, setDemoLoading] = useState(false)
+
+  useEffect(() => {
+    isDemoLoaded().then(setIsDemo)
+  }, [expense, income])
+
+  const handleLoadDemo = useCallback(async () => {
+    setDemoLoading(true)
+    try {
+      await loadDemoData()
+      setIsDemo(true)
+    } finally {
+      setDemoLoading(false)
+    }
+  }, [])
+
+  const handleClearDemo = useCallback(async () => {
+    setDemoLoading(true)
+    try {
+      await clearDemoData()
+      setIsDemo(false)
+    } finally {
+      setDemoLoading(false)
+    }
+  }, [])
 
   const totalBudget = budgetComparison.reduce((s, b) => s + b.planned, 0)
   const hasBudgets = budgetComparison.length > 0
@@ -52,6 +82,16 @@ export default function Dashboard() {
           <ChevronRight className="w-5 h-5" />
         </Button>
       </div>
+
+      {/* Demo Data Banner */}
+      {isDemo && (
+        <div className="flex items-center justify-between rounded-xl bg-primary/10 border border-primary/20 px-4 py-2">
+          <span className="text-xs text-muted-foreground">🎲 Demo mode</span>
+          <Button variant="ghost" size="sm" className="text-xs h-7" onClick={handleClearDemo} disabled={demoLoading}>
+            {t('clearDemoData')}
+          </Button>
+        </div>
+      )}
 
       {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-3">
@@ -154,10 +194,17 @@ export default function Dashboard() {
       ) : (
         <div className="text-center py-12 space-y-3">
           <div className="text-4xl">🏗️</div>
-          <p className="text-sm text-muted-foreground">아직 예산 계획이 없어요</p>
-          <Button variant="outline" size="sm" onClick={() => navigate('/structure')}>
-            구조 설계하러 가기 →
-          </Button>
+          <p className="text-sm text-muted-foreground">{t('noBudgetYet')}</p>
+          <div className="flex flex-col items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => navigate('/structure')}>
+              {t('goToStructure')}
+            </Button>
+            {!isDemo && (
+              <Button variant="secondary" size="sm" onClick={handleLoadDemo} disabled={demoLoading}>
+                🎲 {t('tryDemoData')}
+              </Button>
+            )}
+          </div>
         </div>
       )}
 

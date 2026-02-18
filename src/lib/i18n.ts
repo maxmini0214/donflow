@@ -11,6 +11,10 @@ const translations = {
     categoryName: '카테고리 이름',
     groupNamePlaceholder: '그룹 이름 (예: 부업/수입)',
     appTitle: '돈플로우',
+    tryDemoData: '데모 데이터 체험',
+    clearDemoData: '데모 데이터 삭제',
+    noBudgetYet: '아직 예산 계획이 없어요',
+    goToStructure: '구조 설계하러 가기 →',
   },
   en: {
     search: 'Search...',
@@ -22,6 +26,10 @@ const translations = {
     categoryName: 'Category name',
     groupNamePlaceholder: 'Group name (e.g. Side job/Income)',
     appTitle: 'DonFlow - Budget Planner',
+    tryDemoData: 'Try Demo Data',
+    clearDemoData: 'Clear Demo Data',
+    noBudgetYet: 'No budget plan yet',
+    goToStructure: 'Go to Structure →',
   },
 } as const;
 
