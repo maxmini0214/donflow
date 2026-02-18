@@ -18,9 +18,70 @@ interface ParsedRow {
   date: string
   merchant: string
   amount: number
+  type: 'income' | 'expense' | 'transfer'
   categoryName: string
   categoryId?: number
   selected: boolean
+}
+
+// ─── Banksalad 대분류 → DonFlow category mapping ───
+const BANKSALAD_CATEGORY_MAP: Record<string, string> = {
+  '식비': '식비',
+  '카페/간식': '식비',
+  '교통': '교통',
+  '생활': '생활',
+  '문화/여가': '여가',
+  '술/유흥': '여가',
+  '온라인쇼핑': '쇼핑',
+  '패션/쇼핑': '쇼핑',
+  '뷰티/미용': '생활',
+  '의료/건강': '의료',
+  '주거/통신': '주거',
+  '금융': '금융',
+  '교육/학습': '교육',
+  '여행/숙박': '여가',
+  '경조/선물': '기타',
+  '자녀/육아': '기타',
+  '자동차': '교통',
+  '급여': '급여',
+  '금융수입': '금융수입',
+  '사업수입': '사업수입',
+  '앱테크': '급여',
+  '용돈': '용돈',
+  '저축': '저축',
+  '투자': '저축',
+  '대출': '기타',
+  '미분류': '기타',
+  '현금': '기타',
+  // 이체 관련은 type='transfer'로 처리
+  '내계좌이체': '기타',
+  '이체': '기타',
+  '카드대금': '기타',
+}
+
+// 소분류 기반 더 정밀한 매핑
+const BANKSALAD_SUB_MAP: Record<string, string> = {
+  '편의점': '쇼핑',
+  '마트': '식비',
+  '커피/음료': '카페',
+  '아이스크림/빙수': '카페',
+  '기타간식': '카페',
+  '대중교통': '교통',
+  '택시': '교통',
+}
+
+// ─── Detect transaction type from banksalad data ───
+function detectTransactionType(row: Record<string, string>, amount: number): 'income' | 'expense' | 'transfer' {
+  const typeCol = row['타입']?.trim()
+  if (typeCol) {
+    if (typeCol === '수입') return 'income'
+    if (typeCol === '이체') return 'transfer'
+    if (typeCol === '지출') return 'expense'
+  }
+  // Fallback: use amount sign (original, before Math.abs)
+  const rawAmount = parseFloat(row['금액']?.replace(/[,원\s]/g, '') ?? '0')
+  if (rawAmount > 0 && !typeCol) return 'income'
+  return 'expense'
 }
 
 interface ClassifiedNotif extends ParsedTransaction {
@@ -164,6 +225,7 @@ function CsvPreview({ rows }: { rows: ParsedRow[] }) {
               <th className="px-3 py-1.5 text-left font-medium">날짜</th>
               <th className="px-3 py-1.5 text-left font-medium">가맹점</th>
               <th className="px-3 py-1.5 text-right font-medium">금액</th>
+              <th className="px-3 py-1.5 text-center font-medium">타입</th>
               <th className="px-3 py-1.5 text-left font-medium">자동분류</th>
             </tr>
           </thead>
@@ -172,7 +234,16 @@ function CsvPreview({ rows }: { rows: ParsedRow[] }) {
               <tr key={i} className="border-b border-border/20 last:border-0">
                 <td className="px-3 py-1.5 text-muted-foreground whitespace-nowrap">{r.date}</td>
                 <td className="px-3 py-1.5 truncate max-w-[120px]">{r.merchant || '-'}</td>
-                <td className="px-3 py-1.5 text-right font-medium">{formatNumber(r.amount)}원</td>
+                <td className={`px-3 py-1.5 text-right font-medium ${r.type === 'income' ? 'text-income' : r.type === 'transfer' ? 'text-muted-foreground' : 'text-expense'}`}>
+                  {r.type === 'income' ? '+' : r.type === 'transfer' ? '↔' : '-'}{formatNumber(r.amount)}원
+                </td>
+                <td className="px-3 py-1.5 text-center">
+                  <span className={`px-1.5 py-0.5 rounded text-[10px] ${
+                    r.type === 'income' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                    r.type === 'transfer' ? 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400' :
+                    'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                  }`}>{r.type === 'income' ? '수입' : r.type === 'transfer' ? '이체' : '지출'}</span>
+                </td>
                 <td className="px-3 py-1.5">
                   <span className="px-1.5 py-0.5 rounded bg-secondary text-[10px]">{r.categoryName}</span>
                 </td>
@@ -251,6 +322,9 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
     amountCandidates: string[],
   ): Promise<ParsedRow[]> => {
     const parsed: ParsedRow[] = []
+    // Check if this is banksalad format (has 대분류 and 타입 columns)
+    const hasBanksaladCols = data.length > 0 && ('대분류' in data[0]) && ('타입' in data[0])
+
     for (const row of data) {
       const dateCol = findCol(row, dateCandidates)
       const merchantCol = findCol(row, merchantCandidates)
@@ -260,17 +334,47 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
       const dateVal = row[dateCol]?.trim()
       const merchant = row[merchantCol ?? '']?.trim() ?? ''
       const amountStr = row[amountCol]?.replace(/[,원\s]/g, '')
-      const amount = Math.abs(parseInt(amountStr ?? '0'))
+      const amount = Math.abs(parseFloat(amountStr ?? '0'))
       if (!amount || !dateVal) continue
 
-      const { categoryName, categoryId } = await classifyMerchant(merchant)
+      // Detect transaction type
+      const txType = hasBanksaladCols ? detectTransactionType(row, amount) : 'expense'
+
+      // Category: prefer banksalad 소분류 → 대분류 mapping, then fallback to merchant classifier
+      let categoryName = '기타'
+      let categoryId: number | undefined
+      if (hasBanksaladCols && row['대분류']) {
+        // Try 소분류 first for precision
+        const subCat = row['소분류']?.trim()
+        const subMapped = subCat ? BANKSALAD_SUB_MAP[subCat] : undefined
+        const mappedName = subMapped ?? BANKSALAD_CATEGORY_MAP[row['대분류'].trim()]
+        if (mappedName) {
+          const cat = await db.categories.where('name').equals(mappedName).first()
+          categoryName = mappedName
+          categoryId = cat?.id
+        }
+      }
+      if (!categoryId || categoryName === '기타') {
+        const classified = await classifyMerchant(merchant)
+        if (classified.categoryId && classified.categoryName !== '기타') {
+          categoryName = classified.categoryName
+          categoryId = classified.categoryId
+        } else if (categoryId) {
+          // Keep the banksalad mapping even if it's 기타
+        } else {
+          categoryName = classified.categoryName
+          categoryId = classified.categoryId
+        }
+      }
+
       parsed.push({
         date: normalizeDate(dateVal),
         merchant,
         amount,
+        type: txType,
         categoryName,
         categoryId,
-        selected: true,
+        selected: txType !== 'transfer', // transfers unchecked by default
       })
     }
     return parsed
@@ -356,11 +460,11 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
       await db.transactions.add({
         accountId: walletId,
         amount: row.amount,
-        type: 'expense',
+        type: row.type,
         categoryId: row.categoryId ?? defaultCatId,
         merchantName: row.merchant,
         date: new Date(row.date),
-        memo: '',
+        memo: row.type === 'transfer' ? '[이체]' : '',
         source: 'csv',
         csvHash,
         createdAt: new Date(),
@@ -401,7 +505,13 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
         {/* Preview table */}
         <CsvPreview rows={rows} />
 
-        <p className="text-sm text-muted-foreground">{rows.length}건 감지됨</p>
+        <div className="text-sm text-muted-foreground flex flex-wrap gap-2">
+          <span>{rows.length}건 감지</span>
+          <span className="text-expense">지출 {rows.filter(r => r.type === 'expense').length}</span>
+          <span className="text-income">수입 {rows.filter(r => r.type === 'income').length}</span>
+          <span>이체 {rows.filter(r => r.type === 'transfer').length}</span>
+          <span className="text-xs">(이체는 기본 제외)</span>
+        </div>
         <div className="space-y-2 max-h-80 overflow-y-auto">
           {rows.map((row, i) => (
             <div key={i} className={`flex items-center gap-2 p-2 rounded-lg bg-secondary/30 text-sm ${row.selected ? '' : 'opacity-40'}`}>
@@ -413,7 +523,9 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
               <span className="text-xs text-muted-foreground w-20">{row.date}</span>
               <span className="flex-1 truncate">{row.merchant}</span>
               <span className="text-xs px-1.5 py-0.5 rounded bg-secondary">{row.categoryName}</span>
-              <span className="font-medium">{formatNumber(row.amount)}원</span>
+              <span className={`font-medium ${row.type === 'income' ? 'text-income' : row.type === 'transfer' ? 'text-muted-foreground' : ''}`}>
+                {row.type === 'income' ? '+' : row.type === 'transfer' ? '↔' : ''}{formatNumber(row.amount)}원
+              </span>
             </div>
           ))}
         </div>
@@ -699,11 +811,13 @@ function findCol(row: Record<string, string>, candidates: string[]): string | nu
 }
 
 function normalizeDate(d: string): string {
-  const cleaned = d.replace(/[년월]/g, '-').replace(/[일\s]/g, '').replace(/\//g, '-')
+  // Handle "YYYY-MM-DD HH:MM:SS" format — strip time part first
+  const dateOnly = d.trim().split(/[\sT]/)[0]
+  const cleaned = dateOnly.replace(/[년월]/g, '-').replace(/[일]/g, '').replace(/\//g, '-')
   const parts = cleaned.split('-').filter(Boolean)
   if (parts.length >= 3) {
     const y = parts[0].length === 2 ? '20' + parts[0] : parts[0]
     return `${y}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`
   }
-  return d
+  return dateOnly
 }
