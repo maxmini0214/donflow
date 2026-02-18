@@ -37,6 +37,7 @@ export interface Category {
   isIncome: boolean
   isDefault: boolean
   displayOrder: number
+  groupName?: string
 }
 
 export interface Budget {
@@ -162,6 +163,32 @@ class DonFlowDB extends Dexie {
       insights: '++id, type, month, isRead',
       monthlyIncomes: '++id, &yearMonth',
     })
+    this.version(5).stores({
+      accounts: '++id, name, type, isActive, displayOrder',
+      transactions: '++id, accountId, categoryId, date, type, csvHash',
+      categories: '++id, name, isIncome, isDefault, displayOrder, groupName',
+      budgets: '++id, categoryId, month, [categoryId+month]',
+      salaryAllocations: '++id, accountId, displayOrder',
+      merchantRules: '++id, merchantPattern',
+      appSettings: '++id, &key',
+      recurringItems: '++id, name, type, isActive',
+      changeAlerts: '++id, type, isResolved, createdAt',
+      insights: '++id, type, month, isRead',
+      monthlyIncomes: '++id, &yearMonth',
+    }).upgrade(tx => {
+      // Migrate existing categories to have groupName
+      const groupMap: Record<string, string> = {
+        '주거': '고정비', '통신': '고정비', '보험': '고정비', '구독': '고정비', '교통': '고정비',
+        '식비': '생활비', '카페': '생활비', '의료': '생활비', '교육': '생활비',
+        '저축': '저축/투자',
+        '쇼핑': '자유지출', '데이트': '자유지출', '경조사': '자유지출', '여행': '자유지출', '기타': '자유지출',
+      }
+      return tx.table('categories').toCollection().modify(cat => {
+        if (!cat.groupName) {
+          cat.groupName = groupMap[cat.name] ?? '자유지출'
+        }
+      })
+    })
   }
 }
 
@@ -173,21 +200,21 @@ export async function seedCategories() {
   if (existing.some(c => c.isDefault)) return
 
   await db.categories.bulkAdd([
-    { name: '식비', icon: '🍚', color: '#EF4444', isIncome: false, isDefault: true, displayOrder: 1 },
-    { name: '카페', icon: '☕', color: '#F97316', isIncome: false, isDefault: true, displayOrder: 2 },
-    { name: '교통', icon: '🚌', color: '#EAB308', isIncome: false, isDefault: true, displayOrder: 3 },
-    { name: '쇼핑', icon: '🛒', color: '#84CC16', isIncome: false, isDefault: true, displayOrder: 4 },
-    { name: '주거', icon: '🏠', color: '#22C55E', isIncome: false, isDefault: true, displayOrder: 5 },
-    { name: '통신', icon: '📱', color: '#14B8A6', isIncome: false, isDefault: true, displayOrder: 6 },
-    { name: '구독', icon: '🔄', color: '#06B6D4', isIncome: false, isDefault: true, displayOrder: 7 },
-    { name: '의료', icon: '🏥', color: '#3B82F6', isIncome: false, isDefault: true, displayOrder: 8 },
-    { name: '교육', icon: '📚', color: '#6366F1', isIncome: false, isDefault: true, displayOrder: 9 },
-    { name: '데이트', icon: '💕', color: '#EC4899', isIncome: false, isDefault: true, displayOrder: 10 },
-    { name: '경조사', icon: '🎁', color: '#F43F5E', isIncome: false, isDefault: true, displayOrder: 11 },
-    { name: '여행', icon: '✈️', color: '#8B5CF6', isIncome: false, isDefault: true, displayOrder: 12 },
-    { name: '보험', icon: '🛡️', color: '#64748B', isIncome: false, isDefault: true, displayOrder: 13 },
-    { name: '저축', icon: '🏦', color: '#0EA5E9', isIncome: false, isDefault: true, displayOrder: 14 },
-    { name: '급여', icon: '💰', color: '#10B981', isIncome: true, isDefault: true, displayOrder: 15 },
-    { name: '기타', icon: '📌', color: '#6B7280', isIncome: false, isDefault: true, displayOrder: 16 },
+    { name: '식비', icon: '🍚', color: '#EF4444', isIncome: false, isDefault: true, displayOrder: 1, groupName: '생활비' },
+    { name: '카페', icon: '☕', color: '#F97316', isIncome: false, isDefault: true, displayOrder: 2, groupName: '생활비' },
+    { name: '교통', icon: '🚌', color: '#EAB308', isIncome: false, isDefault: true, displayOrder: 3, groupName: '고정비' },
+    { name: '쇼핑', icon: '🛒', color: '#84CC16', isIncome: false, isDefault: true, displayOrder: 4, groupName: '자유지출' },
+    { name: '주거', icon: '🏠', color: '#22C55E', isIncome: false, isDefault: true, displayOrder: 5, groupName: '고정비' },
+    { name: '통신', icon: '📱', color: '#14B8A6', isIncome: false, isDefault: true, displayOrder: 6, groupName: '고정비' },
+    { name: '구독', icon: '🔄', color: '#06B6D4', isIncome: false, isDefault: true, displayOrder: 7, groupName: '고정비' },
+    { name: '의료', icon: '🏥', color: '#3B82F6', isIncome: false, isDefault: true, displayOrder: 8, groupName: '생활비' },
+    { name: '교육', icon: '📚', color: '#6366F1', isIncome: false, isDefault: true, displayOrder: 9, groupName: '생활비' },
+    { name: '데이트', icon: '💕', color: '#EC4899', isIncome: false, isDefault: true, displayOrder: 10, groupName: '자유지출' },
+    { name: '경조사', icon: '🎁', color: '#F43F5E', isIncome: false, isDefault: true, displayOrder: 11, groupName: '자유지출' },
+    { name: '여행', icon: '✈️', color: '#8B5CF6', isIncome: false, isDefault: true, displayOrder: 12, groupName: '자유지출' },
+    { name: '보험', icon: '🛡️', color: '#64748B', isIncome: false, isDefault: true, displayOrder: 13, groupName: '고정비' },
+    { name: '저축', icon: '🏦', color: '#0EA5E9', isIncome: false, isDefault: true, displayOrder: 14, groupName: '저축/투자' },
+    { name: '급여', icon: '💰', color: '#10B981', isIncome: true, isDefault: true, displayOrder: 15, groupName: '수입' },
+    { name: '기타', icon: '📌', color: '#6B7280', isIncome: false, isDefault: true, displayOrder: 16, groupName: '자유지출' },
   ])
 }
