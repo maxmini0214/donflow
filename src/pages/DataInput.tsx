@@ -172,12 +172,12 @@ function CsvGuide() {
   const [open, setOpen] = useState(false)
   const { t } = useLanguage()
   const guides = [
-    { name: '토스', steps: '앱 → 소비 → ⋯ → 내보내기 → CSV' },
-    { name: '뱅크샐러드', steps: '앱 → 가계부 → 설정 → 데이터 내보내기' },
-    { name: '삼성카드', steps: '앱/웹 → 이용내역 → 엑셀 다운로드' },
-    { name: 'KB국민', steps: '앱/웹 → 이용내역조회 → 내려받기' },
-    { name: '신한', steps: '앱/웹 → 이용대금명세서 → 엑셀' },
-    { name: '현대', steps: '앱/웹 → 이용내역 → 엑셀 다운로드' },
+    { name: '토스', steps: t('guideToss') },
+    { name: '뱅크샐러드', steps: t('guideBanksalad') },
+    { name: '삼성카드', steps: t('guideSamsung') },
+    { name: 'KB국민', steps: t('guideKB') },
+    { name: '신한', steps: t('guideShinhan') },
+    { name: '현대', steps: t('guideHyundai') },
   ]
 
   return (
@@ -454,7 +454,7 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
         categoryId: row.categoryId ?? defaultCatId,
         merchantName: row.merchant,
         date: new Date(row.date),
-        memo: row.type === 'transfer' ? '[이체]' : '',
+        memo: row.type === 'transfer' ? t('transferMemo') : '',
         source: 'csv',
         csvHash,
         createdAt: new Date(),
@@ -574,7 +574,7 @@ function NotificationPaste({ categories }: { categories: ReturnType<typeof useCa
     setParsed(prev => prev.map((item, i) => {
       if (i !== index) return item
       const cat = categories.find(c => c.id === catId)
-      return { ...item, categoryId: catId, categoryName: cat?.name ?? '기타' }
+      return { ...item, categoryId: catId, categoryName: cat?.name ?? t('uncategorized') }
     }))
   }
 
@@ -582,7 +582,7 @@ function NotificationPaste({ categories }: { categories: ReturnType<typeof useCa
     if (parsed.length === 0) return
     setSaving(true)
     const walletId = await ensureDefaultWallet()
-    const defaultCatId = categories.find(c => c.name === '기타')?.id ?? 1
+    const defaultCatId = categories.find(c => c.name === '기타')?.id ?? categories.find(c => c.name === 'Other')?.id ?? 1
 
     for (const item of parsed) {
       const catId = item.categoryId ?? defaultCatId
@@ -596,7 +596,7 @@ function NotificationPaste({ categories }: { categories: ReturnType<typeof useCa
         categoryId: catId,
         merchantName: item.merchantName,
         date: item.date,
-        memo: `[${item.cardCompany}카드]`,
+        memo: `[${item.cardCompany}${t('cardSuffix')}]`,
         source: 'manual',
         createdAt: new Date(),
         updatedAt: new Date(),

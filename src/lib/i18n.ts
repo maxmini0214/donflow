@@ -124,6 +124,33 @@ const translations = {
     higherThanUsual: '지출이 평소보다',
     percentHigher: '% 높아요',
     mostVisited: '🏪 가장 자주 간 곳:',
+    // monthLabel
+    yearSuffix: '년',
+    monthSuffix: '월',
+    // CSV guide
+    guideToss: '앱 → 소비 → ⋯ → 내보내기 → CSV',
+    guideBanksalad: '앱 → 가계부 → 설정 → 데이터 내보내기',
+    guideSamsung: '앱/웹 → 이용내역 → 엑셀 다운로드',
+    guideKB: '앱/웹 → 이용내역조회 → 내려받기',
+    guideShinhan: '앱/웹 → 이용대금명세서 → 엑셀',
+    guideHyundai: '앱/웹 → 이용내역 → 엑셀 다운로드',
+    // changeDetection
+    suggestDeductFromSurplus: '여유자금에서 차감',
+    suggestSaveSavings: '절약된 금액 저축',
+    // defaultWallet
+    defaultWalletName: '기본 지갑',
+    // memo
+    transferMemo: '[이체]',
+    cardSuffix: '카드',
+    // Structure groups
+    groupFixed: '고정비',
+    groupLiving: '생활비',
+    groupSavings: '저축/투자',
+    groupDiscretionary: '자유지출',
+    groupIncome: '수입',
+    // misc
+    demoMode: 'Demo mode',
+    uncategorized: '기타',
   },
   en: {
     search: 'Search...',
@@ -248,6 +275,33 @@ const translations = {
     higherThanUsual: 'spending is',
     percentHigher: '% higher than usual',
     mostVisited: '🏪 Most visited:',
+    // monthLabel
+    yearSuffix: '',
+    monthSuffix: '',
+    // CSV guide
+    guideToss: 'App → Spending → ⋯ → Export → CSV',
+    guideBanksalad: 'App → Budget → Settings → Export data',
+    guideSamsung: 'App/Web → Usage history → Download Excel',
+    guideKB: 'App/Web → Usage inquiry → Download',
+    guideShinhan: 'App/Web → Statement → Excel',
+    guideHyundai: 'App/Web → Usage history → Download Excel',
+    // changeDetection
+    suggestDeductFromSurplus: 'Deduct from surplus',
+    suggestSaveSavings: 'Save the difference',
+    // defaultWallet
+    defaultWalletName: 'Default Wallet',
+    // memo
+    transferMemo: '[Transfer]',
+    cardSuffix: 'Card',
+    // Structure groups
+    groupFixed: 'Fixed',
+    groupLiving: 'Living',
+    groupSavings: 'Savings/Investment',
+    groupDiscretionary: 'Discretionary',
+    groupIncome: 'Income',
+    // misc
+    demoMode: 'Demo mode',
+    uncategorized: 'Other',
   },
 } as const;
 

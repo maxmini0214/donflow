@@ -35,7 +35,7 @@ export async function detectChanges(tx: Transaction) {
           newAmount: tx.amount,
           recurringId: item.id,
           isResolved: false,
-          suggestedAction: tx.amount > item.amount ? '여유자금에서 차감' : '절약된 금액 저축',
+          suggestedAction: tx.amount > item.amount ? t('suggestDeductFromSurplus') : t('suggestSaveSavings'),
           createdAt: new Date(),
         })
       }
@@ -93,7 +93,10 @@ export async function generateInsights(monthKey: string) {
 
     // Increasing trend
     if (amounts[0] > 0 && amounts[1] > amounts[0] && amounts[2] > amounts[1]) {
-      const formatAmt = (a: number) => a >= 10000 ? `${Math.round(a / 10000)}만` : `${Math.round(a / 1000)}천`
+      const formatAmt = (a: number) => {
+        if (getLang() === 'ko') return a >= 10000 ? `${Math.round(a / 10000)}만` : `${Math.round(a / 1000)}천`
+        return a >= 10000 ? `${Math.round(a / 10000)}0k` : `${Math.round(a / 1000)}k`
+      }
       await db.insights.add({
         type: 'trend',
         title: `${cat.icon} ${cat.name} ${t('spendingIncrease')}`,

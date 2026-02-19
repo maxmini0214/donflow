@@ -13,18 +13,20 @@ import { useLanguage } from '@/lib/i18n'
 import { loadDemoData, clearDemoData, isDemoLoaded } from '@/db/demoData'
 
 export default function Dashboard() {
+  const { t } = useLanguage()
   const [monthOffset, setMonthOffset] = useState(0)
   const now = new Date()
   const targetDate = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1)
   const monthKey = getMonthKey(targetDate)
-  const monthLabel = `${targetDate.getFullYear()}년 ${targetDate.getMonth() + 1}월`
+  const monthLabel = t('yearSuffix')
+    ? `${targetDate.getFullYear()}${t('yearSuffix')} ${targetDate.getMonth() + 1}${t('monthSuffix')}`
+    : `${targetDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })}`
 
   const { income, expense } = useMonthlyStats(monthKey)
   const budgetComparison = useBudgetComparison(monthKey)
   const salary = useMonthlySalary()
   const categories = useCategories()
   const navigate = useNavigate()
-  const { t } = useLanguage()
 
   const [isDemo, setIsDemo] = useState(false)
   const [demoLoading, setDemoLoading] = useState(false)
