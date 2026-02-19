@@ -360,9 +360,28 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
     if (ext === 'xlsx' || ext === 'xls') {
       const buf = await file.arrayBuffer()
       const wb = XLSX.read(buf, { type: 'array' })
-      const ws = wb.Sheets[wb.SheetNames[0]]
-      const jsonData = XLSX.utils.sheet_to_json<Record<string, string>>(ws, { defval: '', raw: false })
-      await processData(jsonData)
+      // Try each sheet until one parses successfully
+      let parsed = false
+      for (const sheetName of wb.SheetNames) {
+        const ws = wb.Sheets[sheetName]
+        const jsonData = XLSX.utils.sheet_to_json<Record<string, string>>(ws, { defval: '', raw: false })
+        if (jsonData.length === 0) continue
+        // Check if this sheet has recognizable columns
+        const keys = Object.keys(jsonData[0] || {})
+        const hasDate = keys.some(k => DATE_COLS.includes(k))
+        const hasAmount = keys.some(k => AMOUNT_COLS.includes(k))
+        if (hasDate && hasAmount) {
+          await processData(jsonData)
+          parsed = true
+          break
+        }
+      }
+      if (!parsed) {
+        // Fallback: try first sheet anyway
+        const ws = wb.Sheets[wb.SheetNames[0]]
+        const jsonData = XLSX.utils.sheet_to_json<Record<string, string>>(ws, { defval: '', raw: false })
+        await processData(jsonData)
+      }
     } else {
       Papa.parse(file, {
         header: true,
