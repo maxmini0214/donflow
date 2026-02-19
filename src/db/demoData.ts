@@ -203,7 +203,10 @@ export async function loadDemoData(): Promise<void> {
     await db.monthlyIncomes.add({ yearMonth: month, amount: 4500 } as MonthlyIncome)
   }
 
-  // 5. Mark as demo
+  // 5. Set monthly salary so Dashboard recognises setup is complete
+  await db.appSettings.add({ key: 'monthlySalary', value: '4500' })
+
+  // 6. Mark as demo
   await db.appSettings.add({ key: 'isDemoData', value: 'true' })
 }
 
@@ -219,9 +222,11 @@ export async function clearDemoData(): Promise<void> {
   await db.changeAlerts.clear()
   await db.insights.clear()
 
-  // Remove demo flag
-  const setting = await db.appSettings.where('key').equals('isDemoData').first()
-  if (setting?.id) await db.appSettings.delete(setting.id)
+  // Remove demo flag + salary
+  for (const key of ['isDemoData', 'monthlySalary']) {
+    const setting = await db.appSettings.where('key').equals(key).first()
+    if (setting?.id) await db.appSettings.delete(setting.id)
+  }
 
   // Re-seed default categories
   const { seedCategories } = await import('./index')
