@@ -1,0 +1,28 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a1a"/>
+      <stop offset="100%" style="stop-color:#1a1a2e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="100%" style="stop-color:#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Decorative bars representing plan vs actual -->
+  <rect x="80" y="280" width="120" height="200" rx="8" fill="url(#accent)" opacity="0.3"/>
+  <rect x="80" y="340" width="120" height="140" rx="8" fill="url(#accent)"/>
+  <rect x="220" y="240" width="120" height="240" rx="8" fill="url(#accent)" opacity="0.3"/>
+  <rect x="220" y="320" width="120" height="160" rx="8" fill="url(#accent)"/>
+  <rect x="360" y="300" width="120" height="180" rx="8" fill="url(#accent)" opacity="0.3"/>
+  <rect x="360" y="380" width="120" height="100" rx="8" fill="#ef4444"/>
+  <!-- Title -->
+  <text x="600" y="200" font-family="system-ui, sans-serif" font-size="72" font-weight="800" fill="white" text-anchor="middle">DonFlow</text>
+  <text x="600" y="260" font-family="system-ui, sans-serif" font-size="28" fill="#a1a1aa" text-anchor="middle">Plan vs Reality Budget Tracker</text>
+  <!-- Features -->
+  <text x="600" y="400" font-family="system-ui, sans-serif" font-size="22" fill="#6366f1" text-anchor="middle">🔒 No server · No signup · 100% browser-only</text>
+  <text x="600" y="450" font-family="system-ui, sans-serif" font-size="20" fill="#71717a" text-anchor="middle">Drift detection · What-if simulation · CSV/XLSX import</text>
+  <!-- Bottom accent line -->
+  <rect x="0" y="620" width="1200" height="10" fill="url(#accent)"/>
+</svg>
