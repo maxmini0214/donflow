@@ -251,63 +251,12 @@ function CsvPreview({ rows }: { rows: ParsedRow[] }) {
   )
 }
 
-// ─── Manual Column Mapper ───
-function ColumnMapper({
-  headers,
-  onConfirm,
-}: {
-  headers: string[]
-  onConfirm: (dateCol: string, merchantCol: string, amountCol: string) => void
-}) {
-  const [dateCol, setDateCol] = useState('')
-  const [merchantCol, setMerchantCol] = useState('')
-  const [amountCol, setAmountCol] = useState('')
-  const { t } = useLanguage()
-
-  return (
-    <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 space-y-3">
-      <p className="text-sm font-medium text-amber-600">{t('selectColumns')}</p>
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <span className="text-xs w-14 shrink-0">{t('date')}</span>
-          <Select value={dateCol} onChange={e => setDateCol(e.target.value)} className="h-8 text-xs flex-1">
-            <option value="">{t('selectPlaceholder')}</option>
-            {headers.map(h => <option key={h} value={h}>{h}</option>)}
-          </Select>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs w-14 shrink-0">{t('merchant')}</span>
-          <Select value={merchantCol} onChange={e => setMerchantCol(e.target.value)} className="h-8 text-xs flex-1">
-            <option value="">{t('selectPlaceholder')}</option>
-            {headers.map(h => <option key={h} value={h}>{h}</option>)}
-          </Select>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs w-14 shrink-0">{t('amount')}</span>
-          <Select value={amountCol} onChange={e => setAmountCol(e.target.value)} className="h-8 text-xs flex-1">
-            <option value="">{t('selectPlaceholder')}</option>
-            {headers.map(h => <option key={h} value={h}>{h}</option>)}
-          </Select>
-        </div>
-      </div>
-      <Button
-        className="w-full h-9 text-xs"
-        disabled={!dateCol || !amountCol}
-        onClick={() => onConfirm(dateCol, merchantCol, amountCol)}
-      >
-        {t('parseWithColumns')}
-      </Button>
-    </div>
-  )
-}
-
 // ─── CSV Upload ───
 function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories> }) {
   const [rows, setRows] = useState<ParsedRow[]>([])
   const [importing, setImporting] = useState(false)
   const [done, setDone] = useState(false)
-  const [unmappedHeaders, setUnmappedHeaders] = useState<string[] | null>(null)
-  const [rawData, setRawData] = useState<Record<string, string>[]>([])
+  const [parseError, setParseError] = useState<string | null>(null)
   const [autoDetectMsg, setAutoDetectMsg] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const { t } = useLanguage()
@@ -376,12 +325,12 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
   const processData = async (data: Record<string, string>[]) => {
     if (data.length === 0) return
     setAutoDetectMsg(null)
+    setParseError(null)
 
     const parsed = await parseRows(data, DATE_COLS, MERCHANT_COLS, AMOUNT_COLS)
 
     if (parsed.length > 0) {
       setRows(parsed)
-      setUnmappedHeaders(null)
       return
     }
 
@@ -394,16 +343,12 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
 
       if (patternParsed.length > 0) {
         setAutoDetectMsg(`${t('autoDetected')} ${t('dateCol')}=${detected.dateCol}, ${t('merchantCol')}=${detected.merchantCol ?? t('none')}, ${t('amountCol')}=${detected.amountCol}`)
-        setRawData(data)
         setRows(patternParsed)
-        setUnmappedHeaders(null)
         return
       }
     }
 
-    const headers = Object.keys(data[0])
-    setUnmappedHeaders(headers)
-    setRawData(data)
+    setParseError(t('unrecognizedFormat'))
   }
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -428,12 +373,6 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
         }
       })
     }
-  }
-
-  const handleManualMap = async (dateCol: string, merchantCol: string, amountCol: string) => {
-    const parsed = await parseRows(rawData, [dateCol], merchantCol ? [merchantCol] : [], [amountCol])
-    setRows(parsed)
-    setUnmappedHeaders(null)
   }
 
   const handleImport = async () => {
@@ -472,7 +411,7 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
         <Check className="w-12 h-12 text-income mx-auto mb-3" />
         <p className="font-medium">{t('importComplete')}</p>
         <p className="text-sm text-muted-foreground mt-1">{rows.filter(r => r.selected).length} {t('savedCount')}</p>
-        <Button className="mt-4" onClick={() => { setDone(false); setRows([]); setUnmappedHeaders(null); setAutoDetectMsg(null) }}>
+        <Button className="mt-4" onClick={() => { setDone(false); setRows([]); setParseError(null); setAutoDetectMsg(null) }}>
           {t('uploadMore')}
         </Button>
       </div>
@@ -483,12 +422,8 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
     return (
       <div className="space-y-4">
         {autoDetectMsg && (
-          <div className="flex items-center justify-between rounded-xl border border-green-500/30 bg-green-500/5 px-4 py-2.5">
+          <div className="rounded-xl border border-green-500/30 bg-green-500/5 px-4 py-2.5">
             <p className="text-xs font-medium text-green-600">{autoDetectMsg}</p>
-            <button
-              onClick={() => { setRows([]); setUnmappedHeaders(Object.keys(rawData[0] ?? {})); setAutoDetectMsg(null) }}
-              className="text-[10px] text-muted-foreground hover:text-foreground underline shrink-0 ml-2"
-            >{t('fix')}</button>
           </div>
         )}
         <CsvPreview rows={rows} />
@@ -531,8 +466,11 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
     <div className="space-y-4">
       <CsvGuide />
 
-      {unmappedHeaders && (
-        <ColumnMapper headers={unmappedHeaders} onConfirm={handleManualMap} />
+      {parseError && (
+        <div className="rounded-xl border border-red-500/30 bg-red-500/5 p-4">
+          <p className="text-sm font-medium text-red-600">{parseError}</p>
+          <p className="text-xs text-muted-foreground mt-1">{t('supportedApps')}</p>
+        </div>
       )}
 
       <div
