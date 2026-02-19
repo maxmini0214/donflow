@@ -1,5 +1,7 @@
 # DonFlow 💰
 
+![Local-First](https://img.shields.io/badge/local--first-yes-brightgreen) ![No AI](https://img.shields.io/badge/AI-none-blue) ![Zero Backend](https://img.shields.io/badge/backend-zero-orange) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
+
 **A browser-only budget planner that compares plans vs. reality.**
 
 > No server. No signup. No tracking. Your financial data never leaves your browser.
