@@ -1,73 +1,48 @@
-# React + TypeScript + Vite
+# DonFlow 💰
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**A browser-only budget planner that compares your plans vs. reality.**
 
-Currently, two official plugins are available:
+> No server. No signup. No tracking. Your financial data never leaves your browser.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🔗 **[Try it live →](https://maxmini0214.github.io/donflow/)**
 
-## React Compiler
+## What is DonFlow?
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Most expense trackers only record the past. DonFlow lets you **design your financial structure** and then see how reality compares — in real time.
 
-## Expanding the ESLint configuration
+- 📊 **Plan vs. Actual** — Set budgets, upload transactions, see progress bars and drift warnings
+- 🔮 **What-If Simulator** — Test financial changes before committing
+- 📁 **CSV/XLSX Upload** — Auto-detects formats from 14+ Korean card issuers + generic formats
+- 🎲 **Demo Data** — Click "Try Demo Data" on the dashboard to explore instantly
+- 🌐 **Bilingual** — Auto-detects browser language (English / Korean)
+- 🔒 **100% Private** — All data stored in IndexedDB, never sent anywhere
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Quick Start
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. Visit [donflow](https://maxmini0214.github.io/donflow/)
+2. Click **🎲 Try Demo Data** on the Dashboard tab
+3. Explore the three tabs: **Dashboard** → **Structure Design** → **Data Import**
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Tech Stack
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **React + TypeScript + Vite**
+- **Dexie.js** (IndexedDB wrapper)
+- **SheetJS** for CSV/XLSX parsing
+- **GitHub Pages** for hosting
+
+## Screenshots
+
+| Dashboard | Structure Design |
+|-----------|-----------------|
+| Plan vs. actual progress bars, drift alerts | Income/expense category management |
+
+## Development
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## License
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+MIT
