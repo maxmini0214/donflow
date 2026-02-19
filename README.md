@@ -7,6 +7,8 @@
 🔗 **[Try it live →](https://maxmini0214.github.io/donflow/)**  
 🎲 Click **"Try Demo Data"** on the dashboard to explore with sample transactions.
 
+![DonFlow Dashboard](docs/screenshot-dashboard.png)
+
 ## Why DonFlow?
 
 Most budget apps track what you *spent*. DonFlow tracks what you *planned* — and shows you where reality diverges.
