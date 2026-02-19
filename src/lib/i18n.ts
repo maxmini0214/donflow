@@ -152,6 +152,16 @@ const translations = {
     // misc
     demoMode: 'Demo mode',
     uncategorized: '기타',
+    quickAdd10: '+10만',
+    quickAdd50: '+50만',
+    quickAdd100: '+100만',
+    budgetPreview: '₩{amount}',
+    addCategoryQuick: '+ 카테고리 추가',
+    deleteWithTransactions: '거래 {count}건이 \'기타\'로 이동됩니다',
+    emptyCategoryGuide: '💡 카테고리를 추가해보세요',
+    budgetOverWarning: '⚠️ 예산 합계가 수입을 초과했어요!',
+    longPressEdit: '편집',
+    longPressDelete: '삭제',
   },
   en: {
     search: 'Search...',
@@ -304,6 +314,16 @@ const translations = {
     // misc
     demoMode: 'Demo mode',
     uncategorized: 'Other',
+    quickAdd10: '+100K',
+    quickAdd50: '+500K',
+    quickAdd100: '+1M',
+    budgetPreview: '₩{amount}',
+    addCategoryQuick: '+ Add category',
+    deleteWithTransactions: '{count} transactions will move to \'Other\'',
+    emptyCategoryGuide: '💡 Add some categories to get started',
+    budgetOverWarning: '⚠️ Budget total exceeds your income!',
+    longPressEdit: 'Edit',
+    longPressDelete: 'Delete',
   },
 } as const;
 

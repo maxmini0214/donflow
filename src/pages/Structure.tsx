@@ -1,6 +1,6 @@
-import { useState, useMemo, useCallback } from 'react'
-import { t, useLanguage } from '@/lib/i18n'
-import { Pencil, Check, X, Plus, Trash2, ChevronUp, ChevronDown, Settings2 } from 'lucide-react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
+import { useLanguage } from '@/lib/i18n'
+import { Pencil, Check, X, Plus, Trash2, ChevronUp, ChevronDown, Settings2, MinusCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -43,6 +43,13 @@ interface CategoryFormData {
 
 const emptyForm: CategoryFormData = { name: '', icon: '📌', color: '#6B7280', groupName: '자유지출', isIncome: false }
 
+// Quick amount buttons (in won)
+const QUICK_AMOUNTS = [
+  { label: 'quickAdd10', value: 100000 },
+  { label: 'quickAdd50', value: 500000 },
+  { label: 'quickAdd100', value: 1000000 },
+] as const
+
 export default function Structure() {
   const { t } = useLanguage()
   const salary = useMonthlySalary()
@@ -61,10 +68,23 @@ export default function Structure() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [form, setForm] = useState<CategoryFormData>(emptyForm)
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null)
+  const [deleteTransactionCount, setDeleteTransactionCount] = useState(0)
+
+  // Long press context menu
+  const [contextMenu, setContextMenu] = useState<{ catId: number; x: number; y: number } | null>(null)
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Group management
   const [addGroupOpen, setAddGroupOpen] = useState(false)
   const [newGroupName, setNewGroupName] = useState('')
+
+  // Close context menu on outside tap
+  useEffect(() => {
+    if (!contextMenu) return
+    const close = () => setContextMenu(null)
+    document.addEventListener('click', close)
+    return () => document.removeEventListener('click', close)
+  }, [contextMenu])
 
   const budgetMap = useMemo(() => {
     const m = new Map<number, number>()
@@ -74,6 +94,7 @@ export default function Structure() {
 
   const totalBudget = budgets.reduce((s, b) => s + b.amount, 0)
   const remaining = salary - totalBudget
+  const isOverBudget = remaining < 0
 
   // Get unique group names from categories, maintaining order
   const groupNames = useMemo(() => {
@@ -97,6 +118,8 @@ export default function Structure() {
       return { groupName, cats, groupTotal, groupPct }
     })
   }, [categories, groupNames, budgetMap, salary])
+
+  const hasAnyCategories = categories.some(c => !c.isIncome)
 
   const saveSalary = async () => {
     const val = parseInt(salaryInput)
@@ -127,6 +150,11 @@ export default function Structure() {
     }
     setEditingBudget(null)
     setBudgetInput('')
+  }
+
+  const addQuickAmount = (add: number) => {
+    const current = parseInt(budgetInput) || 0
+    setBudgetInput(String(current + add))
   }
 
   // Category CRUD
@@ -174,6 +202,12 @@ export default function Structure() {
     setDialogOpen(false)
   }
 
+  const confirmDelete = async (catId: number) => {
+    const count = await db.transactions.where('categoryId').equals(catId).count()
+    setDeleteTransactionCount(count)
+    setDeleteConfirm(catId)
+  }
+
   const deleteCategory = async (catId: number) => {
     const etcCat = categories.find(c => c.name === '기타')
     if (etcCat) {
@@ -182,6 +216,7 @@ export default function Structure() {
     await db.budgets.where('categoryId').equals(catId).delete()
     await db.categories.delete(catId)
     setDeleteConfirm(null)
+    setContextMenu(null)
   }
 
   const moveCategory = async (cat: Category, direction: 'up' | 'down') => {
@@ -224,6 +259,21 @@ export default function Structure() {
     }
   }
 
+  // Long press handlers for mobile
+  const handleTouchStart = (catId: number, e: React.TouchEvent) => {
+    const touch = e.touches[0]
+    longPressTimer.current = setTimeout(() => {
+      setContextMenu({ catId, x: touch.clientX, y: touch.clientY })
+    }, 500)
+  }
+
+  const handleTouchEnd = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current)
+      longPressTimer.current = null
+    }
+  }
+
   const whatIfRemaining = useMemo(() => {
     if (editingBudget == null) return remaining
     const editVal = parseInt(budgetInput) || 0
@@ -237,22 +287,40 @@ export default function Structure() {
       <div className="text-center py-4">
         <p className="text-sm text-muted-foreground mb-1">{t('monthlyIncome')}</p>
         {editingSalary ? (
-          <div className="flex items-center gap-2 justify-center">
-            <Input
-              type="number"
-              value={salaryInput}
-              onChange={e => setSalaryInput(e.target.value)}
-              className="w-48 text-center text-lg font-bold"
-              placeholder="0"
-              autoFocus
-              onKeyDown={e => e.key === 'Enter' && saveSalary()}
-            />
-            <Button size="icon" variant="ghost" onClick={saveSalary}>
-              <Check className="w-4 h-4" />
-            </Button>
-            <Button size="icon" variant="ghost" onClick={() => setEditingSalary(false)}>
-              <X className="w-4 h-4" />
-            </Button>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 justify-center">
+              <Input
+                type="number"
+                value={salaryInput}
+                onChange={e => setSalaryInput(e.target.value)}
+                className="w-48 text-center text-lg font-bold"
+                placeholder="0"
+                autoFocus
+                onKeyDown={e => e.key === 'Enter' && saveSalary()}
+              />
+              <Button size="icon" variant="ghost" onClick={saveSalary}>
+                <Check className="w-4 h-4" />
+              </Button>
+              <Button size="icon" variant="ghost" onClick={() => setEditingSalary(false)}>
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            {/* Quick amount buttons for salary */}
+            <div className="flex items-center justify-center gap-2">
+              {QUICK_AMOUNTS.map(({ label, value }) => (
+                <button
+                  key={label}
+                  className="px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 active:bg-primary/30 transition-colors"
+                  onClick={() => setSalaryInput(String((parseInt(salaryInput) || 0) + value))}
+                >
+                  {t(label)}
+                </button>
+              ))}
+            </div>
+            {/* Real-time format preview */}
+            {salaryInput && parseInt(salaryInput) > 0 && (
+              <p className="text-sm text-muted-foreground">₩{formatNumber(parseInt(salaryInput))}</p>
+            )}
           </div>
         ) : (
           <button
@@ -265,9 +333,16 @@ export default function Structure() {
         )}
       </div>
 
+      {/* Budget over-allocation warning */}
+      {salary > 0 && isOverBudget && (
+        <div className="rounded-xl p-3 border-2 border-destructive bg-destructive/10 text-destructive text-sm font-medium text-center animate-pulse">
+          {t('budgetOverWarning')}
+        </div>
+      )}
+
       {/* Overall allocation bar */}
       {salary > 0 && totalBudget > 0 && (
-        <div className="space-y-2">
+        <div className={`space-y-2 ${isOverBudget ? 'rounded-xl p-3 border-2 border-destructive/30' : ''}`}>
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>{t('allocationTotal')} ₩{formatNumber(totalBudget)} ({Math.round(totalBudget / salary * 100)}%)</span>
             <span className={remaining < 0 ? 'text-destructive font-semibold' : ''}>
@@ -323,6 +398,17 @@ export default function Structure() {
         </div>
       )}
 
+      {/* Empty state when no categories */}
+      {salary > 0 && !hasAnyCategories && (
+        <div className="text-center py-12 space-y-3">
+          <div className="text-4xl">📂</div>
+          <p className="text-muted-foreground">{t('emptyCategoryGuide')}</p>
+          <Button onClick={() => openAddDialog()} className="gap-2">
+            <Plus className="w-4 h-4" /> {t('addCategory')}
+          </Button>
+        </div>
+      )}
+
       {/* Category Groups */}
       {salary > 0 && groupedView.map(({ groupName, cats, groupTotal, groupPct }) => (
         <section key={groupName} className="space-y-2">
@@ -368,26 +454,47 @@ export default function Structure() {
               const pct = salary > 0 && budgetAmount > 0 ? Math.round((budgetAmount / salary) * 100) : 0
 
               return (
-                <div key={cat.id} className="rounded-lg bg-secondary/30 p-3">
+                <div
+                  key={cat.id}
+                  className="rounded-lg bg-secondary/30 p-3 relative"
+                  onTouchStart={!editMode ? (e) => handleTouchStart(cat.id!, e) : undefined}
+                  onTouchEnd={!editMode ? handleTouchEnd : undefined}
+                  onTouchCancel={!editMode ? handleTouchEnd : undefined}
+                  onContextMenu={(e) => {
+                    if (!editMode) {
+                      e.preventDefault()
+                      setContextMenu({ catId: cat.id!, x: e.clientX, y: e.clientY })
+                    }
+                  }}
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {editMode && (
-                        <div className="flex flex-col -my-1">
+                        <>
+                          {/* iOS-style red minus button */}
                           <button
-                            className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-0.5"
-                            onClick={() => moveCategory(cat, 'up')}
-                            disabled={idx === 0}
+                            className="w-6 h-6 rounded-full flex items-center justify-center text-white bg-destructive hover:bg-destructive/80 transition-colors shrink-0"
+                            onClick={() => confirmDelete(cat.id!)}
                           >
-                            <ChevronUp className="w-3.5 h-3.5" />
+                            <MinusCircle className="w-4 h-4" />
                           </button>
-                          <button
-                            className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-0.5"
-                            onClick={() => moveCategory(cat, 'down')}
-                            disabled={idx === cats.length - 1}
-                          >
-                            <ChevronDown className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
+                          <div className="flex flex-col -my-1">
+                            <button
+                              className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-0.5"
+                              onClick={() => moveCategory(cat, 'up')}
+                              disabled={idx === 0}
+                            >
+                              <ChevronUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-0.5"
+                              onClick={() => moveCategory(cat, 'down')}
+                              disabled={idx === cats.length - 1}
+                            >
+                              <ChevronDown className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </>
                       )}
                       <span
                         className="w-6 h-6 rounded-md flex items-center justify-center text-sm"
@@ -400,65 +507,36 @@ export default function Structure() {
 
                     <div className="flex items-center gap-1">
                       {editMode ? (
-                        <>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-7 w-7"
-                            onClick={() => openEditDialog(cat)}
-                          >
-                            <Pencil className="w-3.5 h-3.5" />
-                          </Button>
-                          {deleteConfirm === cat.id ? (
-                            <div className="flex items-center gap-1">
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                className="h-7 text-xs px-2"
-                                onClick={() => deleteCategory(cat.id!)}
-                              >
-                                {t('confirm')}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 text-xs px-2"
-                                onClick={() => setDeleteConfirm(null)}
-                              >
-                                {t('cancel')}
-                              </Button>
-                            </div>
-                          ) : (
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-7 w-7 text-destructive hover:text-destructive"
-                              onClick={() => setDeleteConfirm(cat.id!)}
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </Button>
-                          )}
-                        </>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-7 w-7"
+                          onClick={() => openEditDialog(cat)}
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </Button>
                       ) : isEditing ? (
-                        <div className="flex items-center gap-1">
-                          <Input
-                            type="number"
-                            value={budgetInput}
-                            onChange={e => setBudgetInput(e.target.value)}
-                            className="w-28 h-8 text-right text-sm"
-                            placeholder="0"
-                            autoFocus
-                            onKeyDown={e => {
-                              if (e.key === 'Enter') saveBudget(cat.id!)
-                              if (e.key === 'Escape') { setEditingBudget(null); setBudgetInput('') }
-                            }}
-                          />
-                          <Button size="sm" className="h-8 text-xs" onClick={() => saveBudget(cat.id!)}>
-                            {t('save')}
-                          </Button>
-                          <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => { setEditingBudget(null); setBudgetInput('') }}>
-                            <X className="w-3 h-3" />
-                          </Button>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-1">
+                            <Input
+                              type="number"
+                              value={budgetInput}
+                              onChange={e => setBudgetInput(e.target.value)}
+                              className="w-28 h-8 text-right text-sm"
+                              placeholder="0"
+                              autoFocus
+                              onKeyDown={e => {
+                                if (e.key === 'Enter') saveBudget(cat.id!)
+                                if (e.key === 'Escape') { setEditingBudget(null); setBudgetInput('') }
+                              }}
+                            />
+                            <Button size="sm" className="h-8 text-xs" onClick={() => saveBudget(cat.id!)}>
+                              {t('save')}
+                            </Button>
+                            <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => { setEditingBudget(null); setBudgetInput('') }}>
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
                         </div>
                       ) : (
                         <button
@@ -474,6 +552,27 @@ export default function Structure() {
                       )}
                     </div>
                   </div>
+
+                  {/* Quick amount buttons + format preview when editing budget */}
+                  {isEditing && !editMode && (
+                    <div className="mt-2 space-y-1">
+                      <div className="flex gap-1.5">
+                        {QUICK_AMOUNTS.map(({ label, value }) => (
+                          <button
+                            key={label}
+                            className="px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 active:bg-primary/30 transition-colors"
+                            onClick={() => addQuickAmount(value)}
+                          >
+                            {t(label)}
+                          </button>
+                        ))}
+                      </div>
+                      {budgetInput && parseInt(budgetInput) > 0 && (
+                        <p className="text-xs text-muted-foreground pl-1">₩{formatNumber(parseInt(budgetInput))}</p>
+                      )}
+                    </div>
+                  )}
+
                   {budgetAmount > 0 && !isEditing && !editMode && (
                     <div className="h-1.5 bg-secondary rounded-full overflow-hidden mt-2">
                       <div
@@ -486,6 +585,16 @@ export default function Structure() {
               )
             })}
           </div>
+
+          {/* Always-visible "+ 카테고리 추가" button at bottom of each group */}
+          {!editMode && (
+            <button
+              className="w-full py-2 rounded-lg border border-dashed border-muted-foreground/30 text-xs text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+              onClick={() => openAddDialog(groupName)}
+            >
+              {t('addCategoryQuick')}
+            </button>
+          )}
         </section>
       ))}
 
@@ -516,6 +625,67 @@ export default function Structure() {
           <p className="text-xs text-muted-foreground">{t('tapToEdit')}</p>
         </div>
       )}
+
+      {/* Long press context menu */}
+      {contextMenu && (
+        <div
+          className="fixed z-50 bg-popover border rounded-xl shadow-lg overflow-hidden min-w-[140px]"
+          style={{ left: contextMenu.x, top: contextMenu.y, transform: 'translate(-50%, -100%)' }}
+          onClick={e => e.stopPropagation()}
+        >
+          <button
+            className="w-full px-4 py-3 text-sm text-left hover:bg-secondary flex items-center gap-2"
+            onClick={() => {
+              const cat = categories.find(c => c.id === contextMenu.catId)
+              if (cat) openEditDialog(cat)
+              setContextMenu(null)
+            }}
+          >
+            <Pencil className="w-3.5 h-3.5" /> {t('longPressEdit')}
+          </button>
+          <button
+            className="w-full px-4 py-3 text-sm text-left hover:bg-secondary text-destructive flex items-center gap-2"
+            onClick={() => {
+              confirmDelete(contextMenu.catId)
+              setContextMenu(null)
+            }}
+          >
+            <Trash2 className="w-3.5 h-3.5" /> {t('longPressDelete')}
+          </button>
+        </div>
+      )}
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={deleteConfirm !== null} onOpenChange={(open) => { if (!open) setDeleteConfirm(null) }}>
+        <DialogContent className="max-w-sm mx-auto">
+          <DialogHeader>
+            <DialogTitle>{t('longPressDelete')}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {deleteTransactionCount > 0 && (
+              <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-3 text-sm text-amber-500">
+                ⚠️ {t('deleteWithTransactions').replace('{count}', String(deleteTransactionCount))}
+              </div>
+            )}
+            <div className="flex gap-2">
+              <Button
+                variant="destructive"
+                className="flex-1"
+                onClick={() => deleteConfirm !== null && deleteCategory(deleteConfirm)}
+              >
+                {t('confirm')}
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setDeleteConfirm(null)}
+              >
+                {t('cancel')}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Add/Edit Category Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
