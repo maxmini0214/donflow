@@ -1,4 +1,5 @@
 import { db, type Transaction } from '@/db'
+import { t, getLang } from '@/lib/i18n'
 
 /**
  * Called after a transaction is saved.
@@ -28,8 +29,8 @@ export async function detectChanges(tx: Transaction) {
       if (!existingAlert) {
         await db.changeAlerts.add({
           type: 'price_change',
-          title: `${item.name} 금액 변동`,
-          description: `${item.name} 결제 금액이 ₩${item.amount.toLocaleString()}에서 ₩${tx.amount.toLocaleString()}(으)로 변경되었어요.`,
+          title: `${item.name} ${t('amountChanged')}`,
+          description: `${item.name} ${t('amountChangedDesc')} ₩${item.amount.toLocaleString()} → ₩${tx.amount.toLocaleString()}`,
           oldAmount: item.amount,
           newAmount: tx.amount,
           recurringId: item.id,
@@ -95,8 +96,8 @@ export async function generateInsights(monthKey: string) {
       const formatAmt = (a: number) => a >= 10000 ? `${Math.round(a / 10000)}만` : `${Math.round(a / 1000)}천`
       await db.insights.add({
         type: 'trend',
-        title: `${cat.icon} ${cat.name} 지출 증가세`,
-        description: `지난 3개월: ${amounts.map(formatAmt).join('→')} (계속 증가 중이에요 📈)`,
+        title: `${cat.icon} ${cat.name} ${t('spendingIncrease')}`,
+        description: `${t('last3Months')} ${amounts.map(formatAmt).join('→')} ${t('keepIncreasing')}`,
         categoryId: catId,
         month: monthKey,
         isRead: false,
@@ -110,8 +111,8 @@ export async function generateInsights(monthKey: string) {
       const pctOver = Math.round((amounts[2] / prevAvg - 1) * 100)
       await db.insights.add({
         type: 'anomaly',
-        title: `${cat.icon} ${cat.name} 지출 급증`,
-        description: `이번 달 ${cat.name} 지출이 평소보다 ${pctOver}% 높아요`,
+        title: `${cat.icon} ${cat.name} ${t('spendingSurge')}`,
+        description: `${cat.name} ${t('higherThanUsual')} ${pctOver}${t('percentHigher')}`,
         categoryId: catId,
         month: monthKey,
         isRead: false,
@@ -143,8 +144,8 @@ export async function generateInsights(monthKey: string) {
   if (topMerchant.count >= 3) {
     await db.insights.add({
       type: 'tip',
-      title: `🏪 가장 자주 간 곳: ${topMerchant.name}`,
-      description: `${topMerchant.count}회, ₩${topMerchant.total.toLocaleString()}`,
+      title: `${t('mostVisited')} ${topMerchant.name}`,
+      description: `${topMerchant.count}x, ₩${topMerchant.total.toLocaleString()}`,
       month: monthKey,
       isRead: false,
       createdAt: new Date(),

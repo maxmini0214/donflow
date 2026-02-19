@@ -1,19 +1,22 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-
-const navItems = [
-  { to: '/', icon: '📊', label: '대시보드' },
-  { to: '/structure', icon: '🏗️', label: '구조 설계' },
-  { to: '/data', icon: '📥', label: '데이터 입력' },
-]
+import { useLanguage } from '@/lib/i18n'
 
 export default function Layout() {
+  const { t } = useLanguage()
+
+  const navItems = [
+    { to: '/', icon: '📊', label: t('navDashboard') },
+    { to: '/structure', icon: '🏗️', label: t('navStructure') },
+    { to: '/data', icon: '📥', label: t('navData') },
+  ]
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="border-b px-4 py-3">
         <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-          💸 돈플로우
+          {t('headerTitle')}
         </h1>
       </header>
 

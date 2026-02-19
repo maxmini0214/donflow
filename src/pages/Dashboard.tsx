@@ -66,8 +66,6 @@ export default function Dashboard() {
     : expense
   const projectionDiff = totalBudget - projectedExpense
 
-  // Group budget items by parent category concept
-  // For now, show all budget categories with their progress
   const sortedBudgets = [...budgetComparison].sort((a, b) => b.planned - a.planned)
 
   return (
@@ -96,15 +94,15 @@ export default function Dashboard() {
       {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-3">
         <div className="rounded-xl bg-secondary/50 p-3 text-center">
-          <p className="text-xs text-muted-foreground">수입</p>
+          <p className="text-xs text-muted-foreground">{t('income')}</p>
           <p className="text-sm font-bold text-income mt-1">{formatKRW(income || salary)}</p>
         </div>
         <div className="rounded-xl bg-secondary/50 p-3 text-center">
-          <p className="text-xs text-muted-foreground">지출</p>
+          <p className="text-xs text-muted-foreground">{t('expense')}</p>
           <p className="text-sm font-bold text-expense mt-1">{formatKRW(expense)}</p>
         </div>
         <div className="rounded-xl bg-secondary/50 p-3 text-center">
-          <p className="text-xs text-muted-foreground">남은 예산</p>
+          <p className="text-xs text-muted-foreground">{t('remainingBudget')}</p>
           <p className={`text-sm font-bold mt-1 ${remainingBudget >= 0 ? 'text-income' : 'text-destructive'}`}>
             {hasBudgets ? formatKRW(remainingBudget) : '-'}
           </p>
@@ -119,13 +117,13 @@ export default function Dashboard() {
             : 'bg-destructive/10 border-destructive/20'
         }`}>
           <p className="text-sm">
-            남은 <span className="font-bold">{daysRemaining}일</span>, 현재 페이스대로면{' '}
+            {t('currentPace')} <span className="font-bold">{daysRemaining} {t('daysRemaining')}</span>{' '}
             {projectionDiff >= 0 ? (
-              <span className="text-emerald-400 font-bold">₩{formatNumber(projectionDiff)} 여유</span>
+              <span className="text-emerald-400 font-bold">₩{formatNumber(projectionDiff)} {t('surplus')}</span>
             ) : (
-              <span className="text-destructive font-bold">₩{formatNumber(Math.abs(projectionDiff))} 초과</span>
+              <span className="text-destructive font-bold">₩{formatNumber(Math.abs(projectionDiff))} {t('overBudget')}</span>
             )}
-            {' '}예상
+            {' '}{t('forecast')}
           </p>
         </div>
       )}
@@ -135,7 +133,7 @@ export default function Dashboard() {
         <div className="space-y-2">
           {budgetComparison.filter(b => b.percentage >= 100).map(item => (
             <div key={item.categoryId} className="rounded-xl bg-destructive/10 border border-destructive/20 p-3">
-              <p className="text-sm font-medium">🔴 {item.categoryIcon} {item.categoryName} 예산 초과! ₩{formatNumber(item.diff)} 오버</p>
+              <p className="text-sm font-medium">🔴 {item.categoryIcon} {item.categoryName} {t('budgetExceeded')} ₩{formatNumber(item.diff)} {t('over')}</p>
             </div>
           ))}
         </div>
@@ -144,7 +142,7 @@ export default function Dashboard() {
         <div className="space-y-2">
           {budgetComparison.filter(b => b.percentage >= 80 && b.percentage < 100).map(item => (
             <div key={item.categoryId} className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3">
-              <p className="text-sm font-medium">🟡 {item.categoryIcon} {item.categoryName} {item.percentage}% — 주의!</p>
+              <p className="text-sm font-medium">🟡 {item.categoryIcon} {item.categoryName} {item.percentage}% — {t('caution')}</p>
             </div>
           ))}
         </div>
@@ -153,14 +151,14 @@ export default function Dashboard() {
       {/* Category Progress Bars — The Core */}
       {hasBudgets ? (
         <div className="space-y-3">
-          <p className="text-sm font-medium text-muted-foreground">카테고리별 계획 vs 실제</p>
+          <p className="text-sm font-medium text-muted-foreground">{t('categoryPlanVsActual')}</p>
           <div className="space-y-3">
             {sortedBudgets.map((item) => {
               const pct = item.percentage
               const isOver = pct >= 100
               const isWarning = pct >= 80 && pct < 100
               const statusIcon = isOver ? '🔴' : isWarning ? '⚠️' : pct >= 60 ? '' : '✅'
-              const statusText = isOver ? '초과!' : isWarning ? '주의' : pct < 30 ? '여유' : ''
+              const statusText = isOver ? t('exceeded') : isWarning ? t('caution') : pct < 30 ? t('comfortable') : ''
 
               return (
                 <div key={item.categoryId} className="space-y-1.5">
@@ -212,7 +210,7 @@ export default function Dashboard() {
       {hasBudgets && (
         <div className="rounded-xl bg-secondary/30 p-4 space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">전체 예산 소진율</span>
+            <span className="text-muted-foreground">{t('overallBurnRate')}</span>
             <span className="font-bold">{totalBudget > 0 ? Math.round(expense / totalBudget * 100) : 0}%</span>
           </div>
           <div className="h-4 bg-secondary rounded-full overflow-hidden">
@@ -224,8 +222,8 @@ export default function Dashboard() {
             />
           </div>
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>₩{formatNumber(expense)} 사용</span>
-            <span>₩{formatNumber(totalBudget)} 계획</span>
+            <span>₩{formatNumber(expense)} {t('used')}</span>
+            <span>₩{formatNumber(totalBudget)} {t('planned')}</span>
           </div>
         </div>
       )}

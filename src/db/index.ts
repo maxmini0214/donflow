@@ -197,7 +197,31 @@ export const db = new DonFlowDB()
 // Seed default categories
 export async function seedCategories() {
   const existing = await db.categories.toArray()
-  if (existing.some(c => c.isDefault)) return
+  if (existing.some(c => c.isDefault)) {
+    // Deduplicate: remove duplicate categories by name, keeping the one with lowest id
+    const seen = new Map<string, number>()
+    const toDelete: number[] = []
+    for (const cat of existing.sort((a, b) => (a.id ?? 0) - (b.id ?? 0))) {
+      if (seen.has(cat.name)) {
+        toDelete.push(cat.id!)
+      } else {
+        seen.set(cat.name, cat.id!)
+      }
+    }
+    if (toDelete.length > 0) {
+      // Remap transactions pointing to duplicate categories
+      for (const dupId of toDelete) {
+        const cat = existing.find(c => c.id === dupId)
+        if (cat) {
+          const keepId = seen.get(cat.name)!
+          await db.transactions.where('categoryId').equals(dupId).modify({ categoryId: keepId })
+          await db.budgets.where('categoryId').equals(dupId).delete()
+        }
+        await db.categories.delete(dupId)
+      }
+    }
+    return
+  }
 
   await db.categories.bulkAdd([
     { name: '식비', icon: '🍚', color: '#EF4444', isIncome: false, isDefault: true, displayOrder: 1, groupName: '생활비' },

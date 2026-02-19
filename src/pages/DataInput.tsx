@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { t } from '@/lib/i18n'
+import { useLanguage, type TKey } from '@/lib/i18n'
 import Papa from 'papaparse'
 import * as XLSX from 'xlsx'
 import { Upload, ClipboardPaste, Sparkles, Check, ChevronDown, ChevronUp, Search, HelpCircle } from 'lucide-react'
@@ -54,13 +54,11 @@ const BANKSALAD_CATEGORY_MAP: Record<string, string> = {
   '대출': '기타',
   '미분류': '기타',
   '현금': '기타',
-  // 이체 관련은 type='transfer'로 처리
   '내계좌이체': '기타',
   '이체': '기타',
   '카드대금': '기타',
 }
 
-// 소분류 기반 더 정밀한 매핑
 const BANKSALAD_SUB_MAP: Record<string, string> = {
   '편의점': '쇼핑',
   '마트': '식비',
@@ -71,7 +69,6 @@ const BANKSALAD_SUB_MAP: Record<string, string> = {
   '택시': '교통',
 }
 
-// ─── Detect transaction type from banksalad data ───
 function detectTransactionType(row: Record<string, string>, amount: number): 'income' | 'expense' | 'transfer' {
   const typeCol = row['타입']?.trim()
   if (typeCol) {
@@ -79,7 +76,6 @@ function detectTransactionType(row: Record<string, string>, amount: number): 'in
     if (typeCol === '이체') return 'transfer'
     if (typeCol === '지출') return 'expense'
   }
-  // Fallback: use amount sign (original, before Math.abs)
   const rawAmount = parseFloat(row['금액']?.replace(/[,원\s]/g, '') ?? '0')
   if (rawAmount > 0 && !typeCol) return 'income'
   return 'expense'
@@ -90,12 +86,11 @@ interface ClassifiedNotif extends ParsedTransaction {
   categoryName: string
 }
 
-// ─── Column detection candidates ───
+// ─── Column detection candidates (Korean CSV headers) ───
 const DATE_COLS = ['이용일시', '이용일', '이용일자', '거래일', '거래일시', '날짜', '일자', '일시', 'date', '결제일', '승인일', '사용일', '거래일자', '승인일시', '매입일', '결제일시', '거래 일시', '결제 일시', '날짜/시간', '시간', '거래시간']
 const MERCHANT_COLS = ['가맹점', '가맹점명', '이용가맹점', '이용처', '적요', 'merchant', '내용', '사용처', '상호', '상호명', '거래처', '비고', '메모', '이용 내역', '거래내용', '사용처명', '결제처', '사용 내역', '이용 가맹점', '결제내역', '거래처명', '카드사용처']
 const AMOUNT_COLS = ['이용금액', '국내이용금액', '결제금액', '거래금액', '금액', 'amount', '결제', '이용금', '출금', '출금액', '승인금액', '지출금액', '사용금액', '결제 금액', '매출금액', '카드결제금액', '출금금액', '지출', '수입', '입금액']
 
-// ─── Data-pattern based column detection ───
 interface DetectedColumns {
   dateCol: string | null
   merchantCol: string | null
@@ -109,24 +104,20 @@ function detectColumnsByData(rows: Record<string, string>[]): DetectedColumns {
   const headers = Object.keys(rows[0])
   const sampleRows = rows.slice(0, Math.min(5, rows.length))
 
-  // Score each column
   for (const col of headers) {
     const samples = sampleRows.map(r => r[col]?.trim()).filter(Boolean)
     if (samples.length === 0) continue
 
-    // Date: YYYY-MM-DD, YYYY.MM.DD, YYYY/MM/DD, or with time
     const dateScore = samples.filter(s =>
       /\d{4}[-./]\d{1,2}[-./]\d{1,2}/.test(s) ||
       /\d{2}[-./]\d{1,2}[-./]\d{1,2}/.test(s) ||
       /^\d{8}$/.test(s.replace(/\s/g, ''))
     ).length / samples.length
 
-    // Amount: numbers with optional commas, minus, 원
     const amountScore = samples.filter(s =>
       /^-?[\d,]+\.?\d*원?$/.test(s.replace(/\s/g, ''))
     ).length / samples.length
 
-    // Merchant: contains Korean text, not pure numbers/dates
     const merchantScore = samples.filter(s =>
       /[가-힣]/.test(s) &&
       !/^\d{4}[-./]\d{1,2}[-./]\d{1,2}/.test(s) &&
@@ -143,6 +134,7 @@ function detectColumnsByData(rows: Record<string, string>[]): DetectedColumns {
 
 export default function DataInput() {
   const [tab, setTab] = useState<Tab>('csv')
+  const { t } = useLanguage()
   const categories = useCategories()
   const monthKey = getMonthKey(new Date())
   const transactions = useTransactions(monthKey)
@@ -152,18 +144,18 @@ export default function DataInput() {
       {/* Tab Switcher */}
       <div className="flex gap-2">
         {([
-          { key: 'csv' as Tab, icon: '📄', label: 'CSV / 엑셀 업로드' },
-          { key: 'paste' as Tab, icon: '📋', label: '알림 붙여넣기' },
-          { key: 'history' as Tab, icon: '📜', label: '거래 목록' },
-        ]).map(t => (
+          { key: 'csv' as Tab, icon: '📄', label: t('tabCsvUpload') },
+          { key: 'paste' as Tab, icon: '📋', label: t('tabNotifPaste') },
+          { key: 'history' as Tab, icon: '📜', label: t('tabHistory') },
+        ]).map(item => (
           <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
+            key={item.key}
+            onClick={() => setTab(item.key)}
             className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-colors ${
-              tab === t.key ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground hover:text-foreground'
+              tab === item.key ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground hover:text-foreground'
             }`}
           >
-            {t.icon} {t.label}
+            {item.icon} {item.label}
           </button>
         ))}
       </div>
@@ -178,6 +170,7 @@ export default function DataInput() {
 // ─── CSV Guide (collapsible) ───
 function CsvGuide() {
   const [open, setOpen] = useState(false)
+  const { t } = useLanguage()
   const guides = [
     { name: '토스', steps: '앱 → 소비 → ⋯ → 내보내기 → CSV' },
     { name: '뱅크샐러드', steps: '앱 → 가계부 → 설정 → 데이터 내보내기' },
@@ -193,7 +186,7 @@ function CsvGuide() {
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium hover:bg-secondary/50 transition-colors"
       >
-        <span>❓ CSV / 엑셀 파일 어디서 받나요?</span>
+        <span>{t('csvGuideTitle')}</span>
         {open ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
       </button>
       {open && (
@@ -204,7 +197,7 @@ function CsvGuide() {
               <span className="text-muted-foreground">{g.steps}</span>
             </div>
           ))}
-          <p className="text-xs text-primary font-medium pt-1">💡 CSV 또는 엑셀(.xlsx) 파일 모두 지원 · 어떤 카드사/앱이든 자동 인식!</p>
+          <p className="text-xs text-primary font-medium pt-1">{t('csvGuideSupport')}</p>
         </div>
       )}
     </div>
@@ -214,20 +207,21 @@ function CsvGuide() {
 // ─── CSV Preview Table ───
 function CsvPreview({ rows }: { rows: ParsedRow[] }) {
   const preview = rows.slice(0, 5)
+  const { t } = useLanguage()
   return (
     <div className="rounded-xl border border-border/50 overflow-hidden">
       <div className="px-3 py-2 bg-secondary/30 text-xs font-medium text-muted-foreground">
-        미리보기 ({Math.min(5, rows.length)}/{rows.length}건)
+        {t('previewLabel')} ({Math.min(5, rows.length)}/{rows.length})
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-border/30 bg-secondary/20">
-              <th className="px-3 py-1.5 text-left font-medium">날짜</th>
-              <th className="px-3 py-1.5 text-left font-medium">가맹점</th>
-              <th className="px-3 py-1.5 text-right font-medium">금액</th>
-              <th className="px-3 py-1.5 text-center font-medium">타입</th>
-              <th className="px-3 py-1.5 text-left font-medium">자동분류</th>
+              <th className="px-3 py-1.5 text-left font-medium">{t('date')}</th>
+              <th className="px-3 py-1.5 text-left font-medium">{t('merchant')}</th>
+              <th className="px-3 py-1.5 text-right font-medium">{t('amount')}</th>
+              <th className="px-3 py-1.5 text-center font-medium">{t('type')}</th>
+              <th className="px-3 py-1.5 text-left font-medium">{t('autoClassify')}</th>
             </tr>
           </thead>
           <tbody>
@@ -236,14 +230,14 @@ function CsvPreview({ rows }: { rows: ParsedRow[] }) {
                 <td className="px-3 py-1.5 text-muted-foreground whitespace-nowrap">{r.date}</td>
                 <td className="px-3 py-1.5 truncate max-w-[120px]">{r.merchant || '-'}</td>
                 <td className={`px-3 py-1.5 text-right font-medium ${r.type === 'income' ? 'text-income' : r.type === 'transfer' ? 'text-muted-foreground' : 'text-expense'}`}>
-                  {r.type === 'income' ? '+' : r.type === 'transfer' ? '↔' : '-'}{formatNumber(r.amount)}원
+                  {r.type === 'income' ? '+' : r.type === 'transfer' ? '↔' : '-'}{formatNumber(r.amount)}{t('won')}
                 </td>
                 <td className="px-3 py-1.5 text-center">
                   <span className={`px-1.5 py-0.5 rounded text-[10px] ${
                     r.type === 'income' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
                     r.type === 'transfer' ? 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400' :
                     'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                  }`}>{r.type === 'income' ? '수입' : r.type === 'transfer' ? '이체' : '지출'}</span>
+                  }`}>{r.type === 'income' ? t('incomeType') : r.type === 'transfer' ? t('transferType') : t('expenseType')}</span>
                 </td>
                 <td className="px-3 py-1.5">
                   <span className="px-1.5 py-0.5 rounded bg-secondary text-[10px]">{r.categoryName}</span>
@@ -268,29 +262,30 @@ function ColumnMapper({
   const [dateCol, setDateCol] = useState('')
   const [merchantCol, setMerchantCol] = useState('')
   const [amountCol, setAmountCol] = useState('')
+  const { t } = useLanguage()
 
   return (
     <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 space-y-3">
-      <p className="text-sm font-medium text-amber-600">⚠️ 컬럼을 직접 선택해주세요</p>
+      <p className="text-sm font-medium text-amber-600">{t('selectColumns')}</p>
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <span className="text-xs w-14 shrink-0">날짜</span>
+          <span className="text-xs w-14 shrink-0">{t('date')}</span>
           <Select value={dateCol} onChange={e => setDateCol(e.target.value)} className="h-8 text-xs flex-1">
-            <option value="">선택...</option>
+            <option value="">{t('selectPlaceholder')}</option>
             {headers.map(h => <option key={h} value={h}>{h}</option>)}
           </Select>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs w-14 shrink-0">가맹점</span>
+          <span className="text-xs w-14 shrink-0">{t('merchant')}</span>
           <Select value={merchantCol} onChange={e => setMerchantCol(e.target.value)} className="h-8 text-xs flex-1">
-            <option value="">선택...</option>
+            <option value="">{t('selectPlaceholder')}</option>
             {headers.map(h => <option key={h} value={h}>{h}</option>)}
           </Select>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs w-14 shrink-0">금액</span>
+          <span className="text-xs w-14 shrink-0">{t('amount')}</span>
           <Select value={amountCol} onChange={e => setAmountCol(e.target.value)} className="h-8 text-xs flex-1">
-            <option value="">선택...</option>
+            <option value="">{t('selectPlaceholder')}</option>
             {headers.map(h => <option key={h} value={h}>{h}</option>)}
           </Select>
         </div>
@@ -300,7 +295,7 @@ function ColumnMapper({
         disabled={!dateCol || !amountCol}
         onClick={() => onConfirm(dateCol, merchantCol, amountCol)}
       >
-        이 컬럼으로 파싱하기
+        {t('parseWithColumns')}
       </Button>
     </div>
   )
@@ -315,6 +310,7 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
   const [rawData, setRawData] = useState<Record<string, string>[]>([])
   const [autoDetectMsg, setAutoDetectMsg] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
+  const { t } = useLanguage()
 
   const parseRows = async (
     data: Record<string, string>[],
@@ -323,7 +319,6 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
     amountCandidates: string[],
   ): Promise<ParsedRow[]> => {
     const parsed: ParsedRow[] = []
-    // Check if this is banksalad format (has 대분류 and 타입 columns)
     const hasBanksaladCols = data.length > 0 && ('대분류' in data[0]) && ('타입' in data[0])
 
     for (const row of data) {
@@ -338,14 +333,11 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
       const amount = Math.abs(parseFloat(amountStr ?? '0'))
       if (!amount || !dateVal) continue
 
-      // Detect transaction type
       const txType = hasBanksaladCols ? detectTransactionType(row, amount) : 'expense'
 
-      // Category: prefer banksalad 소분류 → 대분류 mapping, then fallback to merchant classifier
       let categoryName = '기타'
       let categoryId: number | undefined
       if (hasBanksaladCols && row['대분류']) {
-        // Try 소분류 first for precision
         const subCat = row['소분류']?.trim()
         const subMapped = subCat ? BANKSALAD_SUB_MAP[subCat] : undefined
         const mappedName = subMapped ?? BANKSALAD_CATEGORY_MAP[row['대분류'].trim()]
@@ -361,7 +353,7 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
           categoryName = classified.categoryName
           categoryId = classified.categoryId
         } else if (categoryId) {
-          // Keep the banksalad mapping even if it's 기타
+          // Keep the banksalad mapping
         } else {
           categoryName = classified.categoryName
           categoryId = classified.categoryId
@@ -375,7 +367,7 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
         type: txType,
         categoryName,
         categoryId,
-        selected: txType !== 'transfer', // transfers unchecked by default
+        selected: txType !== 'transfer',
       })
     }
     return parsed
@@ -385,7 +377,6 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
     if (data.length === 0) return
     setAutoDetectMsg(null)
 
-    // Stage 1: column name matching
     const parsed = await parseRows(data, DATE_COLS, MERCHANT_COLS, AMOUNT_COLS)
 
     if (parsed.length > 0) {
@@ -394,7 +385,6 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
       return
     }
 
-    // Stage 2: data pattern detection
     const detected = detectColumnsByData(data)
     if (detected.dateCol && detected.amountCol) {
       const dateCols = [detected.dateCol]
@@ -403,7 +393,7 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
       const patternParsed = await parseRows(data, dateCols, merchantCols, amountCols)
 
       if (patternParsed.length > 0) {
-        setAutoDetectMsg(`✅ 자동 감지: 날짜=${detected.dateCol}, 가맹점=${detected.merchantCol ?? '없음'}, 금액=${detected.amountCol}`)
+        setAutoDetectMsg(`${t('autoDetected')} ${t('dateCol')}=${detected.dateCol}, ${t('merchantCol')}=${detected.merchantCol ?? t('none')}, ${t('amountCol')}=${detected.amountCol}`)
         setRawData(data)
         setRows(patternParsed)
         setUnmappedHeaders(null)
@@ -411,7 +401,6 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
       }
     }
 
-    // Stage 3: manual fallback
     const headers = Object.keys(data[0])
     setUnmappedHeaders(headers)
     setRawData(data)
@@ -481,10 +470,10 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
     return (
       <div className="text-center py-12">
         <Check className="w-12 h-12 text-income mx-auto mb-3" />
-        <p className="font-medium">임포트 완료!</p>
-        <p className="text-sm text-muted-foreground mt-1">{rows.filter(r => r.selected).length}건 저장됨</p>
+        <p className="font-medium">{t('importComplete')}</p>
+        <p className="text-sm text-muted-foreground mt-1">{rows.filter(r => r.selected).length} {t('savedCount')}</p>
         <Button className="mt-4" onClick={() => { setDone(false); setRows([]); setUnmappedHeaders(null); setAutoDetectMsg(null) }}>
-          더 올리기
+          {t('uploadMore')}
         </Button>
       </div>
     )
@@ -493,25 +482,23 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
   if (rows.length > 0) {
     return (
       <div className="space-y-4">
-        {/* Auto-detect banner */}
         {autoDetectMsg && (
           <div className="flex items-center justify-between rounded-xl border border-green-500/30 bg-green-500/5 px-4 py-2.5">
             <p className="text-xs font-medium text-green-600">{autoDetectMsg}</p>
             <button
               onClick={() => { setRows([]); setUnmappedHeaders(Object.keys(rawData[0] ?? {})); setAutoDetectMsg(null) }}
               className="text-[10px] text-muted-foreground hover:text-foreground underline shrink-0 ml-2"
-            >수정</button>
+            >{t('fix')}</button>
           </div>
         )}
-        {/* Preview table */}
         <CsvPreview rows={rows} />
 
         <div className="text-sm text-muted-foreground flex flex-wrap gap-2">
-          <span>{rows.length}건 감지</span>
-          <span className="text-expense">지출 {rows.filter(r => r.type === 'expense').length}</span>
-          <span className="text-income">수입 {rows.filter(r => r.type === 'income').length}</span>
-          <span>이체 {rows.filter(r => r.type === 'transfer').length}</span>
-          <span className="text-xs">(이체는 기본 제외)</span>
+          <span>{rows.length} {t('detected')}</span>
+          <span className="text-expense">{t('expenseType')} {rows.filter(r => r.type === 'expense').length}</span>
+          <span className="text-income">{t('incomeType')} {rows.filter(r => r.type === 'income').length}</span>
+          <span>{t('transferType')} {rows.filter(r => r.type === 'transfer').length}</span>
+          <span className="text-xs">({t('transferExcluded')})</span>
         </div>
         <div className="space-y-2 max-h-80 overflow-y-auto">
           {rows.map((row, i) => (
@@ -525,15 +512,15 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
               <span className="flex-1 truncate">{row.merchant}</span>
               <span className="text-xs px-1.5 py-0.5 rounded bg-secondary">{row.categoryName}</span>
               <span className={`font-medium ${row.type === 'income' ? 'text-income' : row.type === 'transfer' ? 'text-muted-foreground' : ''}`}>
-                {row.type === 'income' ? '+' : row.type === 'transfer' ? '↔' : ''}{formatNumber(row.amount)}원
+                {row.type === 'income' ? '+' : row.type === 'transfer' ? '↔' : ''}{formatNumber(row.amount)}{t('won')}
               </span>
             </div>
           ))}
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="flex-1" onClick={() => setRows([])}>다시 선택</Button>
+          <Button variant="outline" className="flex-1" onClick={() => setRows([])}>{t('reselect')}</Button>
           <Button className="flex-1" onClick={handleImport} disabled={importing}>
-            {importing ? '가져오는 중...' : `${rows.filter(r => r.selected).length}건 임포트`}
+            {importing ? t('importing') : `${rows.filter(r => r.selected).length} ${t('importCount')}`}
           </Button>
         </div>
       </div>
@@ -542,10 +529,8 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
 
   return (
     <div className="space-y-4">
-      {/* CSV Guide */}
       <CsvGuide />
 
-      {/* Manual column mapper (if auto-detect failed) */}
       {unmappedHeaders && (
         <ColumnMapper headers={unmappedHeaders} onConfirm={handleManualMap} />
       )}
@@ -555,9 +540,9 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
         onClick={() => fileRef.current?.click()}
       >
         <Upload className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
-        <p className="text-sm font-medium">CSV / 엑셀 파일 업로드</p>
+        <p className="text-sm font-medium">{t('uploadCsvExcel')}</p>
         <p className="text-xs text-muted-foreground mt-2">
-          토스 · 뱅크샐러드 · 카카오뱅크 · 신한/삼성/국민/현대/하나/롯데카드
+          {t('supportedApps')}
         </p>
       </div>
       <input ref={fileRef} type="file" accept=".csv,.xlsx,.xls" className="hidden" onChange={handleFile} />
@@ -572,6 +557,7 @@ function NotificationPaste({ categories }: { categories: ReturnType<typeof useCa
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const expenseCategories = categories.filter(c => !c.isIncome)
+  const { t } = useLanguage()
 
   const handleParse = async () => {
     const results = parseNotifications(text)
@@ -626,7 +612,7 @@ function NotificationPaste({ categories }: { categories: ReturnType<typeof useCa
     return (
       <div className="text-center py-12">
         <span className="text-4xl">✅</span>
-        <p className="text-sm font-medium mt-3">저장 완료!</p>
+        <p className="text-sm font-medium mt-3">{t('saveComplete')}</p>
       </div>
     )
   }
@@ -635,7 +621,7 @@ function NotificationPaste({ categories }: { categories: ReturnType<typeof useCa
     const total = parsed.reduce((s, p) => s + p.amount, 0)
     return (
       <div className="space-y-3">
-        <p className="text-xs text-muted-foreground">{parsed.length}건 · 총 {formatNumber(total)}원</p>
+        <p className="text-xs text-muted-foreground">{parsed.length} {t('items')} · {t('total')} {formatNumber(total)}{t('won')}</p>
         <div className="space-y-2 max-h-[50vh] overflow-y-auto">
           {parsed.map((item, i) => {
             const catObj = categories.find(c => c.id === item.categoryId)
@@ -651,7 +637,7 @@ function NotificationPaste({ categories }: { categories: ReturnType<typeof useCa
                       </p>
                     </div>
                   </div>
-                  <span className="text-sm font-bold text-expense">-{formatNumber(item.amount)}원</span>
+                  <span className="text-sm font-bold text-expense">-{formatNumber(item.amount)}{t('won')}</span>
                 </div>
                 <Select
                   value={item.categoryId ? String(item.categoryId) : ''}
@@ -667,9 +653,9 @@ function NotificationPaste({ categories }: { categories: ReturnType<typeof useCa
           })}
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="flex-1" onClick={() => setParsed([])}>뒤로</Button>
+          <Button variant="outline" className="flex-1" onClick={() => setParsed([])}>{t('back')}</Button>
           <Button className="flex-1" onClick={handleSave} disabled={saving}>
-            {saving ? '저장 중...' : `${parsed.length}건 저장`}
+            {saving ? t('saving') : `${parsed.length} ${t('saveCount')}`}
           </Button>
         </div>
       </div>
@@ -681,12 +667,12 @@ function NotificationPaste({ categories }: { categories: ReturnType<typeof useCa
       <textarea
         value={text}
         onChange={e => setText(e.target.value)}
-        placeholder={`카드 결제 알림을 붙여넣으세요\n\n예시:\n[삼성카드] 15,800원 스타벅스 판교점 02/18 14:23\n[KB국민카드] 32,000원 쿠팡 02/18 09:11`}
+        placeholder={`${t('pasteNotifications')}\n\n${t('pasteExample')}`}
         className="w-full h-40 rounded-xl border border-input bg-secondary/50 px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-muted-foreground/60"
         autoFocus
       />
       <Button className="w-full h-11 text-sm font-semibold gap-2" onClick={handleParse} disabled={!text.trim()}>
-        <Sparkles className="w-4 h-4" /> 파싱하기
+        <Sparkles className="w-4 h-4" /> {t('parse')}
       </Button>
     </div>
   )
@@ -705,6 +691,7 @@ function TransactionList({
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editCatId, setEditCatId] = useState('')
   const expenseCategories = categories.filter(c => !c.isIncome)
+  const { t } = useLanguage()
 
   const filtered = transactions.filter(tx => {
     if (!search) return true
@@ -716,7 +703,6 @@ function TransactionList({
   const saveCategory = async (txId: number) => {
     if (!editCatId) return
     await db.transactions.update(txId, { categoryId: Number(editCatId), updatedAt: new Date() })
-    // Learn
     const tx = await db.transactions.get(txId)
     if (tx?.merchantName) {
       await learnMerchant(tx.merchantName, Number(editCatId))
@@ -733,7 +719,7 @@ function TransactionList({
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-center text-muted-foreground py-8 text-sm">거래 내역이 없어요</p>
+        <p className="text-center text-muted-foreground py-8 text-sm">{t('noTransactions')}</p>
       ) : (
         <div className="space-y-1">
           {visible.map(tx => {
@@ -766,18 +752,18 @@ function TransactionList({
                             <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
                           ))}
                         </Select>
-                        <Button size="sm" className="h-7 text-xs" onClick={() => saveCategory(tx.id!)}>저장</Button>
+                        <Button size="sm" className="h-7 text-xs" onClick={() => saveCategory(tx.id!)}>{t('save')}</Button>
                       </div>
                     ) : (
                       <>
-                        <p className="text-sm font-medium truncate">{tx.merchantName || cat?.name || '거래'}</p>
-                        <p className="text-xs text-muted-foreground">{dateStr} · {tx.source === 'csv' ? 'CSV' : '수동'}</p>
+                        <p className="text-sm font-medium truncate">{tx.merchantName || cat?.name || t('transaction')}</p>
+                        <p className="text-xs text-muted-foreground">{dateStr} · {tx.source === 'csv' ? 'CSV' : t('manual')}</p>
                       </>
                     )}
                   </div>
                 </div>
                 <span className={`text-sm font-semibold shrink-0 ${tx.type === 'income' ? 'text-income' : 'text-expense'}`}>
-                  {tx.type === 'income' ? '+' : '-'}{formatNumber(tx.amount)}원
+                  {tx.type === 'income' ? '+' : '-'}{formatNumber(tx.amount)}{t('won')}
                 </span>
               </div>
             )
@@ -791,7 +777,7 @@ function TransactionList({
           className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mx-auto transition-colors"
         >
           {showAll ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-          {showAll ? '접기' : `더보기 (${filtered.length - 20}건)`}
+          {showAll ? t('collapse') : `${t('showMore')} (${filtered.length - 20})`}
         </button>
       )}
     </div>
@@ -812,7 +798,6 @@ function findCol(row: Record<string, string>, candidates: string[]): string | nu
 }
 
 function normalizeDate(d: string): string {
-  // Handle "YYYY-MM-DD HH:MM:SS" format — strip time part first
   const dateOnly = d.trim().split(/[\sT]/)[0]
   const cleaned = dateOnly.replace(/[년월]/g, '-').replace(/[일]/g, '').replace(/\//g, '-')
   const parts = cleaned.split('-').filter(Boolean)

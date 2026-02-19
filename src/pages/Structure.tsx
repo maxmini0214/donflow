@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
-import { t } from '@/lib/i18n'
+import { t, useLanguage } from '@/lib/i18n'
 import { Pencil, Check, X, Plus, Trash2, ChevronUp, ChevronDown, Settings2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -44,6 +44,7 @@ interface CategoryFormData {
 const emptyForm: CategoryFormData = { name: '', icon: '📌', color: '#6B7280', groupName: '자유지출', isIncome: false }
 
 export default function Structure() {
+  const { t } = useLanguage()
   const salary = useMonthlySalary()
   const categories = useCategories()
   const monthKey = getMonthKey(new Date())
@@ -78,11 +79,9 @@ export default function Structure() {
   const groupNames = useMemo(() => {
     const expCats = categories.filter(c => !c.isIncome)
     const groups = new Set<string>()
-    // Add default order first
     DEFAULT_GROUP_ORDER.forEach(g => {
       if (expCats.some(c => c.groupName === g)) groups.add(g)
     })
-    // Then any custom groups
     expCats.forEach(c => { if (c.groupName) groups.add(c.groupName) })
     return Array.from(groups)
   }, [categories])
@@ -176,12 +175,10 @@ export default function Structure() {
   }
 
   const deleteCategory = async (catId: number) => {
-    // Move transactions to "기타" (uncategorized)
     const etcCat = categories.find(c => c.name === '기타')
     if (etcCat) {
       await db.transactions.where('categoryId').equals(catId).modify({ categoryId: etcCat.id! })
     }
-    // Delete budgets for this category
     await db.budgets.where('categoryId').equals(catId).delete()
     await db.categories.delete(catId)
     setDeleteConfirm(null)
@@ -201,10 +198,9 @@ export default function Structure() {
 
   const addGroup = async () => {
     if (!newGroupName.trim() || groupNames.includes(newGroupName.trim())) return
-    // Add a placeholder category so the group exists
     const maxOrder = categories.reduce((max, c) => Math.max(max, c.displayOrder), 0)
     await db.categories.add({
-      name: '새 카테고리',
+      name: t('newCategory'),
       icon: '📌',
       color: '#6B7280',
       isIncome: false,
@@ -239,7 +235,7 @@ export default function Structure() {
     <div className="space-y-6">
       {/* Monthly Income */}
       <div className="text-center py-4">
-        <p className="text-sm text-muted-foreground mb-1">월 수입</p>
+        <p className="text-sm text-muted-foreground mb-1">{t('monthlyIncome')}</p>
         {editingSalary ? (
           <div className="flex items-center gap-2 justify-center">
             <Input
@@ -263,7 +259,7 @@ export default function Structure() {
             onClick={() => { setSalaryInput(String(salary || '')); setEditingSalary(true) }}
             className="text-3xl font-extrabold tracking-tight hover:text-primary transition-colors"
           >
-            {salary > 0 ? `₩${formatNumber(salary)}` : '수입을 설정하세요'}
+            {salary > 0 ? `₩${formatNumber(salary)}` : t('setIncome')}
             <Pencil className="w-4 h-4 inline ml-2 text-muted-foreground" />
           </button>
         )}
@@ -273,9 +269,9 @@ export default function Structure() {
       {salary > 0 && totalBudget > 0 && (
         <div className="space-y-2">
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>배분 합계 ₩{formatNumber(totalBudget)} ({Math.round(totalBudget / salary * 100)}%)</span>
+            <span>{t('allocationTotal')} ₩{formatNumber(totalBudget)} ({Math.round(totalBudget / salary * 100)}%)</span>
             <span className={remaining < 0 ? 'text-destructive font-semibold' : ''}>
-              {remaining >= 0 ? `미배분 ₩${formatNumber(remaining)}` : `₩${formatNumber(Math.abs(remaining))} 초과!`}
+              {remaining >= 0 ? `${t('unallocated')} ₩${formatNumber(remaining)}` : `₩${formatNumber(Math.abs(remaining))} ${t('overAllocated')}`}
             </span>
           </div>
           <div className="h-4 bg-secondary rounded-full overflow-hidden flex">
@@ -304,7 +300,7 @@ export default function Structure() {
 
       {/* Edit mode toggle */}
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium text-muted-foreground">카테고리 관리</h2>
+        <h2 className="text-sm font-medium text-muted-foreground">{t('categoryManagement')}</h2>
         <Button
           size="sm"
           variant={editMode ? 'default' : 'outline'}
@@ -312,7 +308,7 @@ export default function Structure() {
           onClick={() => setEditMode(!editMode)}
         >
           <Settings2 className="w-3.5 h-3.5" />
-          {editMode ? '완료' : '편집'}
+          {editMode ? t('done') : t('edit')}
         </Button>
       </div>
 
@@ -323,7 +319,7 @@ export default function Structure() {
             ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
             : 'bg-destructive/10 border-destructive/20 text-destructive'
         }`}>
-          🔮 이렇게 바꾸면 미배분: ₩{formatNumber(whatIfRemaining)}
+          🔮 {t('whatIfUnallocated')} ₩{formatNumber(whatIfRemaining)}
         </div>
       )}
 
@@ -353,7 +349,7 @@ export default function Structure() {
                   variant="ghost"
                   className="h-7 w-7 text-destructive hover:text-destructive"
                   onClick={() => {
-                    if (confirm(`"${groupName}" 그룹과 하위 카테고리를 모두 삭제하시겠습니까?`)) {
+                    if (confirm(`"${groupName}" — ${t('confirmDeleteGroup')}`)) {
                       deleteGroup(groupName)
                     }
                   }}
@@ -421,7 +417,7 @@ export default function Structure() {
                                 className="h-7 text-xs px-2"
                                 onClick={() => deleteCategory(cat.id!)}
                               >
-                                확인
+                                {t('confirm')}
                               </Button>
                               <Button
                                 size="sm"
@@ -429,7 +425,7 @@ export default function Structure() {
                                 className="h-7 text-xs px-2"
                                 onClick={() => setDeleteConfirm(null)}
                               >
-                                취소
+                                {t('cancel')}
                               </Button>
                             </div>
                           ) : (
@@ -458,7 +454,7 @@ export default function Structure() {
                             }}
                           />
                           <Button size="sm" className="h-8 text-xs" onClick={() => saveBudget(cat.id!)}>
-                            저장
+                            {t('save')}
                           </Button>
                           <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => { setEditingBudget(null); setBudgetInput('') }}>
                             <X className="w-3 h-3" />
@@ -472,7 +468,7 @@ export default function Structure() {
                           {budgetAmount > 0 ? (
                             <>₩{formatNumber(budgetAmount)} <span className="text-xs text-muted-foreground">{pct}%</span></>
                           ) : (
-                            <span className="text-muted-foreground">설정</span>
+                            <span className="text-muted-foreground">{t('setBudget')}</span>
                           )}
                         </button>
                       )}
@@ -508,7 +504,7 @@ export default function Structure() {
             variant="outline"
             onClick={() => setAddGroupOpen(true)}
           >
-            <Plus className="w-4 h-4" /> 대분류 그룹 추가
+            <Plus className="w-4 h-4" /> {t('addGroupCategory')}
           </Button>
         </div>
       )}
@@ -516,8 +512,8 @@ export default function Structure() {
       {salary === 0 && (
         <div className="text-center py-12 space-y-3">
           <div className="text-4xl">💰</div>
-          <p className="text-muted-foreground">먼저 월 수입을 설정해주세요</p>
-          <p className="text-xs text-muted-foreground">위의 수입 금액을 터치하면 편집할 수 있어요</p>
+          <p className="text-muted-foreground">{t('setIncomeFirst')}</p>
+          <p className="text-xs text-muted-foreground">{t('tapToEdit')}</p>
         </div>
       )}
 
@@ -530,7 +526,7 @@ export default function Structure() {
           <div className="space-y-4">
             {/* Name */}
             <div>
-              <label className="text-sm text-muted-foreground mb-1 block">이름</label>
+              <label className="text-sm text-muted-foreground mb-1 block">{t('name')}</label>
               <Input
                 value={form.name}
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
@@ -541,7 +537,7 @@ export default function Structure() {
 
             {/* Group */}
             <div>
-              <label className="text-sm text-muted-foreground mb-1 block">대분류</label>
+              <label className="text-sm text-muted-foreground mb-1 block">{t('group')}</label>
               <select
                 className="flex h-10 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring appearance-none"
                 value={form.groupName}
@@ -555,7 +551,7 @@ export default function Structure() {
 
             {/* Emoji */}
             <div>
-              <label className="text-sm text-muted-foreground mb-1 block">아이콘</label>
+              <label className="text-sm text-muted-foreground mb-1 block">{t('icon')}</label>
               <div className="flex flex-wrap gap-1.5">
                 {EMOJI_PRESETS.map(emoji => (
                   <button
@@ -576,7 +572,7 @@ export default function Structure() {
 
             {/* Color */}
             <div>
-              <label className="text-sm text-muted-foreground mb-1 block">색상</label>
+              <label className="text-sm text-muted-foreground mb-1 block">{t('color')}</label>
               <div className="flex flex-wrap gap-1.5">
                 {COLOR_PRESETS.map(color => (
                   <button
@@ -600,12 +596,12 @@ export default function Structure() {
               >
                 {form.icon}
               </span>
-              <span className="text-sm font-medium">{form.name || '미리보기'}</span>
+              <span className="text-sm font-medium">{form.name || t('preview')}</span>
               <span className="text-xs text-muted-foreground ml-auto">{form.groupName}</span>
             </div>
 
             <Button className="w-full" onClick={saveCategory} disabled={!form.name.trim()}>
-              {editingCategory ? '저장' : '추가'}
+              {editingCategory ? t('save') : t('add')}
             </Button>
           </div>
         </DialogContent>
@@ -615,7 +611,7 @@ export default function Structure() {
       <Dialog open={addGroupOpen} onOpenChange={setAddGroupOpen}>
         <DialogContent className="max-w-sm mx-auto">
           <DialogHeader>
-            <DialogTitle>대분류 그룹 추가</DialogTitle>
+            <DialogTitle>{t('addGroupCategory')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <Input
@@ -626,7 +622,7 @@ export default function Structure() {
               onKeyDown={e => e.key === 'Enter' && addGroup()}
             />
             <Button className="w-full" onClick={addGroup} disabled={!newGroupName.trim()}>
-              추가
+              {t('add')}
             </Button>
           </div>
         </DialogContent>
