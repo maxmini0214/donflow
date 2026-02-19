@@ -1,7 +1,21 @@
 // Extended merchant → category classifier with 200+ merchants
 // Uses existing classifier.ts as base, adds more mappings
 
-import { db } from '@/db'
+import { db, type MerchantRule } from '@/db'
+
+// PG사 이름 목록 — 이 가맹점명이면 "미분류 PG 거래"로 간주
+export const PG_MERCHANTS = [
+  '헥토파이낸셜', '핵토파이낸셜', 'KG이니시스', 'NHN한국사이버결제',
+  '토스페이먼츠', '나이스페이먼츠', '나이스페이', '다날', 'KCP',
+  'NICE페이먼츠', '페이레터', '세틀뱅크', '카카오페이',
+  '네이버파이낸셜', '페이코', 'PAYCO',
+]
+
+export function isPGMerchant(merchantName: string): boolean {
+  if (!merchantName) return false
+  const n = merchantName.trim()
+  return PG_MERCHANTS.some(pg => n.includes(pg) || pg.includes(n))
+}
 
 const MERCHANT_MAP: Record<string, string> = {
   // 카페 (30+)
@@ -107,18 +121,39 @@ const MERCHANT_MAP: Record<string, string> = {
   '네이버파이낸셜': '기타', '토스': '기타',
 }
 
+export async function classifyMerchantWithAmount(merchantName: string, amount?: number): Promise<{ categoryName: string; categoryId?: number; confidence: number; userLabel?: string; matchedRule?: MerchantRule }> {
+  const result = await classifyMerchant(merchantName)
+  if (!amount || !isPGMerchant(merchantName)) return result
+
+  // For PG merchants, try amount-based matching (±20%)
+  const allRules = await db.merchantRules.toArray()
+  for (const rule of allRules) {
+    if (rule.merchantPattern === merchantName.trim() && rule.amount) {
+      const ratio = amount / rule.amount
+      if (ratio >= 0.8 && ratio <= 1.2) {
+        const cat = await db.categories.get(rule.categoryId)
+        if (cat) {
+          return { categoryName: cat.name, categoryId: cat.id, confidence: 0.95, userLabel: rule.userLabel, matchedRule: rule }
+        }
+      }
+    }
+  }
+
+  return result
+}
+
 export async function classifyMerchant(merchantName: string): Promise<{ categoryName: string; categoryId?: number; confidence: number }> {
   if (!merchantName) return { categoryName: '기타', confidence: 0 }
 
   const normalized = merchantName.trim()
 
-  // 1. User-defined rules in DB (learned)
+  // 1. User-defined rules in DB (learned) — skip PG merchants for exact match (need amount-based)
   const userRule = await db.merchantRules
     .where('merchantPattern')
     .equals(normalized)
     .first()
 
-  if (userRule) {
+  if (userRule && !isPGMerchant(normalized)) {
     const cat = await db.categories.get(userRule.categoryId)
     if (cat) {
       return { categoryName: cat.name, categoryId: cat.id, confidence: 1.0 }
@@ -128,7 +163,7 @@ export async function classifyMerchant(merchantName: string): Promise<{ category
   // 2. Partial match on user rules
   const allRules = await db.merchantRules.toArray()
   for (const rule of allRules) {
-    if (normalized.includes(rule.merchantPattern) || rule.merchantPattern.includes(normalized)) {
+    if (!isPGMerchant(rule.merchantPattern) && (normalized.includes(rule.merchantPattern) || rule.merchantPattern.includes(normalized))) {
       const cat = await db.categories.get(rule.categoryId)
       if (cat) return { categoryName: cat.name, categoryId: cat.id, confidence: 0.95 }
     }
@@ -147,12 +182,51 @@ export async function classifyMerchant(merchantName: string): Promise<{ category
   return { categoryName: '기타', categoryId: etcCat?.id, confidence: 0 }
 }
 
-export async function learnMerchant(merchantName: string, categoryId: number) {
+export async function learnMerchant(merchantName: string, categoryId: number, options?: { amount?: number; userLabel?: string }) {
   const pattern = merchantName.trim()
+
+  // For PG merchants with amount, create amount-specific rules
+  if (options?.amount && isPGMerchant(pattern)) {
+    // Check if similar rule exists (same merchant + similar amount ±20%)
+    const allRules = await db.merchantRules.where('merchantPattern').equals(pattern).toArray()
+    for (const rule of allRules) {
+      if (rule.amount) {
+        const ratio = options.amount / rule.amount
+        if (ratio >= 0.8 && ratio <= 1.2) {
+          await db.merchantRules.update(rule.id!, {
+            categoryId,
+            useCount: rule.useCount + 1,
+            amount: options.amount,
+            userLabel: options.userLabel ?? rule.userLabel,
+          })
+          return
+        }
+      }
+    }
+    // No matching rule, create new
+    await db.merchantRules.add({
+      merchantPattern: pattern,
+      categoryId,
+      useCount: 1,
+      amount: options.amount,
+      userLabel: options.userLabel,
+    })
+    return
+  }
+
   const existing = await db.merchantRules.where('merchantPattern').equals(pattern).first()
   if (existing) {
-    await db.merchantRules.update(existing.id!, { categoryId, useCount: existing.useCount + 1 })
+    await db.merchantRules.update(existing.id!, {
+      categoryId,
+      useCount: existing.useCount + 1,
+      ...(options?.userLabel ? { userLabel: options.userLabel } : {}),
+    })
   } else {
-    await db.merchantRules.add({ merchantPattern: pattern, categoryId, useCount: 1 })
+    await db.merchantRules.add({
+      merchantPattern: pattern,
+      categoryId,
+      useCount: 1,
+      ...(options?.userLabel ? { userLabel: options.userLabel } : {}),
+    })
   }
 }

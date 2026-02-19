@@ -61,6 +61,8 @@ export interface MerchantRule {
   merchantPattern: string
   categoryId: number
   useCount: number
+  amount?: number
+  userLabel?: string
 }
 
 export interface AppSettings {

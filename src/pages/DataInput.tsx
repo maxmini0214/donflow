@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { db } from '@/db'
 import { useCategories, useTransactions } from '@/hooks/useDB'
-import { classifyMerchant, learnMerchant } from '@/utils/merchantClassifier'
+import { classifyMerchant, learnMerchant, isPGMerchant } from '@/utils/merchantClassifier'
 import { parseNotifications, type ParsedTransaction } from '@/utils/notificationParser'
 import { ensureDefaultWallet } from '@/lib/defaultWallet'
 import { formatNumber, getMonthKey } from '@/lib/utils'
@@ -647,15 +647,60 @@ function TransactionList({
   const [showAll, setShowAll] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editCatId, setEditCatId] = useState('')
+  const [editMemo, setEditMemo] = useState('')
   const expenseCategories = categories.filter(c => !c.isIncome)
   const { t } = useLanguage()
+
+  const etcCat = categories.find(c => c.name === '기타')
+
+  // Identify unclassified transactions: PG merchants OR category is "기타" with PG name
+  const isUnclassified = (tx: typeof transactions[0]) => {
+    const isPG = isPGMerchant(tx.merchantName)
+    const isEtc = tx.categoryId === etcCat?.id
+    return isPG && isEtc
+  }
 
   const filtered = transactions.filter(tx => {
     if (!search) return true
     return tx.merchantName?.toLowerCase().includes(search.toLowerCase())
   })
 
-  const visible = showAll ? filtered : filtered.slice(0, 20)
+  // Sort: unclassified first
+  const sorted = [...filtered].sort((a, b) => {
+    const aUn = isUnclassified(a) ? 0 : 1
+    const bUn = isUnclassified(b) ? 0 : 1
+    if (aUn !== bUn) return aUn - bUn
+    return new Date(b.date).getTime() - new Date(a.date).getTime()
+  })
+
+  const unclassifiedCount = filtered.filter(isUnclassified).length
+  const visible = showAll ? sorted : sorted.slice(0, 20)
+
+  const saveClassification = async (txId: number) => {
+    if (!editCatId) return
+    const catId = Number(editCatId)
+    const tx = await db.transactions.get(txId)
+    if (!tx) return
+
+    const newMerchantName = editMemo.trim() || tx.merchantName
+    await db.transactions.update(txId, {
+      categoryId: catId,
+      merchantName: newMerchantName,
+      updatedAt: new Date(),
+    })
+
+    // Learn the rule with amount for PG merchants
+    if (tx.merchantName) {
+      await learnMerchant(tx.merchantName, catId, {
+        amount: tx.amount,
+        userLabel: editMemo.trim() || undefined,
+      })
+    }
+
+    setEditingId(null)
+    setEditCatId('')
+    setEditMemo('')
+  }
 
   const saveCategory = async (txId: number) => {
     if (!editCatId) return
@@ -666,10 +711,24 @@ function TransactionList({
     }
     setEditingId(null)
     setEditCatId('')
+    setEditMemo('')
   }
 
   return (
     <div className="space-y-3">
+      {/* Unclassified banner */}
+      {unclassifiedCount > 0 && (
+        <div className="rounded-xl border border-yellow-500/40 bg-yellow-500/10 px-4 py-3 flex items-center gap-2">
+          <span className="text-lg">❓</span>
+          <div>
+            <p className="text-sm font-semibold text-yellow-700 dark:text-yellow-400">
+              {unclassifiedCount}건의 미분류 거래가 있습니다
+            </p>
+            <p className="text-xs text-yellow-600/80 dark:text-yellow-500/80">PG사 결제 — 어디에 쓴 건지 알려주세요!</p>
+          </div>
+        </div>
+      )}
+
       <div className="relative">
         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
         <Input placeholder={t('search')} value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
@@ -683,45 +742,74 @@ function TransactionList({
             const cat = categories.find(c => c.id === tx.categoryId)
             const dateStr = new Date(tx.date).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
             const isEditing = editingId === tx.id
+            const unclassified = isUnclassified(tx)
 
             return (
-              <div key={tx.id} className="flex items-center justify-between py-2.5 border-b border-border/50 last:border-0">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <button
-                    onClick={() => {
-                      if (isEditing) { setEditingId(null); return }
-                      setEditingId(tx.id!); setEditCatId(String(tx.categoryId))
-                    }}
-                    className="text-lg hover:scale-110 transition-transform"
-                    title={t('changeCategory')}
-                  >
-                    {cat?.icon ?? '📌'}
-                  </button>
-                  <div className="min-w-0">
-                    {isEditing ? (
-                      <div className="flex items-center gap-1">
-                        <Select
-                          value={editCatId}
-                          onChange={e => setEditCatId(e.target.value)}
-                          className="h-7 text-xs w-28"
-                        >
-                          {expenseCategories.map(c => (
-                            <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
-                          ))}
-                        </Select>
-                        <Button size="sm" className="h-7 text-xs" onClick={() => saveCategory(tx.id!)}>{t('save')}</Button>
-                      </div>
-                    ) : (
-                      <>
+              <div key={tx.id} className={`py-2.5 border-b border-border/50 last:border-0 ${unclassified ? 'bg-yellow-500/5 rounded-lg px-2 -mx-2' : ''}`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <button
+                      onClick={() => {
+                        if (isEditing) { setEditingId(null); setEditMemo(''); return }
+                        setEditingId(tx.id!); setEditCatId(String(tx.categoryId)); setEditMemo('')
+                      }}
+                      className="text-lg hover:scale-110 transition-transform"
+                      title={t('changeCategory')}
+                    >
+                      {cat?.icon ?? '📌'}
+                    </button>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5">
                         <p className="text-sm font-medium truncate">{tx.merchantName || cat?.name || t('transaction')}</p>
-                        <p className="text-xs text-muted-foreground">{dateStr} · {tx.source === 'csv' ? 'CSV' : t('manual')}</p>
-                      </>
-                    )}
+                        {unclassified && !isEditing && (
+                          <span
+                            className="shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-yellow-400/20 text-yellow-700 dark:text-yellow-400 text-[10px] font-semibold cursor-pointer hover:bg-yellow-400/30 transition-colors"
+                            onClick={() => { setEditingId(tx.id!); setEditCatId(String(tx.categoryId)); setEditMemo('') }}
+                          >
+                            ❓ 뭐였어?
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground">{dateStr} · {tx.source === 'csv' ? 'CSV' : t('manual')}</p>
+                    </div>
                   </div>
+                  <span className={`text-sm font-semibold shrink-0 ${tx.type === 'income' ? 'text-income' : 'text-expense'}`}>
+                    {tx.type === 'income' ? '+' : '-'}{formatNumber(tx.amount)}{t('won')}
+                  </span>
                 </div>
-                <span className={`text-sm font-semibold shrink-0 ${tx.type === 'income' ? 'text-income' : 'text-expense'}`}>
-                  {tx.type === 'income' ? '+' : '-'}{formatNumber(tx.amount)}{t('won')}
-                </span>
+
+                {/* Inline edit form */}
+                {isEditing && (
+                  <div className="mt-2 ml-9 space-y-2">
+                    {unclassified && (
+                      <Input
+                        placeholder="이 결제는 뭐였어? (예: 숨고 보컬레슨)"
+                        value={editMemo}
+                        onChange={e => setEditMemo(e.target.value)}
+                        className="h-8 text-xs"
+                        autoFocus
+                      />
+                    )}
+                    <div className="flex items-center gap-1.5">
+                      <Select
+                        value={editCatId}
+                        onChange={e => setEditCatId(e.target.value)}
+                        className="h-8 text-xs flex-1"
+                      >
+                        {expenseCategories.map(c => (
+                          <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
+                        ))}
+                      </Select>
+                      <Button
+                        size="sm"
+                        className="h-8 text-xs px-3"
+                        onClick={() => unclassified ? saveClassification(tx.id!) : saveCategory(tx.id!)}
+                      >
+                        {t('save')}
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             )
           })}
