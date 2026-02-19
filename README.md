@@ -1,6 +1,6 @@
 # DonFlow 💰
 
-**A browser-only budget planner that compares your plans vs. reality.**
+**A browser-only personal finance tracker that keeps your money visible.**
 
 > No server. No signup. No tracking. Your financial data never leaves your browser.
 
@@ -8,33 +8,27 @@
 
 ## What is DonFlow?
 
-Most expense trackers only record the past. DonFlow lets you **design your financial structure** and then see how reality compares — in real time.
+DonFlow helps you track income, expenses, and savings — all in your browser. See where your money goes each month with clear summaries and category breakdowns.
 
-- 📊 **Plan vs. Actual** — Set budgets, upload transactions, see progress bars and drift warnings
-- 🔮 **What-If Simulator** — Test financial changes before committing
-- 📁 **CSV/XLSX Upload** — Auto-detects formats from 14+ Korean card issuers + generic formats
-- 🎲 **Demo Data** — Click "Try Demo Data" on the dashboard to explore instantly
-- 🌐 **Bilingual** — Auto-detects browser language (English / Korean)
+- 📊 **Monthly Overview** — Income, expenses, and net savings at a glance
+- 💳 **Transaction Tracking** — Add and categorize transactions manually
+- 🏦 **Account Management** — Track balances across multiple accounts
+- 🏷️ **Custom Categories** — Create your own categories with emoji labels
+- 📦 **Data Backup** — Export/import your data as JSON
 - 🔒 **100% Private** — All data stored in IndexedDB, never sent anywhere
 
 ## Quick Start
 
-1. Visit [donflow](https://maxmini0214.github.io/donflow/)
-2. Click **🎲 Try Demo Data** on the Dashboard tab
-3. Explore the three tabs: **Dashboard** → **Structure Design** → **Data Import**
+1. Visit [DonFlow](https://maxmini0214.github.io/donflow/)
+2. Add your accounts in the **계좌 (Accounts)** tab
+3. Start logging transactions in the **거래 (Transactions)** tab
+4. Watch your dashboard update in real time
 
 ## Tech Stack
 
 - **React + TypeScript + Vite**
 - **Dexie.js** (IndexedDB wrapper)
-- **SheetJS** for CSV/XLSX parsing
 - **GitHub Pages** for hosting
-
-## Screenshots
-
-| Dashboard | Structure Design |
-|-----------|-----------------|
-| Plan vs. actual progress bars, drift alerts | Income/expense category management |
 
 ## Development
 
