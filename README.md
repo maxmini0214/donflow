@@ -23,6 +23,13 @@ Most budget apps track what you *spent*. DonFlow tracks what you *planned* — a
 - 📦 **Export/Import** — Full data backup as JSON
 - 🔒 **100% Client-Side** — All data in IndexedDB. Zero network requests for your financial data.
 
+## Privacy Promise
+
+- **Zero network requests** — DonFlow makes no API calls, no analytics pings, no telemetry. Open DevTools and verify.
+- **No accounts** — No signup, no login, no email collection.
+- **Data stays in your browser** — Everything lives in IndexedDB on your machine. Close the tab and it's still there. Clear site data and it's gone. You're in control.
+- **Open source** — Every line is auditable. MIT licensed.
+
 ## Quick Start
 
 1. Visit [DonFlow](https://maxmini0214.github.io/donflow/)
