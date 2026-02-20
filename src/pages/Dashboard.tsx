@@ -265,6 +265,13 @@ export default function Dashboard() {
             <p className="text-sm text-muted-foreground max-w-md mx-auto">
               {t('welcomeDesc') || 'Plan your budget, track spending, and see exactly where your money goes. 100% private — your data never leaves this browser.'}
             </p>
+            <div className="flex flex-wrap justify-center gap-2 mt-3">
+              {['🔒 No Server', '🚫 No AI', '👁️ No Tracking', '💯 Open Source'].map((badge) => (
+                <span key={badge} className="text-xs px-2.5 py-1 rounded-full bg-secondary/60 text-muted-foreground border border-border/40">
+                  {badge}
+                </span>
+              ))}
+            </div>
           </div>
           <div className="flex flex-col items-center gap-3">
             {!isDemo && (
