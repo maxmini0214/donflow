@@ -82,6 +82,28 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 - **Academic/deep-tech gets respect** — but DonFlow's angle is "boring on purpose"
 - **Trigger philosophy, not just demo** — Micasa's top comments were about the nature of SaaS, not just the tool
 
+### Ledgr — Just Posted on Show HN (2026-02-21, item 47091350)
+**What it is**: Offline finance tracker with local LLM categorization (macOS desktop app)
+**Stack**: Tauri 2.0 (Rust + React), SQLite, llama.cpp
+**Direct DonFlow competitor** — but fundamentally different approach:
+
+| | DonFlow | Ledgr |
+|---|---|---|
+| Platform | Web (any browser, any OS) | Desktop (macOS ARM only) |
+| Core concept | **Plan vs Reality drift** | Transaction categorization |
+| AI | None needed | Local LLM (bring your own GGUF) |
+| Bank support | 14+ formats auto-detected | Chase CSV only |
+| Install | Zero (static site) | Download + install app |
+| Mobile | PWA (add to home screen) | No |
+| Unique feature | Drift warnings + what-if sim | Shows "why" per categorization |
+
+**Strategic implications**:
+- Ledgr validates demand for local-first finance tools on HN
+- Our differentiation is crystal clear: **planning** (plan vs actual) vs **tracking** (categorization)
+- "No install needed" + "any browser" + "14+ bank formats" = lower friction
+- If Ledgr gets traction, it primes the audience for DonFlow's Show HN
+- **Do NOT position against Ledgr** — position as complementary (they categorize, we plan)
+
 ### Pre-launch checklist (before Feb 25):
 - [x] Verify demo GIF ends on dashboard, not welcome screen ✅ (verified 2/20 — progress bars + drift warnings)
 - [x] Test PWA on mobile (iPhone Safari, Android Chrome) — viewport fixed (a11y: allow zoom), PWA manifest OK
@@ -111,6 +133,9 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 
 ### Q: "How is this different from YNAB / Mint / Copilot?"
 > Those are tracking tools — they show where money went. DonFlow is a planning tool — it shows where money *should* go vs where it *actually* goes. The core loop is: set a budget structure → import transactions → see the drift → adjust. Also: no subscription, no account, no data sharing. Your bank data stays on your device.
+
+### Q: "How is this different from Ledgr?"
+> Different problem space. Ledgr is a categorization tool — it figures out *what* a transaction is (local LLM, cool tech). DonFlow is a planning tool — it tells you if your *budget structure* still matches reality. They're complementary: Ledgr answers "where did my money go?", DonFlow answers "am I still on track with my plan?" Also: DonFlow runs in any browser with no install, supports 14+ bank formats, and works on mobile as a PWA. Ledgr is macOS ARM only.
 
 ### Q: "Why IndexedDB instead of just localStorage?"
 > Storage limits. localStorage caps at ~5-10MB depending on browser. IndexedDB gives you hundreds of MB, supports structured queries, and handles years of transaction data without breaking a sweat. Dexie.js makes the API pleasant to work with.

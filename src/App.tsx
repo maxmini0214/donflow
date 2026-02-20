@@ -11,7 +11,32 @@ class ErrorBoundary extends Component<{children: ReactNode}, {error: Error | nul
   state = { error: null as Error | null }
   static getDerivedStateFromError(error: Error) { return { error } }
   render() {
-    if (this.state.error) return <pre style={{color:'red',padding:20}}>{this.state.error.message}{'\n'}{this.state.error.stack}</pre>
+    if (this.state.error) return (
+      <div style={{padding:'40px 20px',maxWidth:600,margin:'0 auto',fontFamily:'system-ui',color:'#e0e0e0',textAlign:'center'}}>
+        <h2 style={{fontSize:24,marginBottom:16}}>⚠️ Something went wrong</h2>
+        <p style={{color:'#aaa',marginBottom:24}}>
+          Your data is safe in IndexedDB. Try refreshing the page.
+        </p>
+        <div style={{display:'flex',gap:12,justifyContent:'center',marginBottom:32}}>
+          <button
+            onClick={() => window.location.reload()}
+            style={{padding:'10px 24px',background:'#3b82f6',color:'#fff',border:'none',borderRadius:8,cursor:'pointer',fontSize:14,fontWeight:600}}
+          >
+            Refresh Page
+          </button>
+          <button
+            onClick={() => { this.setState({ error: null }) }}
+            style={{padding:'10px 24px',background:'#374151',color:'#e0e0e0',border:'1px solid #4b5563',borderRadius:8,cursor:'pointer',fontSize:14}}
+          >
+            Try Again
+          </button>
+        </div>
+        <details style={{textAlign:'left',background:'#1e1e1e',padding:16,borderRadius:8,border:'1px solid #333'}}>
+          <summary style={{cursor:'pointer',color:'#888',fontSize:13}}>Technical details</summary>
+          <pre style={{color:'#ef4444',fontSize:12,marginTop:8,overflow:'auto',whiteSpace:'pre-wrap'}}>{this.state.error.message}{'\n'}{this.state.error.stack}</pre>
+        </details>
+      </div>
+    )
     return this.props.children
   }
 }
