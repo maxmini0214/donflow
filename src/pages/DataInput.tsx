@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { useLanguage, type TKey } from '@/lib/i18n'
+import { useLanguage, getLang, type TKey } from '@/lib/i18n'
 import Papa from 'papaparse'
 import { Upload, ClipboardPaste, Sparkles, Check, ChevronDown, ChevronUp, Search, HelpCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -282,13 +282,13 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
 
       const dateVal = row[dateCol]?.trim()
       const merchant = row[merchantCol ?? '']?.trim() ?? ''
-      const amountStr = row[amountCol]?.replace(/[,원\s]/g, '')
+      const amountStr = row[amountCol]?.replace(/[$€£¥₩,원\s()]/g, '')
       const amount = Math.abs(parseFloat(amountStr ?? '0'))
       if (!amount || !dateVal) continue
 
       const txType = hasBanksaladCols ? detectTransactionType(row, amount) : 'expense'
 
-      let categoryName = '기타'
+      let categoryName = getLang() === 'ko' ? '기타' : 'Other'
       let categoryId: number | undefined
       if (hasBanksaladCols && row['대분류']) {
         const subCat = row['소분류']?.trim()
