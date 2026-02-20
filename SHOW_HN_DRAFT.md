@@ -4,26 +4,29 @@
 Show HN: DonFlow – Plan vs. reality budget tracker, 100% browser-only
 
 ## Text
-I built DonFlow to solve a personal pain point: I'd set up a monthly budget, then never check back because updating it was too annoying. Three months later, my plan and reality had completely diverged.
+I built DonFlow because I kept setting up monthly budgets, then never checking back. Three months later my plan and reality had completely diverged — and fixing it was too annoying.
 
-DonFlow is a browser-only budget planner that compares what you planned to spend vs. what you actually spent. No server, no signup, no tracking — all data stays in IndexedDB.
+DonFlow compares what you planned to spend vs. what you actually spent. It's 100% browser-only: IndexedDB for storage, zero network requests, no signup. Open DevTools and verify — there's literally nothing phoning home.
 
-Key features:
 - Plan vs. actual progress bars per category
-- Drift warnings when spending exceeds plan
-- What-if simulator for budget changes
-- Smart CSV/XLSX import (auto-detects 14+ Korean card formats)
-- Full JSON export/import for backup
+- Drift warnings when spending drifts from your plan
+- What-if simulator: test budget changes before committing
+- CSV/XLSX import with auto-detection (works with most bank exports)
+- Full JSON export — your data is portable, no vendor lock-in
+- Works offline after first load (service worker + PWA)
 
-Tech: React + TypeScript + Vite, Dexie.js, SheetJS, hosted on GitHub Pages.
+Boring tech stack on purpose: React + TypeScript + Vite, Dexie.js for IndexedDB, SheetJS for spreadsheet parsing. Hosted on GitHub Pages. No backend to maintain, no database to migrate, no subscription to cancel.
 
-Try it: https://maxmini0214.github.io/donflow/ (click "Try Demo Data" to explore)
+Try it: https://maxmini0214.github.io/donflow/ (click "Try Demo Data" to explore with sample transactions)
 
-Source: https://github.com/maxmini0214/donflow
+Source: https://github.com/maxmini0214/donflow (MIT)
 
-Would love feedback on the UX and any feature ideas!
+Would love feedback on the UX — especially the plan-vs-reality flow.
 
 ## Notes
-- Need: demo GIF or screenshot in README before posting
-- Timing: weekday morning US time (Tue-Thu 10am ET optimal for HN)
+- **Blocker**: Need demo GIF or screenshot before posting (animated walkthrough of demo data)
+- **Timing**: Tue-Thu 10am ET optimal. Next window: Tue Feb 25 → 00:00 KST
 - Korean card format support is a differentiator but niche — lead with universal value
+- **HN validation (2026-02-20)**: Mini-Diarium (encrypted local journaling) got 113pts on Show HN same week. Local-first + privacy + boring-tech resonates strongly with HN audience.
+- **Key HN themes that apply to us**: data portability in 10 years, no vendor lock-in, standard formats, works offline, mobile support
+- Lead with "verify yourself: open DevTools" — HN loves auditable claims
