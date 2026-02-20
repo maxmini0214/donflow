@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
-import { useLanguage, getCurrency } from '@/lib/i18n'
+import { useLanguage, getCurrency, getLang } from '@/lib/i18n'
 import { Pencil, Check, X, Plus, Trash2, ChevronUp, ChevronDown, Settings2, MinusCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -43,12 +43,21 @@ interface CategoryFormData {
 
 const emptyForm: CategoryFormData = { name: '', icon: '📌', color: '#6B7280', groupName: '자유지출', isIncome: false }
 
-// Quick amount buttons (in won)
-const QUICK_AMOUNTS = [
-  { label: 'quickAdd10', value: 100000 },
-  { label: 'quickAdd50', value: 500000 },
-  { label: 'quickAdd100', value: 1000000 },
-] as const
+// Quick amount buttons — locale-aware
+function getQuickAmounts() {
+  if (getLang() === 'ko') {
+    return [
+      { label: 'quickAdd10' as const, value: 100000 },
+      { label: 'quickAdd50' as const, value: 500000 },
+      { label: 'quickAdd100' as const, value: 1000000 },
+    ]
+  }
+  return [
+    { label: 'quickAdd10' as const, value: 100 },
+    { label: 'quickAdd50' as const, value: 500 },
+    { label: 'quickAdd100' as const, value: 1000 },
+  ]
+}
 
 export default function Structure() {
   const { t } = useLanguage()
@@ -307,7 +316,7 @@ export default function Structure() {
             </div>
             {/* Quick amount buttons for salary */}
             <div className="flex items-center justify-center gap-2">
-              {QUICK_AMOUNTS.map(({ label, value }) => (
+              {getQuickAmounts().map(({ label, value }) => (
                 <button
                   key={label}
                   className="px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 active:bg-primary/30 transition-colors"
@@ -557,7 +566,7 @@ export default function Structure() {
                   {isEditing && !editMode && (
                     <div className="mt-2 space-y-1">
                       <div className="flex gap-1.5">
-                        {QUICK_AMOUNTS.map(({ label, value }) => (
+                        {getQuickAmounts().map(({ label, value }) => (
                           <button
                             key={label}
                             className="px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 active:bg-primary/30 transition-colors"

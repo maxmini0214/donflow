@@ -345,9 +345,9 @@ const translations = {
     // misc
     demoMode: 'Demo mode',
     uncategorized: 'Other',
-    quickAdd10: '+100K',
-    quickAdd50: '+500K',
-    quickAdd100: '+1M',
+    quickAdd10: '+$100',
+    quickAdd50: '+$500',
+    quickAdd100: '+$1K',
     budgetPreview: '${amount}',
     addCategoryQuick: '+ Add category',
     deleteWithTransactions: '{count} transactions will move to \'Other\'',
