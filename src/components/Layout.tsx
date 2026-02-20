@@ -1,9 +1,15 @@
+import { useState, useCallback } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { useLanguage } from '@/lib/i18n'
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
+import KeyboardShortcutsHelp from '@/components/KeyboardShortcutsHelp'
 
 export default function Layout() {
   const { t } = useLanguage()
+  const [showShortcuts, setShowShortcuts] = useState(false)
+  const toggleShortcuts = useCallback(() => setShowShortcuts(v => !v), [])
+  useKeyboardShortcuts(toggleShortcuts)
 
   const navItems = [
     { to: '/', icon: '📊', label: t('navDashboard') },
@@ -13,6 +19,7 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <KeyboardShortcutsHelp open={showShortcuts} onClose={() => setShowShortcuts(false)} />
       {/* Header */}
       <header className="border-b px-4 py-3">
         <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
