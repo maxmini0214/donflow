@@ -9,7 +9,7 @@ import {
 } from '@/hooks/useDB'
 import { formatKRW, formatNumber, getMonthKey } from '@/lib/utils'
 import { useNavigate } from 'react-router-dom'
-import { useLanguage } from '@/lib/i18n'
+import { useLanguage, getCurrency } from '@/lib/i18n'
 import { loadDemoData, clearDemoData, isDemoLoaded } from '@/db/demoData'
 import { exportJSON, exportCSV, importJSON } from '@/utils/exportData'
 
@@ -142,7 +142,7 @@ export default function Dashboard() {
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                {t('savingsRateDesc')} — ₩{formatNumber(Math.max(effectiveIncome - expense, 0))} {t('surplus')}
+                {t('savingsRateDesc')} — {getCurrency()}{formatNumber(Math.max(effectiveIncome - expense, 0))} {t('surplus')}
               </p>
             </div>
           )
@@ -159,9 +159,9 @@ export default function Dashboard() {
           <p className="text-sm">
             {t('currentPace')} <span className="font-bold">{daysRemaining} {t('daysRemaining')}</span>{' '}
             {projectionDiff >= 0 ? (
-              <span className="text-emerald-400 font-bold">₩{formatNumber(projectionDiff)} {t('surplus')}</span>
+              <span className="text-emerald-400 font-bold">{getCurrency()}{formatNumber(projectionDiff)} {t('surplus')}</span>
             ) : (
-              <span className="text-destructive font-bold">₩{formatNumber(Math.abs(projectionDiff))} {t('overBudget')}</span>
+              <span className="text-destructive font-bold">{getCurrency()}{formatNumber(Math.abs(projectionDiff))} {t('overBudget')}</span>
             )}
             {' '}{t('forecast')}
           </p>
@@ -179,12 +179,12 @@ export default function Dashboard() {
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-muted-foreground">{t('dailyAvgSpending')}</span>
                 <span className={`font-bold ${isOverDaily ? 'text-destructive' : 'text-emerald-400'}`}>
-                  ₩{formatNumber(dailyAvg)}
+                  {getCurrency()}{formatNumber(dailyAvg)}
                 </span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-muted-foreground">{t('dailyBudget')}</span>
-                <span className="font-medium">₩{formatNumber(dailyBudget)}</span>
+                <span className="font-medium">{getCurrency()}{formatNumber(dailyBudget)}</span>
               </div>
             </div>
           )
@@ -196,7 +196,7 @@ export default function Dashboard() {
         <div className="space-y-2">
           {budgetComparison.filter(b => b.percentage >= 100).map(item => (
             <div key={item.categoryId} className="rounded-xl bg-destructive/10 border border-destructive/20 p-3">
-              <p className="text-sm font-medium">🔴 {item.categoryIcon} {item.categoryName} {t('budgetExceeded')} ₩{formatNumber(item.diff)} {t('over')}</p>
+              <p className="text-sm font-medium">🔴 {item.categoryIcon} {item.categoryName} {t('budgetExceeded')} {getCurrency()}{formatNumber(item.diff)} {t('over')}</p>
             </div>
           ))}
         </div>
@@ -290,8 +290,8 @@ export default function Dashboard() {
             />
           </div>
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>₩{formatNumber(expense)} {t('used')}</span>
-            <span>₩{formatNumber(totalBudget)} {t('planned')}</span>
+            <span>{getCurrency()}{formatNumber(expense)} {t('used')}</span>
+            <span>{getCurrency()}{formatNumber(totalBudget)} {t('planned')}</span>
           </div>
         </div>
       )}

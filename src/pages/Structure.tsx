@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
-import { useLanguage } from '@/lib/i18n'
+import { useLanguage, getCurrency } from '@/lib/i18n'
 import { Pencil, Check, X, Plus, Trash2, ChevronUp, ChevronDown, Settings2, MinusCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -319,7 +319,7 @@ export default function Structure() {
             </div>
             {/* Real-time format preview */}
             {salaryInput && parseInt(salaryInput) > 0 && (
-              <p className="text-sm text-muted-foreground">₩{formatNumber(parseInt(salaryInput))}</p>
+              <p className="text-sm text-muted-foreground">{getCurrency()}{formatNumber(parseInt(salaryInput))}</p>
             )}
           </div>
         ) : (
@@ -327,7 +327,7 @@ export default function Structure() {
             onClick={() => { setSalaryInput(String(salary || '')); setEditingSalary(true) }}
             className="text-3xl font-extrabold tracking-tight hover:text-primary transition-colors"
           >
-            {salary > 0 ? `₩${formatNumber(salary)}` : t('setIncome')}
+            {salary > 0 ? `${getCurrency()}${formatNumber(salary)}` : t('setIncome')}
             <Pencil className="w-4 h-4 inline ml-2 text-muted-foreground" />
           </button>
         )}
@@ -344,9 +344,9 @@ export default function Structure() {
       {salary > 0 && totalBudget > 0 && (
         <div className={`space-y-2 ${isOverBudget ? 'rounded-xl p-3 border-2 border-destructive/30' : ''}`}>
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>{t('allocationTotal')} ₩{formatNumber(totalBudget)} ({Math.round(totalBudget / salary * 100)}%)</span>
+            <span>{t('allocationTotal')} {getCurrency()}{formatNumber(totalBudget)} ({Math.round(totalBudget / salary * 100)}%)</span>
             <span className={remaining < 0 ? 'text-destructive font-semibold' : ''}>
-              {remaining >= 0 ? `${t('unallocated')} ₩${formatNumber(remaining)}` : `₩${formatNumber(Math.abs(remaining))} ${t('overAllocated')}`}
+              {remaining >= 0 ? `${t('unallocated')} ${getCurrency()}${formatNumber(remaining)}` : `${getCurrency()}${formatNumber(Math.abs(remaining))} ${t('overAllocated')}`}
             </span>
           </div>
           <div className="h-4 bg-secondary rounded-full overflow-hidden flex">
@@ -357,7 +357,7 @@ export default function Structure() {
                   key={g.groupName}
                   className="h-full first:rounded-l-full last:rounded-r-full transition-all duration-300"
                   style={{ width: `${pct}%`, backgroundColor: GROUP_COLORS[g.groupName] ?? '#6b7280' }}
-                  title={`${g.groupName}: ₩${formatNumber(g.groupTotal)}`}
+                  title={`${g.groupName}: ${getCurrency()}${formatNumber(g.groupTotal)}`}
                 />
               ) : null
             })}
@@ -394,7 +394,7 @@ export default function Structure() {
             ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
             : 'bg-destructive/10 border-destructive/20 text-destructive'
         }`}>
-          🔮 {t('whatIfUnallocated')} ₩{formatNumber(whatIfRemaining)}
+          🔮 {t('whatIfUnallocated')} {getCurrency()}{formatNumber(whatIfRemaining)}
         </div>
       )}
 
@@ -416,7 +416,7 @@ export default function Structure() {
             <p className="text-sm font-medium text-muted-foreground">
               ── {groupName} ──
               {groupTotal > 0 && (
-                <span className="ml-2 text-foreground">₩{formatNumber(groupTotal)} ({groupPct}%)</span>
+                <span className="ml-2 text-foreground">{getCurrency()}{formatNumber(groupTotal)} ({groupPct}%)</span>
               )}
             </p>
             {editMode && (
@@ -544,7 +544,7 @@ export default function Structure() {
                           className="text-sm font-medium hover:text-primary transition-colors"
                         >
                           {budgetAmount > 0 ? (
-                            <>₩{formatNumber(budgetAmount)} <span className="text-xs text-muted-foreground">{pct}%</span></>
+                            <>{getCurrency()}{formatNumber(budgetAmount)} <span className="text-xs text-muted-foreground">{pct}%</span></>
                           ) : (
                             <span className="text-muted-foreground">{t('setBudget')}</span>
                           )}
@@ -568,7 +568,7 @@ export default function Structure() {
                         ))}
                       </div>
                       {budgetInput && parseInt(budgetInput) > 0 && (
-                        <p className="text-xs text-muted-foreground pl-1">₩{formatNumber(parseInt(budgetInput))}</p>
+                        <p className="text-xs text-muted-foreground pl-1">{getCurrency()}{formatNumber(parseInt(budgetInput))}</p>
                       )}
                     </div>
                   )}

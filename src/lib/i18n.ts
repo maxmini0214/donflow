@@ -10,6 +10,7 @@ const translations = {
     addCategoryToGroup: '이 그룹에 카테고리 추가',
     categoryName: '카테고리 이름',
     groupNamePlaceholder: '그룹 이름 (예: 부업/수입)',
+    currency: '₩',
     appTitle: '돈플로우',
     tryDemoData: '🎲 데모로 체험하기',
     clearDemoData: '데모 데이터 삭제',
@@ -165,7 +166,7 @@ const translations = {
     quickAdd10: '+10만',
     quickAdd50: '+50만',
     quickAdd100: '+100만',
-    budgetPreview: '₩{amount}',
+    budgetPreview: '₩{amount}',  // ko currency handled by getCurrency() elsewhere
     addCategoryQuick: '+ 카테고리 추가',
     deleteWithTransactions: '거래 {count}건이 \'기타\'로 이동됩니다',
     emptyCategoryGuide: '💡 카테고리를 추가해보세요',
@@ -191,6 +192,7 @@ const translations = {
     addCategoryToGroup: 'Add category to this group',
     categoryName: 'Category name',
     groupNamePlaceholder: 'Group name (e.g. Side job/Income)',
+    currency: '$',
     appTitle: 'DonFlow - Budget Planner',
     tryDemoData: '🎲 Try with Demo Data',
     clearDemoData: 'Clear Demo Data',
@@ -346,7 +348,7 @@ const translations = {
     quickAdd10: '+100K',
     quickAdd50: '+500K',
     quickAdd100: '+1M',
-    budgetPreview: '₩{amount}',
+    budgetPreview: '${amount}',
     addCategoryQuick: '+ Add category',
     deleteWithTransactions: '{count} transactions will move to \'Other\'',
     emptyCategoryGuide: '💡 Add some categories to get started',
@@ -388,6 +390,10 @@ export function setLang(lang: Lang) {
 
 export function t(key: TKey): string {
   return translations[currentLang][key];
+}
+
+export function getCurrency(): string {
+  return translations[currentLang].currency;
 }
 
 export function useLanguage() {

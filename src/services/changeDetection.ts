@@ -1,5 +1,5 @@
 import { db, type Transaction } from '@/db'
-import { t, getLang } from '@/lib/i18n'
+import { t, getLang, getCurrency } from '@/lib/i18n'
 
 /**
  * Called after a transaction is saved.
@@ -30,7 +30,7 @@ export async function detectChanges(tx: Transaction) {
         await db.changeAlerts.add({
           type: 'price_change',
           title: `${item.name} ${t('amountChanged')}`,
-          description: `${item.name} ${t('amountChangedDesc')} ₩${item.amount.toLocaleString()} → ₩${tx.amount.toLocaleString()}`,
+          description: `${item.name} ${t('amountChangedDesc')} ${getCurrency()}${item.amount.toLocaleString()} → ${getCurrency()}${tx.amount.toLocaleString()}`,
           oldAmount: item.amount,
           newAmount: tx.amount,
           recurringId: item.id,
@@ -148,7 +148,7 @@ export async function generateInsights(monthKey: string) {
     await db.insights.add({
       type: 'tip',
       title: `${t('mostVisited')} ${topMerchant.name}`,
-      description: `${topMerchant.count}x, ₩${topMerchant.total.toLocaleString()}`,
+      description: `${topMerchant.count}x, ${getCurrency()}${topMerchant.total.toLocaleString()}`,
       month: monthKey,
       isRead: false,
       createdAt: new Date(),
