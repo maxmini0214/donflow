@@ -68,3 +68,27 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 - [ ] Prepare responses for expected questions (mobile? encryption? data format?)
 - [ ] Add "Google Sheets refugee" angle to opening line — Micasa proved this resonates
 - [x] Keyboard shortcuts added (1/2/3 nav, ? help overlay) ✅ commit cf5985b
+- [x] Prepared FAQ responses for fast replies ✅
+
+## Prepared FAQ Responses (copy-paste ready)
+
+### Q: "Why not just use a spreadsheet?"
+> That's literally what I was doing. The problem isn't the math — it's the discipline. A spreadsheet doesn't scream at you when your plan and reality diverge. DonFlow's drift warnings are the feature that keeps you honest. You set a plan once, upload your bank exports, and it tells you where you're drifting. The spreadsheet approach works until month 3 when you stop updating it.
+
+### Q: "Mobile support?"
+> It's a PWA — works on iPhone Safari and Android Chrome. Add to home screen and it behaves like a native app. The UI is responsive but I'd say the sweet spot is tablet/desktop since you're doing financial planning, not quick glances. That said, checking drift alerts on mobile works fine.
+
+### Q: "What about encryption / security?"
+> Your data never leaves your browser. Zero network requests — open DevTools and verify. IndexedDB stores everything locally. There's no server to breach, no account to hack, no database to leak. The tradeoff: if you clear browser data, it's gone. Export to JSON regularly (one click). I chose simplicity over complexity here — no encryption layer means no key management headaches, and the threat model is "your browser, your device."
+
+### Q: "What if you stop maintaining it?"
+> No server to shut down. It's a static site on GitHub Pages. The source is MIT-licensed. Fork it, self-host it, or just keep using the deployed version — it'll work indefinitely because there's no backend dependency. Your data is in IndexedDB + exportable JSON.
+
+### Q: "Can I import from [specific bank/app]?"
+> CSV and XLSX with auto-format detection. It handles most bank export formats — column mapping is flexible. If your bank exports something weird, open an issue and I'll add support. Korean card company formats are also supported (14 card issuers).
+
+### Q: "How is this different from YNAB / Mint / Copilot?"
+> Those are tracking tools — they show where money went. DonFlow is a planning tool — it shows where money *should* go vs where it *actually* goes. The core loop is: set a budget structure → import transactions → see the drift → adjust. Also: no subscription, no account, no data sharing. Your bank data stays on your device.
+
+### Q: "Why IndexedDB instead of just localStorage?"
+> Storage limits. localStorage caps at ~5-10MB depending on browser. IndexedDB gives you hundreds of MB, supports structured queries, and handles years of transaction data without breaking a sweat. Dexie.js makes the API pleasant to work with.
