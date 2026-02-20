@@ -11,4 +11,15 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-slot', 'lucide-react'],
+          'vendor-data': ['dexie', 'dexie-react-hooks', 'papaparse'],
+        },
+      },
+    },
+  },
 })
