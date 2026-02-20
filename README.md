@@ -37,9 +37,12 @@ Most budget apps track what you *spent*. DonFlow tracks what you *planned* — a
 
 Your data is yours. Always.
 
-- **Export anytime** — Full JSON backup with one click. Re-import on any browser, any device.
-- **No vendor lock-in** — Standard formats (JSON, CSV/XLSX import). Walk away whenever you want.
+- **Export anytime** — Full JSON backup with one click. Human-readable, well-structured JSON — open it in any text editor.
+- **CSV export** — Transaction history as plain CSV. Import into Excel, Sheets, or any tool that reads tabular data.
+- **No vendor lock-in** — Standard formats only. No proprietary schema, no binary blobs. Walk away whenever you want.
 - **No account = no deletion risk** — There's no server to shut down, no company to go bankrupt, no subscription to cancel.
+- **Can I read my data in 10 years?** — Yes. It's JSON and CSV. These formats will outlive us all.
+- **What if you stop maintaining it?** — It's a static site with no server. It keeps working. Fork the repo and host it yourself. MIT licensed.
 - **Works offline** — Once loaded, DonFlow works without internet. Your budget doesn't need WiFi.
 
 ## Why Not [X]?
