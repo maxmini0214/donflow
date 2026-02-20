@@ -24,7 +24,7 @@ Source: https://github.com/maxmini0214/donflow (MIT)
 Would love feedback on the UX — especially the plan-vs-reality flow.
 
 ## Notes
-- **Blocker**: Need demo GIF or screenshot before posting (animated walkthrough of demo data)
+- ✅ **Demo GIF**: docs/demo.gif (165KB, 5 frames, welcome→dashboard→budgets→structure→data)
 - **Timing**: Tue-Thu 10am ET optimal. Next window: Tue Feb 25 → 00:00 KST
 - Korean card format support is a differentiator but niche — lead with universal value
 - **HN validation (2026-02-20)**: Mini-Diarium (encrypted local journaling) got 113pts on Show HN same week. Local-first + privacy + boring-tech resonates strongly with HN audience.

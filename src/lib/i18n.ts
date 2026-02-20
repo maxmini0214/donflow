@@ -170,6 +170,9 @@ const translations = {
     budgetOverWarning: '⚠️ 예산 합계가 수입을 초과했어요!',
     longPressEdit: '편집',
     longPressDelete: '삭제',
+    exportJsonBackup: '📦 JSON 백업',
+    exportCsv: '📊 CSV 내보내기',
+    exportData: '데이터 내보내기',
   },
   en: {
     search: 'Search...',
@@ -340,6 +343,9 @@ const translations = {
     budgetOverWarning: '⚠️ Budget total exceeds your income!',
     longPressEdit: 'Edit',
     longPressDelete: 'Delete',
+    exportJsonBackup: '📦 JSON Backup',
+    exportCsv: '📊 CSV Export',
+    exportData: 'Export Data',
   },
 } as const;
 

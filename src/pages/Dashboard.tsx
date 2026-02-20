@@ -11,6 +11,7 @@ import { formatKRW, formatNumber, getMonthKey } from '@/lib/utils'
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '@/lib/i18n'
 import { loadDemoData, clearDemoData, isDemoLoaded } from '@/db/demoData'
+import { exportJSON, exportCSV } from '@/utils/exportData'
 
 export default function Dashboard() {
   const { t } = useLanguage()
@@ -271,6 +272,19 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* Export Data */}
+      <div className="rounded-xl bg-secondary/30 p-4 space-y-3">
+        <p className="text-sm font-medium text-muted-foreground">{t('exportData')}</p>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={exportJSON}>
+            {t('exportJsonBackup')}
+          </Button>
+          <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={exportCSV}>
+            {t('exportCsv')}
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }
