@@ -1,5 +1,57 @@
 import { db } from '@/db'
 
+export interface ImportResult {
+  success: boolean
+  tables: Record<string, number>
+  error?: string
+}
+
+export async function importJSON(file: File): Promise<ImportResult> {
+  try {
+    const text = await file.text()
+    const data = JSON.parse(text)
+
+    if (!data.version || !data.tables) {
+      return { success: false, tables: {}, error: 'Invalid backup file format' }
+    }
+
+    const tableNames = [
+      'accounts', 'transactions', 'categories', 'budgets',
+      'salaryAllocations', 'merchantRules', 'recurringItems',
+      'changeAlerts', 'monthlyIncomes', 'insights',
+    ] as const
+
+    const counts: Record<string, number> = {}
+
+    // Clear all tables first, then bulk insert
+    for (const name of tableNames) {
+      const table = db.table(name)
+      await table.clear()
+      const rows = data.tables[name]
+      if (Array.isArray(rows) && rows.length > 0) {
+        // Restore Date objects from ISO strings
+        const restored = rows.map((row: Record<string, unknown>) => {
+          const out = { ...row }
+          for (const [key, val] of Object.entries(out)) {
+            if (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(val)) {
+              out[key] = new Date(val)
+            }
+          }
+          return out
+        })
+        await table.bulkAdd(restored)
+        counts[name] = restored.length
+      } else {
+        counts[name] = 0
+      }
+    }
+
+    return { success: true, tables: counts }
+  } catch (e) {
+    return { success: false, tables: {}, error: e instanceof Error ? e.message : 'Unknown error' }
+  }
+}
+
 function getDateString(): string {
   const d = new Date()
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`

@@ -11,7 +11,7 @@ import { formatKRW, formatNumber, getMonthKey } from '@/lib/utils'
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '@/lib/i18n'
 import { loadDemoData, clearDemoData, isDemoLoaded } from '@/db/demoData'
-import { exportJSON, exportCSV } from '@/utils/exportData'
+import { exportJSON, exportCSV, importJSON } from '@/utils/exportData'
 
 export default function Dashboard() {
   const { t } = useLanguage()
@@ -273,7 +273,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Export Data */}
+      {/* Export / Import Data */}
       <div className="rounded-xl bg-secondary/30 p-4 space-y-3">
         <p className="text-sm font-medium text-muted-foreground">{t('exportData')}</p>
         <div className="flex gap-2">
@@ -282,6 +282,34 @@ export default function Dashboard() {
           </Button>
           <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={exportCSV}>
             {t('exportCsv')}
+          </Button>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 text-xs"
+            onClick={() => {
+              if (!confirm(t('importConfirm'))) return
+              const input = document.createElement('input')
+              input.type = 'file'
+              input.accept = '.json'
+              input.onchange = async (e) => {
+                const file = (e.target as HTMLInputElement).files?.[0]
+                if (!file) return
+                const result = await importJSON(file)
+                if (result.success) {
+                  const total = Object.values(result.tables).reduce((a, b) => a + b, 0)
+                  alert(`${t('importSuccess')} ${total} ${t('tablesRestored')}`)
+                  window.location.reload()
+                } else {
+                  alert(`${t('importFailed')}: ${result.error}`)
+                }
+              }
+              input.click()
+            }}
+          >
+            {t('importJsonBackup')}
           </Button>
         </div>
       </div>

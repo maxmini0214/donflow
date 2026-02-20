@@ -173,6 +173,12 @@ const translations = {
     exportJsonBackup: '📦 JSON 백업',
     exportCsv: '📊 CSV 내보내기',
     exportData: '데이터 내보내기',
+    importJsonBackup: '📥 JSON 복원',
+    importConfirm: '기존 데이터를 모두 덮어씁니다. 계속하시겠습니까?',
+    importSuccess: '복원 완료!',
+    importFailed: '복원 실패',
+    importInvalidFile: 'DonFlow 백업 파일이 아닙니다',
+    tablesRestored: '테이블 복원됨',
   },
   en: {
     search: 'Search...',
@@ -346,6 +352,12 @@ const translations = {
     exportJsonBackup: '📦 JSON Backup',
     exportCsv: '📊 CSV Export',
     exportData: 'Export Data',
+    importJsonBackup: '📥 Restore from JSON',
+    importConfirm: 'This will replace all existing data. Continue?',
+    importSuccess: 'Restore complete!',
+    importFailed: 'Restore failed',
+    importInvalidFile: 'Not a valid DonFlow backup file',
+    tablesRestored: 'tables restored',
   },
 } as const;
 
