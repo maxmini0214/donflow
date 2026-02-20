@@ -27,6 +27,30 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 - ✅ **Demo GIF**: docs/demo.gif (165KB, 5 frames, welcome→dashboard→budgets→structure→data)
 - **Timing**: Tue-Thu 10am ET optimal. Next window: Tue Feb 25 → 00:00 KST
 - Korean card format support is a differentiator but niche — lead with universal value
-- **HN validation (2026-02-20)**: Mini-Diarium (encrypted local journaling) got 113pts on Show HN same week. Local-first + privacy + boring-tech resonates strongly with HN audience.
-- **Key HN themes that apply to us**: data portability in 10 years, no vendor lock-in, standard formats, works offline, mobile support
 - Lead with "verify yourself: open DevTools" — HN loves auditable claims
+
+## HN Competitive Intelligence (2026-02-20)
+
+### Mini-Diarium — 124pts, 59 comments (same week!)
+**What resonated**: local-first, encrypted, open-source, boring tech, no vendor lock-in
+**Top concerns from HN commenters** (apply directly to us):
+1. **"Can I read my data in 10 years?"** → Emphasize JSON export, standard formats, no proprietary schema
+2. **"Mobile support?"** → Mention PWA/responsive. HN commenter: "most people do this on phones not laptops"
+3. **"Plain text > proprietary"** → Our JSON export = fully portable, human-readable
+4. **"Boring crypto/tech = trust"** → Our stack (React+IndexedDB+SheetJS) is intentionally boring. Say so.
+5. **"What if you stop maintaining it?"** → "No server to shut down. It's a static site. Fork it."
+6. **Demo GIF trap**: Mini-Diarium's GIF ended on login screen, people missed the animation. **Our GIF must end on the dashboard (most impressive screen).**
+
+### Patterns that get 100+ points on Show HN:
+- **Niche + opinionated** (Micasa: "track your house from terminal" = 549pts)
+- **"I scratched my own itch"** personal story
+- **Auditable claims** ("open DevTools and check" = instant credibility)
+- **Respond quickly to comments** — Mini-Diarium creator replied within hours to every concern
+- **Academic/deep-tech gets respect** — but DonFlow's angle is "boring on purpose"
+
+### Pre-launch checklist (before Feb 25):
+- [ ] Verify demo GIF ends on dashboard, not welcome screen
+- [ ] Test PWA on mobile (iPhone Safari, Android Chrome)
+- [ ] Create 2-3 GitHub issues (good first issue) for community signal
+- [ ] Verify offline mode works after first visit
+- [ ] Prepare responses for expected questions (mobile? encryption? data format?)
