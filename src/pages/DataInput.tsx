@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react'
 import { useLanguage, type TKey } from '@/lib/i18n'
 import Papa from 'papaparse'
-import * as XLSX from 'xlsx'
 import { Upload, ClipboardPaste, Sparkles, Check, ChevronDown, ChevronUp, Search, HelpCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -358,6 +357,7 @@ function CsvUpload({ categories }: { categories: ReturnType<typeof useCategories
     const ext = file.name.split('.').pop()?.toLowerCase()
 
     if (ext === 'xlsx' || ext === 'xls') {
+      const XLSX = await import('xlsx')
       const buf = await file.arrayBuffer()
       const wb = XLSX.read(buf, { type: 'array' })
       // Try each sheet until one parses successfully
