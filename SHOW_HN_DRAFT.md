@@ -24,7 +24,7 @@ Source: https://github.com/maxmini0214/donflow (MIT)
 
 Tech details for the curious:
 
-~4,400 lines of TypeScript across 25 files. Initial JS is code-split: 306KB main + 47KB React + 39KB UI + 116KB data layer (166KB total gzipped). SheetJS (429KB) is lazy-loaded only when you import an XLSX file, so the first paint doesn't pay for spreadsheet parsing. Core dependencies: Dexie.js wraps IndexedDB (gives structured queries over years of transactions without localStorage's 5MB cap), SheetJS parses CSV/XLSX uploads with auto-column-detection, and React + Vite for the UI. 91 commits, MIT licensed.
+~4,400 lines of TypeScript across 25 files. Initial JS is code-split: 306KB main + 47KB React + 39KB UI + 116KB data layer (166KB total gzipped). SheetJS (429KB) is lazy-loaded only when you import an XLSX file, so the first paint doesn't pay for spreadsheet parsing. Core dependencies: Dexie.js wraps IndexedDB (gives structured queries over years of transactions without localStorage's 5MB cap), SheetJS parses CSV/XLSX uploads with auto-column-detection, and React + Vite for the UI. 93 commits, MIT licensed.
 
 The drift detection engine compares your budget plan against actual categorized transactions and fires warnings when any category exceeds a configurable threshold. The what-if simulator clones your current state, lets you adjust allocations, and shows projected outcomes — all computed client-side in ~2ms for typical datasets.
 
@@ -111,7 +111,8 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 - **"AI is not a coworker, it's an exoskeleton"**: 447pts. Nuanced AI debate, not blanket rejection.
 - **Anthropic auth ban**: 643pts. Trust/privacy in tech conversation active.
 - **Ghostty terminal**: 166pts/70 comments (Feb 21). Another "single purpose + polished UX" hit. Pattern holds.
-- **Native macOS HN client**: 129pts/92 comments (Feb 21, up from 81). "Show your work" + tech details = sustained growth.
+- **Mines.fyi**: 29pts in 1 hour (Feb 21). Public data + clean Leaflet visualization = instant HN love. Confirms "simple data viz" pattern.
+- **Native macOS HN client**: 158pts/116 comments (Feb 21, up from 81). "Show your work" + tech details = sustained growth.
 - **Ledgr (competitor)**: Dead. 1-2pts, 0 comments after 5+ hours. Chase-only + macOS ARM-only = too narrow.
 - **Timing validation**: Finance + privacy + local-first = three HN themes converging. Feb 25 launch window looks ideal.
 
