@@ -67,4 +67,4 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 - [ ] Verify offline mode works after first visit
 - [ ] Prepare responses for expected questions (mobile? encryption? data format?)
 - [ ] Add "Google Sheets refugee" angle to opening line — Micasa proved this resonates
-- [ ] Consider adding keyboard shortcuts (Micasa thread: "keyboard-centric operation" = HN value)
+- [x] Keyboard shortcuts added (1/2/3 nav, ? help overlay) ✅ commit cf5985b
