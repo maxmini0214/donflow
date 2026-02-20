@@ -107,10 +107,20 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 ### HN Front Page Zeitgeist (Feb 20-21)
 - **"America vs Singapore: You can't save your way out of economic shocks"** — 302pts. Personal finance topic trending on HN front. HN audience is thinking about money, budgets, financial planning RIGHT NOW.
 - **Gemini 3.1 Pro**: 914pts dominating. AI fatigue angle still valid for our "No AI" positioning.
-- **Micasa**: 611pts (peaked). Local-first wave confirmed.
+- **Micasa**: 615pts (still climbing, Feb 21 05:30 KST). Local-first wave confirmed and sustained.
 - **"AI is not a coworker, it's an exoskeleton"**: 447pts. Nuanced AI debate, not blanket rejection.
 - **Anthropic auth ban**: 643pts. Trust/privacy in tech conversation active.
+- **Ghostty terminal**: 166pts/70 comments (Feb 21). Another "single purpose + polished UX" hit. Pattern holds.
+- **Native macOS HN client**: 129pts/92 comments (Feb 21, up from 81). "Show your work" + tech details = sustained growth.
+- **Ledgr (competitor)**: Dead. 1-2pts, 0 comments after 5+ hours. Chase-only + macOS ARM-only = too narrow.
 - **Timing validation**: Finance + privacy + local-first = three HN themes converging. Feb 25 launch window looks ideal.
+
+### Key Micasa 615pts Meta-Insight (Feb 21)
+The HN discussion went philosophical: **"Most SaaS = an Excel template with curated CRUD on domain models."** Top commenter argued the real value of a product is "exporting the _education_ and information architecture of that domain."
+
+This maps PERFECTLY to DonFlow: we don't just store budget data (spreadsheets do that). We teach you to think about budget planning as a plan-vs-reality system with drift detection. The "boring alternative" to a spreadsheet that actually keeps you honest.
+
+Angle for Show HN comments: "A spreadsheet shows you numbers. DonFlow shows you the gap between your intentions and your behavior."
 
 ### Pre-launch checklist (before Feb 25):
 - [x] Verify demo GIF ends on dashboard, not welcome screen ✅ (verified 2/20 — progress bars + drift warnings)
