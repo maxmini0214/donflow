@@ -30,6 +30,29 @@ Most budget apps track what you *spent*. DonFlow tracks what you *planned* — a
 - **Data stays in your browser** — Everything lives in IndexedDB on your machine. Close the tab and it's still there. Clear site data and it's gone. You're in control.
 - **Open source** — Every line is auditable. MIT licensed.
 
+## Data Portability
+
+Your data is yours. Always.
+
+- **Export anytime** — Full JSON backup with one click. Re-import on any browser, any device.
+- **No vendor lock-in** — Standard formats (JSON, CSV/XLSX import). Walk away whenever you want.
+- **No account = no deletion risk** — There's no server to shut down, no company to go bankrupt, no subscription to cancel.
+- **Works offline** — Once loaded, DonFlow works without internet. Your budget doesn't need WiFi.
+
+## Why Not [X]?
+
+| | DonFlow | Mint/YNAB | Toss/Bank Apps |
+|---|---|---|---|
+| **Data location** | Your browser only | Their servers | Their servers |
+| **Account required** | No | Yes | Yes |
+| **Cost** | Free forever | $99/yr+ | Free (limited) |
+| **Plan vs. Reality** | ✅ Core feature | Partial | ❌ |
+| **Bank linking** | Manual upload | Auto-sync | Auto |
+| **Privacy** | Zero tracking | Analytics + ads | Bank data |
+| **Open source** | ✅ MIT | ❌ | ❌ |
+
+DonFlow is for people who want to **design their financial structure** — not just record what happened.
+
 ## Quick Start
 
 1. Visit [DonFlow](https://maxmini0214.github.io/donflow/)
