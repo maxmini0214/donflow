@@ -85,10 +85,10 @@ interface ClassifiedNotif extends ParsedTransaction {
   categoryName: string
 }
 
-// ─── Column detection candidates (Korean CSV headers) ───
-const DATE_COLS = ['이용일시', '이용일', '이용일자', '거래일', '거래일시', '날짜', '일자', '일시', 'date', '결제일', '승인일', '사용일', '거래일자', '승인일시', '매입일', '결제일시', '거래 일시', '결제 일시', '날짜/시간', '시간', '거래시간']
-const MERCHANT_COLS = ['가맹점', '가맹점명', '이용가맹점', '이용처', '적요', 'merchant', '내용', '사용처', '상호', '상호명', '거래처', '비고', '메모', '이용 내역', '거래내용', '사용처명', '결제처', '사용 내역', '이용 가맹점', '결제내역', '거래처명', '카드사용처']
-const AMOUNT_COLS = ['이용금액', '국내이용금액', '결제금액', '거래금액', '금액', 'amount', '결제', '이용금', '출금', '출금액', '승인금액', '지출금액', '사용금액', '결제 금액', '매출금액', '카드결제금액', '출금금액', '지출', '수입', '입금액']
+// ─── Column detection candidates (KO + EN CSV headers) ───
+const DATE_COLS = ['이용일시', '이용일', '이용일자', '거래일', '거래일시', '날짜', '일자', '일시', 'date', '결제일', '승인일', '사용일', '거래일자', '승인일시', '매입일', '결제일시', '거래 일시', '결제 일시', '날짜/시간', '시간', '거래시간', 'transaction date', 'posting date', 'trans date', 'trans. date']
+const MERCHANT_COLS = ['가맹점', '가맹점명', '이용가맹점', '이용처', '적요', 'merchant', '내용', '사용처', '상호', '상호명', '거래처', '비고', '메모', '이용 내역', '거래내용', '사용처명', '결제처', '사용 내역', '이용 가맹점', '결제내역', '거래처명', '카드사용처', 'description', 'payee', 'name', 'memo', 'details', 'reference']
+const AMOUNT_COLS = ['이용금액', '국내이용금액', '결제금액', '거래금액', '금액', 'amount', '결제', '이용금', '출금', '출금액', '승인금액', '지출금액', '사용금액', '결제 금액', '매출금액', '카드결제금액', '출금금액', '지출', '수입', '입금액', 'debit', 'credit', 'charge', 'payment', 'total']
 
 interface DetectedColumns {
   dateCol: string | null
@@ -113,15 +113,20 @@ function detectColumnsByData(rows: Record<string, string>[]): DetectedColumns {
       /^\d{8}$/.test(s.replace(/\s/g, ''))
     ).length / samples.length
 
-    const amountScore = samples.filter(s =>
-      /^-?[\d,]+\.?\d*원?$/.test(s.replace(/\s/g, ''))
-    ).length / samples.length
+    const amountScore = samples.filter(s => {
+      const cleaned = s.replace(/\s/g, '')
+      return /^-?[$€£¥₩]?[\d,]+\.?\d*원?$/.test(cleaned) ||
+             /^-?[\d,]+\.?\d*[$€£¥₩원]?$/.test(cleaned) ||
+             /^\([\d,]+\.?\d*\)$/.test(cleaned)  // accounting format: (1,234.56)
+    }).length / samples.length
 
-    const merchantScore = samples.filter(s =>
-      /[가-힣]/.test(s) &&
-      !/^\d{4}[-./]\d{1,2}[-./]\d{1,2}/.test(s) &&
-      !/^-?[\d,]+원?$/.test(s.replace(/\s/g, ''))
-    ).length / samples.length
+    const merchantScore = samples.filter(s => {
+      const trimmed = s.trim()
+      const isDate = /^\d{4}[-./]\d{1,2}[-./]\d{1,2}/.test(trimmed) || /^\d{1,2}\/\d{1,2}\/\d{2,4}/.test(trimmed)
+      const isAmount = /^-?[$€£¥₩]?[\d,]+\.?\d*[$€£¥₩원]?$/.test(trimmed.replace(/\s/g, ''))
+      const hasText = /[가-힣a-zA-Z]/.test(trimmed)
+      return hasText && !isDate && !isAmount && trimmed.length > 1
+    }).length / samples.length
 
     if (dateScore >= 0.8 && !result.dateCol) result.dateCol = col
     else if (amountScore >= 0.8 && !result.amountCol) result.amountCol = col
