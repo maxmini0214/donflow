@@ -104,6 +104,14 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 - If Ledgr gets traction, it primes the audience for DonFlow's Show HN
 - **Do NOT position against Ledgr** — position as complementary (they categorize, we plan)
 
+### HN Front Page Zeitgeist (Feb 20-21)
+- **"America vs Singapore: You can't save your way out of economic shocks"** — 302pts. Personal finance topic trending on HN front. HN audience is thinking about money, budgets, financial planning RIGHT NOW.
+- **Gemini 3.1 Pro**: 914pts dominating. AI fatigue angle still valid for our "No AI" positioning.
+- **Micasa**: 611pts (peaked). Local-first wave confirmed.
+- **"AI is not a coworker, it's an exoskeleton"**: 447pts. Nuanced AI debate, not blanket rejection.
+- **Anthropic auth ban**: 643pts. Trust/privacy in tech conversation active.
+- **Timing validation**: Finance + privacy + local-first = three HN themes converging. Feb 25 launch window looks ideal.
+
 ### Pre-launch checklist (before Feb 25):
 - [x] Verify demo GIF ends on dashboard, not welcome screen ✅ (verified 2/20 — progress bars + drift warnings)
 - [x] Test PWA on mobile (iPhone Safari, Android Chrome) — viewport fixed (a11y: allow zoom), PWA manifest OK
