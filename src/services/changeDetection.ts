@@ -95,7 +95,8 @@ export async function generateInsights(monthKey: string) {
     if (amounts[0] > 0 && amounts[1] > amounts[0] && amounts[2] > amounts[1]) {
       const formatAmt = (a: number) => {
         if (getLang() === 'ko') return a >= 10000 ? `${Math.round(a / 10000)}만` : `${Math.round(a / 1000)}천`
-        return a >= 10000 ? `${Math.round(a / 10000)}0k` : `${Math.round(a / 1000)}k`
+        if (a >= 1000) return `$${(a / 1000).toFixed(a % 1000 === 0 ? 0 : 1)}k`
+        return `$${a}`
       }
       await db.insights.add({
         type: 'trend',
