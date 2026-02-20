@@ -22,6 +22,14 @@ Try it: https://maxmini0214.github.io/donflow/ (click "Try Demo Data" to explore
 
 Source: https://github.com/maxmini0214/donflow (MIT)
 
+Tech details for the curious:
+
+~4,300 lines of TypeScript across 25 files. The entire built output is 1.7MB. Core dependencies: Dexie.js wraps IndexedDB (gives structured queries over years of transactions without localStorage's 5MB cap), SheetJS parses CSV/XLSX uploads with auto-column-detection, and React + Vite for the UI. 67 commits, MIT licensed.
+
+The drift detection engine compares your budget plan against actual categorized transactions and fires warnings when any category exceeds a configurable threshold. The what-if simulator clones your current state, lets you adjust allocations, and shows projected outcomes — all computed client-side in ~2ms for typical datasets.
+
+No service worker tricks for "offline" marketing — it genuinely works offline because there's no server to talk to. The SW just caches the static assets on first visit.
+
 Would love feedback on the UX — especially the plan-vs-reality flow.
 
 ## Notes
@@ -58,6 +66,13 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 - FileMaker/Access nostalgia thread: people miss domain-specific tools without SaaS bloat
 - "A product exports the _education_ of that domain" — the value isn't the CRUD, it's the opinionated structure
 - **For DonFlow**: lean into "yes, you could use a spreadsheet. The spreadsheet doesn't tell you you're lying to yourself about your budget."
+
+### Native macOS HN Client — 81pts in 2 hours (2026-02-21)
+**What worked**: 
+- Extremely detailed "Tech details for the curious" section (lines of code, specific API choices, CI/CD pipeline)
+- Personal motivation first: "I spend a lot of time reading HN — I wanted something that felt like a proper Mac app"
+- Invites specific feedback: "especially on features you'd want to see"
+- **Applied to DonFlow**: Added "Tech details" section with line count, bundle size, dependency choices, and drift detection perf numbers
 
 ### Patterns that get 100+ points on Show HN:
 - **Niche + opinionated** (Micasa: "track your house from terminal" = 549pts)
