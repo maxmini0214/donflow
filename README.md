@@ -9,7 +9,7 @@
 🔗 **[Try it live →](https://maxmini0214.github.io/donflow/)**  
 🎲 Click **"Try Demo Data"** on the dashboard to explore with sample transactions.
 
-![DonFlow Dashboard](docs/screenshot-dashboard.png)
+![DonFlow Demo](docs/demo.gif)
 
 ## Why DonFlow?
 
