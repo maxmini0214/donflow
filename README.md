@@ -15,6 +15,8 @@
 
 Most budget apps track what you *spent*. DonFlow tracks what you *planned* — and shows you where reality diverges.
 
+> **"I set up a budget spreadsheet once, then never opened it again."** Sound familiar? DonFlow is for the people who *want* a budget structure but find spreadsheets too tedious to maintain.
+
 - 📊 **Plan vs. Actual Dashboard** — Progress bars show budget vs. real spending per category
 - ⚠️ **Drift Warnings** — Get alerted when spending exceeds your plan
 - 🔮 **What-If Simulator** — Test budget changes before committing
@@ -41,15 +43,16 @@ Your data is yours. Always.
 
 ## Why Not [X]?
 
-| | DonFlow | Mint/YNAB | Toss/Bank Apps |
-|---|---|---|---|
-| **Data location** | Your browser only | Their servers | Their servers |
-| **Account required** | No | Yes | Yes |
-| **Cost** | Free forever | $99/yr+ | Free (limited) |
-| **Plan vs. Reality** | ✅ Core feature | Partial | ❌ |
-| **Bank linking** | Manual upload | Auto-sync | Auto |
-| **Privacy** | Zero tracking | Analytics + ads | Bank data |
-| **Open source** | ✅ MIT | ❌ | ❌ |
+| | DonFlow | Google Sheets | Mint/YNAB | Toss/Bank Apps |
+|---|---|---|---|---|
+| **Data location** | Your browser only | Google's servers | Their servers | Their servers |
+| **Account required** | No | Google account | Yes | Yes |
+| **Cost** | Free forever | Free | $99/yr+ | Free (limited) |
+| **Plan vs. Reality** | ✅ Core feature | DIY formulas | Partial | ❌ |
+| **Auto drift alerts** | ✅ Built-in | ❌ Manual | Partial | ❌ |
+| **Bank/card import** | CSV/XLSX upload | Copy-paste | Auto-sync | Auto |
+| **Privacy** | Zero tracking | Google analytics | Analytics + ads | Bank data |
+| **Open source** | ✅ MIT | ❌ | ❌ | ❌ |
 
 DonFlow is for people who want to **design their financial structure** — not just record what happened.
 
