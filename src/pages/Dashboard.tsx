@@ -336,6 +336,21 @@ export default function Dashboard() {
           </Button>
         </div>
       </div>
+
+      {/* Support CTA */}
+      <div className="rounded-xl p-4 text-center space-y-2" style={{background: 'linear-gradient(135deg, rgba(251,191,36,0.1), rgba(251,191,36,0.05))', border: '1px solid rgba(251,191,36,0.2)'}}>
+        <p className="text-sm font-semibold">☕ Like this tool? Support the project!</p>
+        <p className="text-xs text-muted-foreground">Every coffee keeps free tools alive. No account needed.</p>
+        <a
+          href="https://paypal.me/maxseats"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block px-4 py-2 rounded-lg text-sm font-semibold text-white"
+          style={{background: '#0070ba'}}
+        >
+          ☕ Buy Me a Coffee via PayPal
+        </a>
+      </div>
     </div>
   )
 }
