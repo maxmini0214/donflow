@@ -1,7 +1,7 @@
 {
-  "name": "돈플로우 - DonFlow",
-  "short_name": "돈플로우",
-  "description": "개인 재정 관리 앱",
+  "name": "DonFlow — Plan vs. Reality Budget Tracker",
+  "short_name": "DonFlow",
+  "description": "Private, local-first budget tracker. Compare what you planned to spend vs. what you actually spent.",
   "start_url": "/donflow/",
   "display": "standalone",
   "background_color": "#0a0a0f",
