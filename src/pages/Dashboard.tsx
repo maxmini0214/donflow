@@ -168,6 +168,29 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* Daily Spending Rate */}
+      {hasBudgets && monthOffset === 0 && dayOfMonth > 0 && expense > 0 && (
+        (() => {
+          const dailyAvg = Math.round(expense / dayOfMonth)
+          const dailyBudget = Math.round(totalBudget / daysInMonth)
+          const isOverDaily = dailyAvg > dailyBudget
+          return (
+            <div className="flex items-center justify-between rounded-xl bg-secondary/30 px-4 py-2.5">
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-muted-foreground">{t('dailyAvgSpending')}</span>
+                <span className={`font-bold ${isOverDaily ? 'text-destructive' : 'text-emerald-400'}`}>
+                  ₩{formatNumber(dailyAvg)}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-muted-foreground">{t('dailyBudget')}</span>
+                <span className="font-medium">₩{formatNumber(dailyBudget)}</span>
+              </div>
+            </div>
+          )
+        })()
+      )}
+
       {/* Budget Alert Banners */}
       {hasBudgets && budgetComparison.filter(b => b.percentage >= 100).length > 0 && (
         <div className="space-y-2">
