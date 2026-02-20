@@ -225,7 +225,26 @@ export async function seedCategories() {
     return
   }
 
-  await db.categories.bulkAdd([
+  const isEN = !navigator.language.startsWith('ko')
+
+  const categories = isEN ? [
+    { name: 'Groceries', icon: '🍽️', color: '#EF4444', isIncome: false, isDefault: true, displayOrder: 1, groupName: 'Living' },
+    { name: 'Coffee', icon: '☕', color: '#F97316', isIncome: false, isDefault: true, displayOrder: 2, groupName: 'Living' },
+    { name: 'Transport', icon: '🚌', color: '#EAB308', isIncome: false, isDefault: true, displayOrder: 3, groupName: 'Fixed' },
+    { name: 'Shopping', icon: '🛒', color: '#84CC16', isIncome: false, isDefault: true, displayOrder: 4, groupName: 'Discretionary' },
+    { name: 'Housing', icon: '🏠', color: '#22C55E', isIncome: false, isDefault: true, displayOrder: 5, groupName: 'Fixed' },
+    { name: 'Phone', icon: '📱', color: '#14B8A6', isIncome: false, isDefault: true, displayOrder: 6, groupName: 'Fixed' },
+    { name: 'Subscriptions', icon: '🔄', color: '#06B6D4', isIncome: false, isDefault: true, displayOrder: 7, groupName: 'Fixed' },
+    { name: 'Healthcare', icon: '🏥', color: '#3B82F6', isIncome: false, isDefault: true, displayOrder: 8, groupName: 'Living' },
+    { name: 'Education', icon: '📚', color: '#6366F1', isIncome: false, isDefault: true, displayOrder: 9, groupName: 'Living' },
+    { name: 'Going Out', icon: '💕', color: '#EC4899', isIncome: false, isDefault: true, displayOrder: 10, groupName: 'Discretionary' },
+    { name: 'Gifts', icon: '🎁', color: '#F43F5E', isIncome: false, isDefault: true, displayOrder: 11, groupName: 'Discretionary' },
+    { name: 'Travel', icon: '✈️', color: '#8B5CF6', isIncome: false, isDefault: true, displayOrder: 12, groupName: 'Discretionary' },
+    { name: 'Insurance', icon: '🛡️', color: '#64748B', isIncome: false, isDefault: true, displayOrder: 13, groupName: 'Fixed' },
+    { name: 'Savings', icon: '🏦', color: '#0EA5E9', isIncome: false, isDefault: true, displayOrder: 14, groupName: 'Savings' },
+    { name: 'Salary', icon: '💰', color: '#10B981', isIncome: true, isDefault: true, displayOrder: 15, groupName: 'Income' },
+    { name: 'Other', icon: '📌', color: '#6B7280', isIncome: false, isDefault: true, displayOrder: 16, groupName: 'Discretionary' },
+  ] : [
     { name: '식비', icon: '🍚', color: '#EF4444', isIncome: false, isDefault: true, displayOrder: 1, groupName: '생활비' },
     { name: '카페', icon: '☕', color: '#F97316', isIncome: false, isDefault: true, displayOrder: 2, groupName: '생활비' },
     { name: '교통', icon: '🚌', color: '#EAB308', isIncome: false, isDefault: true, displayOrder: 3, groupName: '고정비' },
@@ -242,5 +261,7 @@ export async function seedCategories() {
     { name: '저축', icon: '🏦', color: '#0EA5E9', isIncome: false, isDefault: true, displayOrder: 14, groupName: '저축/투자' },
     { name: '급여', icon: '💰', color: '#10B981', isIncome: true, isDefault: true, displayOrder: 15, groupName: '수입' },
     { name: '기타', icon: '📌', color: '#6B7280', isIncome: false, isDefault: true, displayOrder: 16, groupName: '자유지출' },
-  ])
+  ]
+
+  await db.categories.bulkAdd(categories)
 }
