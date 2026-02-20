@@ -4,9 +4,9 @@
 Show HN: DonFlow – Plan vs. reality budget tracker, 100% browser-only
 
 ## Text
-I built DonFlow because I kept setting up monthly budgets in Google Sheets, then never checking back. Three months later my plan and reality had completely diverged — and fixing it was too annoying to do in a spreadsheet.
+I'm a Google Sheets refugee. Every few months I'd build a new budget spreadsheet — income allocations, category targets, the works. Then life happens, I stop updating it, and three months later the plan and reality have completely diverged. Fixing it in a spreadsheet is tedious enough that I just… don't.
 
-DonFlow compares what you planned to spend vs. what you actually spent. It's 100% browser-only: IndexedDB for storage, zero network requests, no signup. Open DevTools and verify — there's literally nothing phoning home.
+DonFlow is the tool I built to solve that specific loop. You set a financial plan once, upload your bank/card exports, and it shows you where reality is drifting from your plan. It's 100% browser-only: IndexedDB for storage, zero network requests, no signup. Open DevTools and verify — there's literally nothing phoning home.
 
 - Plan vs. actual progress bars per category
 - Drift warnings when spending drifts from your plan
@@ -64,9 +64,9 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 - [x] Verify demo GIF ends on dashboard, not welcome screen ✅ (verified 2/20 — progress bars + drift warnings)
 - [ ] Test PWA on mobile (iPhone Safari, Android Chrome)
 - [x] Create 2-3 GitHub issues (good first issue) for community signal ✅ (#1 dark mode, #2 recurring, #3 i18n)
-- [ ] Verify offline mode works after first visit
-- [ ] Prepare responses for expected questions (mobile? encryption? data format?)
-- [ ] Add "Google Sheets refugee" angle to opening line — Micasa proved this resonates
+- [x] Verify offline mode works after first visit ✅ SW runtime caching confirmed (cache-first + network fallback)
+- [x] Prepare responses for expected questions ✅ 7 FAQ responses ready (commit debeeb9)
+- [x] Add "Google Sheets refugee" angle to opening line ✅ Rewritten opening paragraph
 - [x] Keyboard shortcuts added (1/2/3 nav, ? help overlay) ✅ commit cf5985b
 - [x] Prepared FAQ responses for fast replies ✅
 
