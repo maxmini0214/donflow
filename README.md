@@ -20,7 +20,7 @@ Most budget apps track what you *spent*. DonFlow tracks what you *planned* — a
 - 📊 **Plan vs. Actual Dashboard** — Progress bars show budget vs. real spending per category
 - ⚠️ **Drift Warnings** — Get alerted when spending exceeds your plan
 - 🔮 **What-If Simulator** — Test budget changes before committing
-- 💳 **Smart Import** — Upload bank/card CSV or XLSX files (auto-detects 14+ card formats)
+- 💳 **Smart Import** — Upload bank/card CSV or XLSX files (auto-detects columns from any bank)
 - 🏷️ **Custom Categories** — Organize with emoji labels and flexible grouping
 - 📦 **Export/Import** — Full data backup as JSON
 - ⌨️ **Keyboard Shortcuts** — Press `1`/`2`/`3` to switch tabs, `?` for shortcut reference

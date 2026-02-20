@@ -1,4 +1,4 @@
-import { db } from './index'
+import { db, seedCategories } from './index'
 import type { Account, Transaction, Category, Budget, MonthlyIncome } from './index'
 import { getLang } from '@/lib/i18n'
 
@@ -314,7 +314,6 @@ export async function clearDemoData(): Promise<void> {
     if (setting?.id) await db.appSettings.delete(setting.id)
   }
 
-  const { seedCategories } = await import('./index')
   await seedCategories()
 }
 
