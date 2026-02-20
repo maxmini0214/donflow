@@ -42,7 +42,7 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 5. **"What if you stop maintaining it?"** → "No server to shut down. It's a static site. Fork it."
 6. **Demo GIF trap**: Mini-Diarium's GIF ended on login screen, people missed the animation. **Our GIF must end on the dashboard (most impressive screen).**
 
-### Micasa — 549pts, 178 comments (SAME DAY as our target!)
+### Micasa — 598pts, 190 comments (SAME DAY as our target!)
 **What it is**: Track your house from the terminal (TUI + SQLite)
 **Why it exploded**: Triggered a deep philosophical HN discussion:
 1. **"Most SaaS = an Excel template"** — Top comment. People realize most tools are just curated CRUD on domain models. DonFlow should lean into this: "yes, you could track this in a spreadsheet. But you won't stick with it."
@@ -52,6 +52,12 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 5. **"No server to shut down"**: People love the permanence. If Micasa's SQLite file appeals, our IndexedDB + JSON export should too.
 
 **Strategic implication**: Post DonFlow Show HN on a DIFFERENT day than Micasa peaks (let it cool). The "local-first domain tool" wave is hot. Ride it, don't compete with it.
+
+**Key Micasa comment thread** (598pts → top HN philosophical debate):
+- "Most SaaS = an Excel template with curated CRUD" — top-voted comment
+- FileMaker/Access nostalgia thread: people miss domain-specific tools without SaaS bloat
+- "A product exports the _education_ of that domain" — the value isn't the CRUD, it's the opinionated structure
+- **For DonFlow**: lean into "yes, you could use a spreadsheet. The spreadsheet doesn't tell you you're lying to yourself about your budget."
 
 ### Patterns that get 100+ points on Show HN:
 - **Niche + opinionated** (Micasa: "track your house from terminal" = 549pts)

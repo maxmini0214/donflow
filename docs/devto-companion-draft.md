@@ -52,7 +52,7 @@ You set a budget structure once (income → categories → amounts). Then upload
 - 🟡 Watch it (80-100%)
 - 🔴 Over budget (> 100%)
 
-The "What-If Simulator" lets you test changes: "What if I move ₩200K from dining to savings?" — see the impact before committing.
+The "What-If Simulator" lets you test changes: "What if I move $200 from dining to savings?" — see the impact before committing.
 
 ## Lessons Learned
 
