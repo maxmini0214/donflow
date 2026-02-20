@@ -544,7 +544,7 @@ function NotificationPaste({ categories }: { categories: ReturnType<typeof useCa
     if (parsed.length === 0) return
     setSaving(true)
     const walletId = await ensureDefaultWallet()
-    const defaultCatId = categories.find(c => c.name === '기타')?.id ?? categories.find(c => c.name === 'Other')?.id ?? 1
+    const defaultCatId = categories.find(c => c.name === (getLang() === 'ko' ? '기타' : 'Other'))?.id ?? categories.find(c => c.name === 'Other')?.id ?? categories.find(c => c.name === '기타')?.id ?? 1
 
     for (const item of parsed) {
       const catId = item.categoryId ?? defaultCatId

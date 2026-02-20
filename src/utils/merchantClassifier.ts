@@ -2,6 +2,20 @@
 // Uses existing classifier.ts as base, adds more mappings
 
 import { db, type MerchantRule } from '@/db'
+import { getLang } from '@/lib/i18n'
+
+// Map Korean category names → English equivalents
+const KO_TO_EN_CATEGORY: Record<string, string> = {
+  '카페': 'Coffee', '식비': 'Groceries', '쇼핑': 'Shopping',
+  '교통': 'Transport', '통신': 'Phone', '구독': 'Subscriptions',
+  '의료': 'Healthcare', '교육': 'Education', '주거': 'Housing',
+  '여행': 'Travel', '보험': 'Insurance', '기타': 'Other',
+}
+
+function localizeCategoryName(koName: string): string {
+  if (getLang() === 'ko') return koName
+  return KO_TO_EN_CATEGORY[koName] ?? 'Other'
+}
 
 // PG사 이름 목록 — 이 가맹점명이면 "미분류 PG 거래"로 간주
 export const PG_MERCHANTS = [
@@ -143,7 +157,8 @@ export async function classifyMerchantWithAmount(merchantName: string, amount?: 
 }
 
 export async function classifyMerchant(merchantName: string): Promise<{ categoryName: string; categoryId?: number; confidence: number }> {
-  if (!merchantName) return { categoryName: '기타', confidence: 0 }
+  const fallbackName = localizeCategoryName('기타')
+  if (!merchantName) return { categoryName: fallbackName, confidence: 0 }
 
   const normalized = merchantName.trim()
 
@@ -169,17 +184,18 @@ export async function classifyMerchant(merchantName: string): Promise<{ category
     }
   }
 
-  // 3. Built-in keyword map
-  for (const [keyword, categoryName] of Object.entries(MERCHANT_MAP)) {
+  // 3. Built-in keyword map (returns Korean names, localize for EN)
+  for (const [keyword, koCategoryName] of Object.entries(MERCHANT_MAP)) {
     if (normalized.includes(keyword) || keyword.includes(normalized)) {
-      const cat = await db.categories.where('name').equals(categoryName).first()
-      return { categoryName, categoryId: cat?.id, confidence: 0.9 }
+      const localName = localizeCategoryName(koCategoryName)
+      const cat = await db.categories.where('name').equals(localName).first()
+      return { categoryName: localName, categoryId: cat?.id, confidence: 0.9 }
     }
   }
 
   // 4. Fallback
-  const etcCat = await db.categories.where('name').equals('기타').first()
-  return { categoryName: '기타', categoryId: etcCat?.id, confidence: 0 }
+  const etcCat = await db.categories.where('name').equals(fallbackName).first()
+  return { categoryName: fallbackName, categoryId: etcCat?.id, confidence: 0 }
 }
 
 export async function learnMerchant(merchantName: string, categoryId: number, options?: { amount?: number; userLabel?: string }) {
