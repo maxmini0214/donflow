@@ -111,6 +111,43 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Savings Rate */}
+      {(income > 0 || salary > 0) && expense > 0 && (
+        (() => {
+          const effectiveIncome = income || salary
+          const savingsRate = Math.round((effectiveIncome - expense) / effectiveIncome * 100)
+          const isPositive = savingsRate > 0
+          const ratingText = savingsRate >= 30 ? t('excellent') : savingsRate >= 15 ? t('good') : t('needsWork')
+          const ratingColor = savingsRate >= 30 ? 'text-emerald-400' : savingsRate >= 15 ? 'text-amber-400' : 'text-destructive'
+          const ratingEmoji = savingsRate >= 30 ? '🌟' : savingsRate >= 15 ? '👍' : '⚡'
+
+          return (
+            <div className="rounded-xl bg-secondary/30 p-4 space-y-2">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">{t('savingsRate')}</span>
+                <div className="flex items-center gap-2">
+                  <span className={`font-bold text-lg ${isPositive ? 'text-emerald-400' : 'text-destructive'}`}>
+                    {savingsRate}%
+                  </span>
+                  <span className={`text-xs ${ratingColor}`}>{ratingEmoji} {ratingText}</span>
+                </div>
+              </div>
+              <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    savingsRate >= 30 ? 'bg-emerald-500' : savingsRate >= 15 ? 'bg-amber-500' : 'bg-destructive'
+                  }`}
+                  style={{ width: `${Math.min(Math.max(savingsRate, 0), 100)}%` }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {t('savingsRateDesc')} — ₩{formatNumber(Math.max(effectiveIncome - expense, 0))} {t('surplus')}
+              </p>
+            </div>
+          )
+        })()
+      )}
+
       {/* Pace Projection Banner */}
       {hasBudgets && monthOffset === 0 && daysRemaining > 0 && (
         <div className={`rounded-xl p-3 border ${

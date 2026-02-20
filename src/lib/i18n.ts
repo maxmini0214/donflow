@@ -38,6 +38,11 @@ const translations = {
     surplus: '여유',
     overBudget: '초과',
     forecast: '예상',
+    savingsRate: '저축률',
+    savingsRateDesc: '수입 대비 저축 비율',
+    excellent: '우수',
+    good: '양호',
+    needsWork: '개선 필요',
     // Structure
     monthlyIncome: '월 수입',
     setIncome: '수입을 설정하세요',
@@ -200,6 +205,11 @@ const translations = {
     surplus: 'surplus',
     overBudget: 'over',
     forecast: 'projected',
+    savingsRate: 'Savings Rate',
+    savingsRateDesc: 'Percentage of income saved',
+    excellent: 'Excellent',
+    good: 'Good',
+    needsWork: 'Needs work',
     // Structure
     monthlyIncome: 'Monthly Income',
     setIncome: 'Set your income',
