@@ -23,6 +23,7 @@ Most budget apps track what you *spent*. DonFlow tracks what you *planned* — a
 - 💳 **Smart Import** — Upload bank/card CSV or XLSX files (auto-detects 14+ card formats)
 - 🏷️ **Custom Categories** — Organize with emoji labels and flexible grouping
 - 📦 **Export/Import** — Full data backup as JSON
+- ⌨️ **Keyboard Shortcuts** — Press `1`/`2`/`3` to switch tabs, `?` for shortcut reference
 - 🔒 **100% Client-Side** — All data in IndexedDB. Zero network requests for your financial data.
 
 ## Privacy Promise
