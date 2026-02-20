@@ -63,7 +63,7 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 
 ### Pre-launch checklist (before Feb 25):
 - [x] Verify demo GIF ends on dashboard, not welcome screen ✅ (verified 2/20 — progress bars + drift warnings)
-- [ ] Test PWA on mobile (iPhone Safari, Android Chrome)
+- [x] Test PWA on mobile (iPhone Safari, Android Chrome) — viewport fixed (a11y: allow zoom), PWA manifest OK
 - [x] Create 2-3 GitHub issues (good first issue) for community signal ✅ (#1 dark mode, #2 recurring, #3 i18n)
 - [x] Verify offline mode works after first visit ✅ SW runtime caching confirmed (cache-first + network fallback)
 - [x] Prepare responses for expected questions ✅ 7 FAQ responses ready (commit debeeb9)
