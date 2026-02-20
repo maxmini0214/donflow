@@ -155,5 +155,8 @@ Angle for Show HN comments: "A spreadsheet shows you numbers. DonFlow shows you 
 ### Q: "How is this different from Ledgr?"
 > Different problem space. Ledgr is a categorization tool — it figures out *what* a transaction is (local LLM, cool tech). DonFlow is a planning tool — it tells you if your *budget structure* still matches reality. They're complementary: Ledgr answers "where did my money go?", DonFlow answers "am I still on track with my plan?" Also: DonFlow runs in any browser with no install, supports 14+ bank formats, and works on mobile as a PWA. Ledgr is macOS ARM only.
 
+### Q: "Why a web app instead of native/TUI?"
+> Zero friction to try. No install, no download, no sign-up — click the link and you're in. That matters for a Show HN where people give you 30 seconds. Once you're in, it works offline (service worker caches everything), has keyboard shortcuts (1/2/3 to switch tabs, ? for help), and IndexedDB gives you local persistence across sessions. The tradeoff vs native is no system-level file access, but for a budget tool that imports CSVs, that's fine — drag-and-drop works. PWA lets you pin it to your home screen on mobile. I wanted the widest possible reach with zero deployment overhead.
+
 ### Q: "Why IndexedDB instead of just localStorage?"
 > Storage limits. localStorage caps at ~5-10MB depending on browser. IndexedDB gives you hundreds of MB, supports structured queries, and handles years of transaction data without breaking a sweat. Dexie.js makes the API pleasant to work with.
