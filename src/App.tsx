@@ -30,7 +30,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={hasSetup ? <Dashboard /> : <Navigate to="/structure" replace />} />
+        <Route path="/" element={<Dashboard />} />
         <Route path="/structure" element={<Structure />} />
         <Route path="/data" element={<DataInput />} />
       </Route>

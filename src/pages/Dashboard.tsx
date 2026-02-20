@@ -229,18 +229,23 @@ export default function Dashboard() {
           </div>
         </div>
       ) : (
-        <div className="text-center py-12 space-y-3">
-          <div className="text-4xl">🏗️</div>
-          <p className="text-sm text-muted-foreground">{t('noBudgetYet')}</p>
-          <div className="flex flex-col items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => navigate('/structure')}>
-              {t('goToStructure')}
-            </Button>
+        <div className="text-center py-16 space-y-6">
+          <div className="text-6xl">📊</div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold">{t('welcomeTitle') || 'Welcome to DonFlow'}</h2>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              {t('welcomeDesc') || 'Plan your budget, track spending, and see exactly where your money goes. 100% private — your data never leaves this browser.'}
+            </p>
+          </div>
+          <div className="flex flex-col items-center gap-3">
             {!isDemo && (
-              <Button variant="secondary" size="sm" onClick={handleLoadDemo} disabled={demoLoading}>
-                🎲 {t('tryDemoData')}
+              <Button size="lg" className="text-base px-8" onClick={handleLoadDemo} disabled={demoLoading}>
+                🎲 {t('tryDemoData') || 'Try with Demo Data'}
               </Button>
             )}
+            <Button variant="outline" size="sm" onClick={() => navigate('/structure')}>
+              {t('startFromScratch') || 'Start from scratch →'}
+            </Button>
           </div>
         </div>
       )}
