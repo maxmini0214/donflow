@@ -21,10 +21,18 @@ export default function Layout() {
     <div className="min-h-screen flex flex-col">
       <KeyboardShortcutsHelp open={showShortcuts} onClose={() => setShowShortcuts(false)} />
       {/* Header */}
-      <header className="border-b px-4 py-3">
+      <header className="border-b px-4 py-3 flex items-center justify-between">
         <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
           {t('headerTitle')}
         </h1>
+        <button
+          onClick={toggleShortcuts}
+          className="hidden md:flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-secondary/50"
+          title="Keyboard shortcuts"
+        >
+          <kbd className="px-1.5 py-0.5 rounded border border-border bg-secondary/50 text-[10px] font-mono">?</kbd>
+          <span>shortcuts</span>
+        </button>
       </header>
 
       {/* Main */}

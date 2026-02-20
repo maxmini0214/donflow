@@ -14,6 +14,7 @@ DonFlow is the tool I built to solve that specific loop. You set a financial pla
 - CSV/XLSX import with auto-detection (works with most bank exports)
 - Full JSON export — your data is portable, no vendor lock-in
 - Works offline after first load (service worker + PWA)
+- Keyboard-driven: 1/2/3 to switch tabs, ? for shortcut reference
 
 Boring tech stack on purpose: React + TypeScript + Vite, Dexie.js for IndexedDB, SheetJS for spreadsheet parsing. Hosted on GitHub Pages. No backend to maintain, no database to migrate, no subscription to cancel.
 
