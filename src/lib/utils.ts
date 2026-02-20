@@ -6,11 +6,24 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatKRW(amount: number): string {
-  return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(amount)
+  return formatCurrency(amount)
+}
+
+export function formatCurrency(amount: number): string {
+  const lang = typeof document !== 'undefined'
+    ? (navigator.language?.startsWith('ko') ? 'ko' : 'en')
+    : 'en'
+  if (lang === 'ko') {
+    return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(amount)
+  }
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount)
 }
 
 export function formatNumber(amount: number): string {
-  return new Intl.NumberFormat('ko-KR').format(amount)
+  const lang = typeof document !== 'undefined'
+    ? (navigator.language?.startsWith('ko') ? 'ko' : 'en')
+    : 'en'
+  return new Intl.NumberFormat(lang === 'ko' ? 'ko-KR' : 'en-US').format(amount)
 }
 
 export function getMonthKey(date: Date = new Date()): string {
