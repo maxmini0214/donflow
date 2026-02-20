@@ -86,11 +86,16 @@ export default function Dashboard() {
 
       {/* Demo Data Banner */}
       {isDemo && (
-        <div className="flex items-center justify-between rounded-xl bg-primary/10 border border-primary/20 px-4 py-2">
-          <span className="text-xs text-muted-foreground">🎲 Demo mode</span>
-          <Button variant="ghost" size="sm" className="text-xs h-7" onClick={handleClearDemo} disabled={demoLoading}>
-            {t('clearDemoData')}
-          </Button>
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-primary/10 border border-primary/20 px-4 py-2">
+          <span className="text-xs text-muted-foreground">🎲 Demo mode — exploring sample data</span>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => { handleClearDemo(); navigate('/structure'); }}>
+              Use your own data →
+            </Button>
+            <Button variant="ghost" size="sm" className="text-xs h-7 text-muted-foreground" onClick={handleClearDemo} disabled={demoLoading}>
+              {t('clearDemoData')}
+            </Button>
+          </div>
         </div>
       )}
 
