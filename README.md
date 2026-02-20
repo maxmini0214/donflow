@@ -70,6 +70,37 @@ DonFlow is for people who want to **design their financial structure** — not j
 - **SheetJS** for CSV/XLSX parsing
 - **GitHub Pages** for hosting
 
+## Architecture
+
+DonFlow follows a strict **zero-network, browser-only** architecture.
+
+```
+┌─────────────────────────────────────────┐
+│  Browser (your machine)                 │
+│                                         │
+│  ┌──────────┐  ┌──────────────────────┐ │
+│  │ React UI │←→│ Dexie.js (IndexedDB) │ │
+│  └────┬─────┘  └──────────────────────┘ │
+│       │                                 │
+│  ┌────┴─────┐  ┌──────────────────────┐ │
+│  │ SheetJS  │  │ Export Engine (JSON)  │ │
+│  │ (import) │  │ (backup/restore)     │ │
+│  └──────────┘  └──────────────────────┘ │
+│                                         │
+│  Network requests: 0                    │
+│  Server dependencies: 0                 │
+│  External APIs: 0                       │
+└─────────────────────────────────────────┘
+```
+
+- **All computation happens client-side** — budget calculations, drift detection, what-if simulations
+- **IndexedDB as the sole data store** — no localStorage fallback, no cookies, no server sync
+- **Import pipeline** — SheetJS parses CSV/XLSX locally, auto-detects 14+ Korean card statement formats, maps to internal schema
+- **No build-time secrets** — the deployed bundle contains zero API keys, tokens, or endpoints
+- **Static hosting** — GitHub Pages serves pre-built assets. The "server" is a CDN. There is no backend to compromise.
+
+Open DevTools → Network tab → use DonFlow for an hour → observe zero requests. That's the architecture.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
