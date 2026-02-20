@@ -74,15 +74,15 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       {/* Month Navigator */}
-      <div className="flex items-center justify-between">
-        <Button variant="ghost" size="icon" onClick={() => setMonthOffset(m => m - 1)}>
+      <nav className="flex items-center justify-between" aria-label="Month navigation">
+        <Button variant="ghost" size="icon" onClick={() => setMonthOffset(m => m - 1)} aria-label="Previous month">
           <ChevronLeft className="w-5 h-5" />
         </Button>
-        <span className="text-sm text-muted-foreground">{monthLabel}</span>
-        <Button variant="ghost" size="icon" onClick={() => setMonthOffset(m => m + 1)} disabled={monthOffset >= 0}>
+        <span className="text-sm text-muted-foreground" aria-live="polite">{monthLabel}</span>
+        <Button variant="ghost" size="icon" onClick={() => setMonthOffset(m => m + 1)} disabled={monthOffset >= 0} aria-label="Next month">
           <ChevronRight className="w-5 h-5" />
         </Button>
-      </div>
+      </nav>
 
       {/* Demo Data Banner */}
       {isDemo && (
@@ -95,7 +95,7 @@ export default function Dashboard() {
       )}
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3" role="region" aria-label="Financial summary">
         <div className="rounded-xl bg-secondary/50 p-3 text-center">
           <p className="text-xs text-muted-foreground">{t('income')}</p>
           <p className="text-sm font-bold text-income mt-1">{formatKRW(income || salary)}</p>
@@ -239,7 +239,7 @@ export default function Dashboard() {
                       {statusIcon && <span>{statusIcon}</span>}
                     </div>
                   </div>
-                  <div className="h-3 bg-secondary rounded-full overflow-hidden">
+                  <div className="h-3 bg-secondary rounded-full overflow-hidden" role="progressbar" aria-valuenow={Math.min(pct, 100)} aria-valuemin={0} aria-valuemax={100} aria-label={`${item.categoryName} budget usage`}>
                     <div
                       className={`h-full rounded-full transition-all duration-500 ${
                         isOver ? 'bg-destructive' : isWarning ? 'bg-amber-500' : 'bg-emerald-500'
@@ -281,7 +281,7 @@ export default function Dashboard() {
             <span className="text-muted-foreground">{t('overallBurnRate')}</span>
             <span className="font-bold">{totalBudget > 0 ? Math.round(expense / totalBudget * 100) : 0}%</span>
           </div>
-          <div className="h-4 bg-secondary rounded-full overflow-hidden">
+          <div className="h-4 bg-secondary rounded-full overflow-hidden" role="progressbar" aria-valuenow={totalBudget > 0 ? Math.round(expense / totalBudget * 100) : 0} aria-valuemin={0} aria-valuemax={100} aria-label="Overall budget burn rate">
             <div
               className={`h-full rounded-full transition-all duration-500 ${
                 expense > totalBudget ? 'bg-destructive' : expense > totalBudget * 0.8 ? 'bg-amber-500' : 'bg-primary'
