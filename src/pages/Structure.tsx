@@ -12,14 +12,40 @@ import {
 } from '@/hooks/useDB'
 import { formatNumber, getMonthKey } from '@/lib/utils'
 
-const GROUP_COLORS: Record<string, string> = {
-  '고정비': '#6366f1',
-  '생활비': '#f59e0b',
-  '저축/투자': '#10b981',
-  '자유지출': '#ec4899',
+// Group colors — locale-aware keys
+function getGroupColors(): Record<string, string> {
+  if (getLang() === 'ko') {
+    return {
+      '고정비': '#6366f1',
+      '생활비': '#f59e0b',
+      '저축/투자': '#10b981',
+      '자유지출': '#ec4899',
+      '저축': '#10b981',
+    }
+  }
+  return {
+    'Fixed': '#6366f1',
+    'Living': '#f59e0b',
+    'Savings/Investment': '#10b981',
+    'Savings': '#10b981',
+    'Discretionary': '#ec4899',
+  }
 }
 
-const DEFAULT_GROUP_ORDER = ['고정비', '생활비', '저축/투자', '자유지출']
+function getDefaultGroupOrder(): string[] {
+  if (getLang() === 'ko') {
+    return ['고정비', '생활비', '저축/투자', '자유지출']
+  }
+  return ['Fixed', 'Living', 'Savings/Investment', 'Discretionary']
+}
+
+function getDefaultGroupName(): string {
+  return getLang() === 'ko' ? '자유지출' : 'Discretionary'
+}
+
+function getFallbackCategoryName(): string {
+  return getLang() === 'ko' ? '기타' : 'Other'
+}
 
 const EMOJI_PRESETS = [
   '🍔', '🍚', '🚗', '🚌', '☕', '🛒', '💊', '📚', '🏠', '💰',
@@ -41,7 +67,7 @@ interface CategoryFormData {
   isIncome: boolean
 }
 
-const emptyForm: CategoryFormData = { name: '', icon: '📌', color: '#6B7280', groupName: '자유지출', isIncome: false }
+const emptyForm = (): CategoryFormData => ({ name: '', icon: '📌', color: '#6B7280', groupName: getDefaultGroupName(), isIncome: false })
 
 // Quick amount buttons — locale-aware
 function getQuickAmounts() {
@@ -61,6 +87,7 @@ function getQuickAmounts() {
 
 export default function Structure() {
   const { t } = useLanguage()
+  const GROUP_COLORS = getGroupColors()
   const salary = useMonthlySalary()
   const categories = useCategories()
   const monthKey = getMonthKey(new Date())
@@ -75,7 +102,7 @@ export default function Structure() {
   const [editMode, setEditMode] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
-  const [form, setForm] = useState<CategoryFormData>(emptyForm)
+  const [form, setForm] = useState<CategoryFormData>(emptyForm())
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null)
   const [deleteTransactionCount, setDeleteTransactionCount] = useState(0)
 
@@ -109,7 +136,7 @@ export default function Structure() {
   const groupNames = useMemo(() => {
     const expCats = categories.filter(c => !c.isIncome)
     const groups = new Set<string>()
-    DEFAULT_GROUP_ORDER.forEach(g => {
+    getDefaultGroupOrder().forEach(g => {
       if (expCats.some(c => c.groupName === g)) groups.add(g)
     })
     expCats.forEach(c => { if (c.groupName) groups.add(c.groupName) })
@@ -169,7 +196,7 @@ export default function Structure() {
   // Category CRUD
   const openAddDialog = useCallback((groupName?: string) => {
     setEditingCategory(null)
-    setForm({ ...emptyForm, groupName: groupName ?? '자유지출' })
+    setForm({ ...emptyForm(), groupName: groupName ?? getDefaultGroupName() })
     setDialogOpen(true)
   }, [])
 
@@ -179,7 +206,7 @@ export default function Structure() {
       name: cat.name,
       icon: cat.icon,
       color: cat.color,
-      groupName: cat.groupName ?? '자유지출',
+      groupName: cat.groupName ?? getDefaultGroupName(),
       isIncome: cat.isIncome,
     })
     setDialogOpen(true)
@@ -218,7 +245,7 @@ export default function Structure() {
   }
 
   const deleteCategory = async (catId: number) => {
-    const etcCat = categories.find(c => c.name === '기타')
+    const etcCat = categories.find(c => c.name === getFallbackCategoryName())
     if (etcCat) {
       await db.transactions.where('categoryId').equals(catId).modify({ categoryId: etcCat.id! })
     }
@@ -258,7 +285,7 @@ export default function Structure() {
 
   const deleteGroup = async (groupName: string) => {
     const groupCats = categories.filter(c => c.groupName === groupName)
-    const etcCat = categories.find(c => c.name === '기타' && c.groupName !== groupName)
+    const etcCat = categories.find(c => c.name === getFallbackCategoryName() && c.groupName !== groupName)
     for (const cat of groupCats) {
       if (etcCat) {
         await db.transactions.where('categoryId').equals(cat.id!).modify({ categoryId: etcCat.id! })
