@@ -175,13 +175,21 @@ export default function DataInput() {
 function CsvGuide() {
   const [open, setOpen] = useState(false)
   const { t } = useLanguage()
-  const guides = [
+  const lang = getLang()
+  const guides = lang === 'ko' ? [
     { name: '토스', steps: t('guideToss') },
     { name: '뱅크샐러드', steps: t('guideBanksalad') },
     { name: '삼성카드', steps: t('guideSamsung') },
     { name: 'KB국민', steps: t('guideKB') },
     { name: '신한', steps: t('guideShinhan') },
     { name: '현대', steps: t('guideHyundai') },
+  ] : [
+    { name: 'Chase', steps: t('guideToss') },
+    { name: 'Amex', steps: t('guideBanksalad') },
+    { name: 'Capital One', steps: t('guideSamsung') },
+    { name: 'Citi', steps: t('guideKB') },
+    { name: 'Wells Fargo', steps: t('guideShinhan') },
+    { name: 'Any Bank', steps: t('guideHyundai') },
   ]
 
   return (
