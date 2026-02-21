@@ -727,9 +727,9 @@ function TransactionList({
           <span className="text-lg">❓</span>
           <div>
             <p className="text-sm font-semibold text-yellow-700 dark:text-yellow-400">
-              {unclassifiedCount}건의 미분류 거래가 있습니다
+              {unclassifiedCount}{t('unclassifiedCount')}
             </p>
-            <p className="text-xs text-yellow-600/80 dark:text-yellow-500/80">PG사 결제 — 어디에 쓴 건지 알려주세요!</p>
+            <p className="text-xs text-yellow-600/80 dark:text-yellow-500/80">{t('unclassifiedHint')}</p>
           </div>
         </div>
       )}
@@ -745,7 +745,7 @@ function TransactionList({
         <div className="space-y-1">
           {visible.map(tx => {
             const cat = categories.find(c => c.id === tx.categoryId)
-            const dateStr = new Date(tx.date).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
+            const dateStr = new Date(tx.date).toLocaleDateString(getLang() === 'ko' ? 'ko-KR' : 'en-US', { month: 'short', day: 'numeric' })
             const isEditing = editingId === tx.id
             const unclassified = isUnclassified(tx)
 
@@ -771,7 +771,7 @@ function TransactionList({
                             className="shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-yellow-400/20 text-yellow-700 dark:text-yellow-400 text-[10px] font-semibold cursor-pointer hover:bg-yellow-400/30 transition-colors"
                             onClick={() => { setEditingId(tx.id!); setEditCatId(String(tx.categoryId)); setEditMemo('') }}
                           >
-                            ❓ 뭐였어?
+                            ❓ {t('whatWasThis')}
                           </span>
                         )}
                       </div>
@@ -788,7 +788,7 @@ function TransactionList({
                   <div className="mt-2 ml-9 space-y-2">
                     {unclassified && (
                       <Input
-                        placeholder="이 결제는 뭐였어? (예: 숨고 보컬레슨)"
+                        placeholder={t('whatWasThisPlaceholder')}
                         value={editMemo}
                         onChange={e => setEditMemo(e.target.value)}
                         className="h-8 text-xs"
