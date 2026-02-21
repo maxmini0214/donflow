@@ -3,10 +3,13 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { useLanguage } from '@/lib/i18n'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
+import { useTheme } from '@/hooks/useTheme'
 import KeyboardShortcutsHelp from '@/components/KeyboardShortcutsHelp'
 
 export default function Layout() {
   const { lang, setLang, t } = useLanguage()
+  const { theme, toggle: toggleTheme } = useTheme()
+  const themeIcon = theme === 'light' ? '☀️' : theme === 'dark' ? '🌙' : '💻'
   const [showShortcuts, setShowShortcuts] = useState(false)
   const toggleShortcuts = useCallback(() => setShowShortcuts(v => !v), [])
   useKeyboardShortcuts(toggleShortcuts)
@@ -26,6 +29,13 @@ export default function Layout() {
           {t('headerTitle')}
         </h1>
         <div className="flex items-center gap-2">
+          <button
+            onClick={toggleTheme}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-secondary/50"
+            title={`Theme: ${theme}`}
+          >
+            {themeIcon}
+          </button>
           <button
             onClick={() => setLang(lang === 'ko' ? 'en' : 'ko')}
             className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-secondary/50"
