@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { getLang } from './i18n'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -10,9 +11,7 @@ export function formatKRW(amount: number): string {
 }
 
 export function formatCurrency(amount: number): string {
-  const lang = typeof document !== 'undefined'
-    ? (navigator.language?.startsWith('ko') ? 'ko' : 'en')
-    : 'en'
+  const lang = getLang()
   if (lang === 'ko') {
     return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(amount)
   }
@@ -20,9 +19,7 @@ export function formatCurrency(amount: number): string {
 }
 
 export function formatNumber(amount: number): string {
-  const lang = typeof document !== 'undefined'
-    ? (navigator.language?.startsWith('ko') ? 'ko' : 'en')
-    : 'en'
+  const lang = getLang()
   return new Intl.NumberFormat(lang === 'ko' ? 'ko-KR' : 'en-US').format(amount)
 }
 

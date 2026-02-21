@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
+import { getLang } from '../lib/i18n'
 
 export interface Account {
   id?: number
@@ -225,7 +226,7 @@ export async function seedCategories() {
     return
   }
 
-  const isEN = !navigator.language.startsWith('ko')
+  const isEN = getLang() !== 'ko'
 
   const categories = isEN ? [
     { name: 'Groceries', icon: '🍽️', color: '#EF4444', isIncome: false, isDefault: true, displayOrder: 1, groupName: 'Living' },
