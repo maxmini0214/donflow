@@ -213,7 +213,7 @@ const translations = {
     // Dashboard
     income: 'Income',
     expense: 'Expense',
-    remainingBudget: 'Remaining',
+    remainingBudget: 'Budget Left',
     budgetExceeded: 'Over budget!',
     over: 'over',
     caution: 'Caution!',
