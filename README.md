@@ -98,7 +98,7 @@ DonFlow follows a strict **zero-network, browser-only** architecture.
 
 - **All computation happens client-side** — budget calculations, drift detection, what-if simulations
 - **IndexedDB as the sole data store** — no localStorage fallback, no cookies, no server sync
-- **Import pipeline** — SheetJS parses CSV/XLSX locally, auto-detects columns from any bank (Korean 14+ card issuers, US/intl bank CSVs with `$€£¥` amounts, accounting formats), maps to internal schema
+- **Import pipeline** — SheetJS parses CSV/XLSX locally, auto-detects columns from any bank or card issuer (supports `$€£¥₩` amounts, accounting formats, and 14+ statement formats), maps to internal schema
 - **No build-time secrets** — the deployed bundle contains zero API keys, tokens, or endpoints
 - **Static hosting** — GitHub Pages serves pre-built assets. The "server" is a CDN. There is no backend to compromise.
 
