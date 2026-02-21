@@ -7,7 +7,7 @@ import {
   useMonthlySalary,
   useCategories,
 } from '@/hooks/useDB'
-import { formatKRW, formatNumber, getMonthKey } from '@/lib/utils'
+import { formatCurrency, formatNumber, getMonthKey } from '@/lib/utils'
 import { useNavigate } from 'react-router-dom'
 import { useLanguage, getCurrency } from '@/lib/i18n'
 import { loadDemoData, clearDemoData, isDemoLoaded } from '@/db/demoData'
@@ -103,16 +103,16 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3" role="region" aria-label="Financial summary">
         <div className="rounded-xl bg-secondary/50 p-3 text-center">
           <p className="text-xs text-muted-foreground">{t('income')}</p>
-          <p className="text-sm font-bold text-income mt-1">{formatKRW(income || salary)}</p>
+          <p className="text-sm font-bold text-income mt-1">{formatCurrency(income || salary)}</p>
         </div>
         <div className="rounded-xl bg-secondary/50 p-3 text-center">
           <p className="text-xs text-muted-foreground">{t('expense')}</p>
-          <p className="text-sm font-bold text-expense mt-1">{formatKRW(expense)}</p>
+          <p className="text-sm font-bold text-expense mt-1">{formatCurrency(expense)}</p>
         </div>
         <div className="rounded-xl bg-secondary/50 p-3 text-center">
           <p className="text-xs text-muted-foreground">{t('remainingBudget')}</p>
           <p className={`text-sm font-bold mt-1 ${remainingBudget >= 0 ? 'text-income' : 'text-destructive'}`}>
-            {hasBudgets ? formatKRW(remainingBudget) : '-'}
+            {hasBudgets ? formatCurrency(remainingBudget) : '-'}
           </p>
         </div>
       </div>
