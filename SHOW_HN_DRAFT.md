@@ -24,7 +24,7 @@ Source: https://github.com/maxmini0214/donflow (MIT)
 
 Tech details for the curious:
 
-~4,450 lines of TypeScript across 25 files. Initial JS is code-split: 309KB main + 47KB React + 39KB UI + 116KB data layer (166KB total gzipped). SheetJS (429KB) is lazy-loaded only when you import an XLSX file, so the first paint doesn't pay for spreadsheet parsing. Core dependencies: Dexie.js wraps IndexedDB (gives structured queries over years of transactions without localStorage's 5MB cap), SheetJS parses CSV/XLSX uploads with auto-column-detection, and React + Vite for the UI. 101 commits, MIT licensed.
+~4,450 lines of TypeScript across 25 files. Initial JS is code-split: 309KB main + 47KB React + 39KB UI + 116KB data layer (166KB total gzipped). SheetJS (429KB) is lazy-loaded only when you import an XLSX file, so the first paint doesn't pay for spreadsheet parsing. Core dependencies: Dexie.js wraps IndexedDB (gives structured queries over years of transactions without localStorage's 5MB cap), SheetJS parses CSV/XLSX uploads with auto-column-detection, and React + Vite for the UI. 102 commits, MIT licensed.
 
 The drift detection engine compares your budget plan against actual categorized transactions and fires warnings when any category exceeds a configurable threshold. The what-if simulator clones your current state, lets you adjust allocations, and shows projected outcomes — all computed client-side in ~2ms for typical datasets.
 
@@ -111,10 +111,10 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 - **"AI is not a coworker, it's an exoskeleton"**: 447pts. Nuanced AI debate, not blanket rejection.
 - **Anthropic auth ban**: 643pts. Trust/privacy in tech conversation active.
 - **Ghostty terminal**: 166pts/70 comments (Feb 21). Another "single purpose + polished UX" hit. Pattern holds.
-- **Mines.fyi**: **43pts/23c in 3 hours** (Feb 21, now on Show HN front page!). Public data + clean Leaflet visualization = instant HN love. Confirms "simple data viz" pattern. "I downloaded public datasets and made a visualization" = the ultimate Show HN formula.
-- **Native macOS HN client**: 158pts/116 comments (Feb 21, up from 81). "Show your work" + tech details = sustained growth.
+- **Mines.fyi**: **49pts/32c in 4 hours** (Feb 21, Show HN front page #1!). Public data + clean Leaflet visualization + API docs = instant HN love. Confirms "simple data viz" pattern. 91,000+ US mines on a map. Clean domain (.fyi), fast load, API for developers.
+- **Native macOS HN client**: **170pts/131c** (Feb 21, up from 81). "Show your work" + tech details = sustained growth over 11 hours.
 - **Ledgr (competitor)**: Dead. 1-2pts, 0 comments after 5+ hours. Chase-only + macOS ARM-only = too narrow.
-- **Micasa**: **623pts** (still climbing on Day 2). Local-first terminal tool wave sustained.
+- **Micasa**: **624pts/198c** (Day 2, still climbing). Local-first terminal tool wave sustained.
 - **Timing validation**: Finance + privacy + local-first = three HN themes converging. Feb 25 launch window looks ideal.
 
 ### Key Micasa 615pts Meta-Insight (Feb 21)
