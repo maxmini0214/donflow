@@ -24,7 +24,7 @@ Source: https://github.com/maxmini0214/donflow (MIT)
 
 Tech details for the curious:
 
-~4,500 lines of TypeScript across 25 files. Initial JS is code-split: 310KB main + 47KB React + 39KB UI + 116KB data layer (166KB total gzipped). SheetJS (429KB) is lazy-loaded only when you import an XLSX file, so the first paint doesn't pay for spreadsheet parsing. Core dependencies: Dexie.js wraps IndexedDB (gives structured queries over years of transactions without localStorage's 5MB cap), SheetJS parses CSV/XLSX uploads with auto-column-detection, and React + Vite for the UI. Dark/light/system theme toggle. EN/한국어 language switcher. 104 commits, MIT licensed.
+~4,500 lines of TypeScript across 25 files. Initial JS is code-split: 310KB main + 47KB React + 39KB UI + 116KB data layer (166KB total gzipped). SheetJS (429KB) is lazy-loaded only when you import an XLSX file, so the first paint doesn't pay for spreadsheet parsing. Core dependencies: Dexie.js wraps IndexedDB (gives structured queries over years of transactions without localStorage's 5MB cap), SheetJS parses CSV/XLSX uploads with auto-column-detection, and React + Vite for the UI. Dark/light/system theme toggle. EN/한국어 language switcher. 107 commits, MIT licensed.
 
 The drift detection engine compares your budget plan against actual categorized transactions and fires warnings when any category exceeds a configurable threshold. The what-if simulator clones your current state, lets you adjust allocations, and shows projected outcomes — all computed client-side in ~2ms for typical datasets.
 
