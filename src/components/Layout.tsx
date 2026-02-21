@@ -6,7 +6,7 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import KeyboardShortcutsHelp from '@/components/KeyboardShortcutsHelp'
 
 export default function Layout() {
-  const { t } = useLanguage()
+  const { lang, setLang, t } = useLanguage()
   const [showShortcuts, setShowShortcuts] = useState(false)
   const toggleShortcuts = useCallback(() => setShowShortcuts(v => !v), [])
   useKeyboardShortcuts(toggleShortcuts)
@@ -25,14 +25,23 @@ export default function Layout() {
         <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
           {t('headerTitle')}
         </h1>
-        <button
-          onClick={toggleShortcuts}
-          className="hidden md:flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-secondary/50"
-          title="Keyboard shortcuts"
-        >
-          <kbd className="px-1.5 py-0.5 rounded border border-border bg-secondary/50 text-[10px] font-mono">?</kbd>
-          <span>shortcuts</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setLang(lang === 'ko' ? 'en' : 'ko')}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-secondary/50"
+            title="Switch language"
+          >
+            {lang === 'ko' ? '🌐 EN' : '🌐 한국어'}
+          </button>
+          <button
+            onClick={toggleShortcuts}
+            className="hidden md:flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-secondary/50"
+            title="Keyboard shortcuts"
+          >
+            <kbd className="px-1.5 py-0.5 rounded border border-border bg-secondary/50 text-[10px] font-mono">?</kbd>
+            <span>shortcuts</span>
+          </button>
+        </div>
       </header>
 
       {/* Main */}
