@@ -58,6 +58,17 @@ Your data is yours. Always.
 
 DonFlow is for people who want to **design their financial structure** — not just record what happened.
 
+## Searching for Alternatives?
+
+If you're looking for a **YNAB alternative**, **Mint alternative**, or **Toss alternative** that doesn't require a subscription, account, or handing over your bank credentials — DonFlow might be what you need.
+
+- **Tired of YNAB's $99/year?** → DonFlow is free forever, open source, and runs entirely in your browser.
+- **Miss Mint?** → DonFlow gives you plan-vs-actual tracking without the ads, analytics, or Intuit ecosystem.
+- **Want more than Toss/bank apps?** → DonFlow lets you *design* your budget structure, not just view transactions.
+- **Privacy-conscious?** → Zero network requests. Zero tracking. Your data never leaves your machine. [Verify it yourself.](https://maxmini0214.github.io/donflow/)
+
+DonFlow works as a **Google Sheets budget template alternative** too — with auto-import, drift alerts, and what-if simulation built in.
+
 ## Quick Start
 
 1. Visit [DonFlow](https://maxmini0214.github.io/donflow/)
