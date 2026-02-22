@@ -35,6 +35,7 @@ export default defineConfig({
         items: [
           { text: 'Architecture', link: '/guide/architecture' },
           { text: 'Privacy', link: '/guide/privacy' },
+          { text: 'Data Portability', link: '/guide/data-portability' },
         ]
       },
       {
