@@ -1,6 +1,6 @@
 # DonFlow 💰
 
-![Local-First](https://img.shields.io/badge/local--first-yes-brightgreen) ![No AI](https://img.shields.io/badge/AI-none-blue) ![Zero Backend](https://img.shields.io/badge/backend-zero-orange) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
+![Local-First](https://img.shields.io/badge/local--first-yes-brightgreen) ![No AI](https://img.shields.io/badge/AI-none-blue) ![Zero Backend](https://img.shields.io/badge/backend-zero-orange) ![License: MIT](https://img.shields.io/badge/license-MIT-green) [![Dev.to](https://img.shields.io/badge/Featured_on-Dev.to-0A0A0A?logo=devdotto)](https://dev.to/maxxmini/i-built-a-budget-app-with-zero-ai-zero-backend-zero-tracking-heres-why-58m9)
 
 **You made a budget once. Then life happened — and the spreadsheet stayed frozen while your money didn't.**
 
