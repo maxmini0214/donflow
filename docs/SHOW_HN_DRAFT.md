@@ -105,3 +105,16 @@ A: Open DevTools → Network tab → use it for an hour. Zero requests. Not a cl
 
 **Q: "Will you add bank API integration?"**
 A: Probably not. Plaid/Yodlee mean server costs, user auth, and financial data in transit. The CSV/XLSX upload flow keeps everything local. Most banks let you download statements in 2 clicks.
+
+**Q: "What's the roadmap?"**
+A: Near-term: recurring transactions (auto-fill monthly bills), budget templates (50/30/20 etc.), and periodic backup reminders. Medium-term: optional CRDT-based sync for people who want multi-device without a server. Long-term: PWA install for true offline-first mobile experience. I won't add anything that requires a server or sends data anywhere.
+
+**Q: "How is this different from a spreadsheet?"**
+A: A spreadsheet shows you numbers. DonFlow shows you drift. The core feature is the plan-vs-actual comparison — you set a budget structure, upload your actual spending, and see exactly where and by how much you're off. You could build this in a spreadsheet, but you'd spend more time maintaining the spreadsheet than budgeting. I know because I tried for two years.
+
+---
+
+## Dev.to Cover Image Fix (TODO)
+- OG image 라이브: `https://maxmini0214.github.io/donflow/og-image.png` (1200x630)
+- Dev.to API로 cover_image 필드 업데이트 필요 (API 키 필요 → max 또는 다음 세션)
+- cover_image=null이면 Dev.to 피드에서 텍스트만 보임 → 클릭률 현저히 낮음
