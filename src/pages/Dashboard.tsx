@@ -32,8 +32,24 @@ export default function Dashboard() {
   const [isDemo, setIsDemo] = useState(false)
   const [demoLoading, setDemoLoading] = useState(false)
 
+  // Auto-load demo data when ?demo is in the URL
   useEffect(() => {
-    isDemoLoaded().then(setIsDemo)
+    isDemoLoaded().then(async (loaded) => {
+      setIsDemo(loaded)
+      if (!loaded && window.location.search.includes('demo')) {
+        setDemoLoading(true)
+        try {
+          await loadDemoData()
+          setIsDemo(true)
+        } finally {
+          setDemoLoading(false)
+          // Clean up URL without reload
+          const url = new URL(window.location.href)
+          url.searchParams.delete('demo')
+          window.history.replaceState({}, '', url.toString())
+        }
+      }
+    })
   }, [expense, income])
 
   const handleLoadDemo = useCallback(async () => {
