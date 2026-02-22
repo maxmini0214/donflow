@@ -2,9 +2,9 @@
 
 ![Local-First](https://img.shields.io/badge/local--first-yes-brightgreen) ![No AI](https://img.shields.io/badge/AI-none-blue) ![Zero Backend](https://img.shields.io/badge/backend-zero-orange) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-**A browser-only budget planner that compares plans vs. reality.**
+**You made a budget once. Then life happened — and the spreadsheet stayed frozen while your money didn't.**
 
-> No server. No signup. No tracking. Your financial data never leaves your browser.
+DonFlow shows you exactly where your plan and reality diverge. Browser-only. No server. No signup. No tracking. Your financial data never leaves your machine.
 
 🔗 **[Try it live →](https://maxmini0214.github.io/donflow/)**  
 🎲 Click **"Try Demo Data"** on the dashboard to explore with sample transactions.
@@ -13,9 +13,7 @@
 
 ## Why DonFlow?
 
-Most budget apps track what you *spent*. DonFlow tracks what you *planned* — and shows you where reality diverges.
-
-> **"I set up a budget spreadsheet once, then never opened it again."** Sound familiar? DonFlow is for the people who *want* a budget structure but find spreadsheets too tedious to maintain.
+Most budget apps track what you *spent*. DonFlow tracks what you *planned* — and shows you where reality diverges. It's for people who *want* a budget structure but find spreadsheets too tedious to maintain.
 
 - 📊 **Plan vs. Actual Dashboard** — Progress bars show budget vs. real spending per category
 - ⚠️ **Drift Warnings** — Get alerted when spending exceeds your plan
