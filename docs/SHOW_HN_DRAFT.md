@@ -105,7 +105,7 @@ DonFlow's core loop: set a plan → upload your actual bank statements → see e
 
 A few technical decisions:
 
-**Why IndexedDB instead of a server?** Zero excuses for not using it. No signup friction, no "is my data safe" anxiety. The tradeoff is no cross-device sync — acceptable for something you check weekly.
+**Why IndexedDB instead of a server?** Zero excuses for not using it. No signup friction, no "is my data safe" anxiety, no vendor that can suspend your account or shut down. The tradeoff is no cross-device sync — acceptable for something you check weekly.
 
 **Why no AI?** Budget drift is a math problem, not a prediction problem. Your finances need a clear diff, not a language model. Adding AI would've meant sending financial data somewhere, which defeats the whole point.
 
