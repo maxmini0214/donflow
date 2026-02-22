@@ -7,7 +7,7 @@
 DonFlow shows you exactly where your plan and reality diverge. Browser-only. No server. No signup. No tracking. Your financial data never leaves your machine.
 
 🔗 **[Try it live →](https://maxmini0214.github.io/donflow/)**  
-🎲 Click **"Try Demo Data"** on the dashboard to explore with sample transactions.
+🎲 **[Try with demo data →](https://maxmini0214.github.io/donflow/?demo)** — loads instantly with sample transactions, no setup needed.
 
 ![DonFlow Demo](docs/demo.gif)
 
