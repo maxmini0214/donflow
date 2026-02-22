@@ -3,7 +3,23 @@
 ## Title
 Show HN: DonFlow – Plan vs. reality budget tracker, 100% browser-only
 
-## Text
+## Text (Short — for the post body)
+I'm a Google Sheets refugee. Every few months I'd build a new budget spreadsheet, then life happens and the plan and reality completely diverge. Fixing it in a spreadsheet is tedious enough that I just… don't.
+
+DonFlow solves that specific loop. Set a financial plan once, upload bank/card exports (CSV/XLSX), and it shows you where reality is drifting from your plan — with drift warnings and a what-if simulator to test changes before committing.
+
+100% browser-only: IndexedDB for storage, zero network requests, no signup. Open DevTools and verify — nothing phones home. Works offline, full JSON export, no vendor lock-in.
+
+Try it: https://maxmini0214.github.io/donflow/?demo
+
+Source: https://github.com/maxmini0214/donflow (MIT)
+
+Would love feedback on the UX — especially the plan-vs-reality flow.
+
+## Text (Long — DEPRECATED, kept for reference)
+<details>
+<summary>Previous long version</summary>
+
 I'm a Google Sheets refugee. Every few months I'd build a new budget spreadsheet — income allocations, category targets, the works. Then life happens, I stop updating it, and three months later the plan and reality have completely diverged. Fixing it in a spreadsheet is tedious enough that I just… don't.
 
 DonFlow is the tool I built to solve that specific loop. You set a financial plan once, upload your bank/card exports, and it shows you where reality is drifting from your plan. It's 100% browser-only: IndexedDB for storage, zero network requests, no signup. Open DevTools and verify — there's literally nothing phoning home.
@@ -31,6 +47,7 @@ The drift detection engine compares your budget plan against actual categorized 
 No service worker tricks for "offline" marketing — it genuinely works offline because there's no server to talk to. The SW just caches the static assets on first visit.
 
 Would love feedback on the UX — especially the plan-vs-reality flow.
+</details>
 
 ## Notes
 - ✅ **Demo GIF**: docs/demo.gif (165KB, 5 frames, welcome→dashboard→budgets→structure→data)
@@ -143,6 +160,58 @@ Angle for Show HN comments: "A spreadsheet shows you numbers. DonFlow shows you 
 - [x] Add "Google Sheets refugee" angle to opening line ✅ Rewritten opening paragraph
 - [x] Keyboard shortcuts added (1/2/3 nav, ? help overlay) ✅ commit cf5985b
 - [x] Prepared FAQ responses for fast replies ✅
+
+## Maker's First Comment (post immediately after submission)
+
+Hey, maker here. A few things that might save you time reading the code:
+
+**Why I built this**: I used Google Sheets for budgeting for 2 years. The pattern was always the same — spend a Sunday building a beautiful spreadsheet, update it for a month, then abandon it when reality drifted too far from the plan. The problem wasn't tracking spending (plenty of apps do that). It was that nobody tells you your budget *structure* is wrong.
+
+**Three tech decisions and why**:
+
+1. **IndexedDB over localStorage**: localStorage caps at 5-10MB. IndexedDB gives you hundreds of MB with structured queries — you can store years of transactions. Dexie.js makes the API tolerable.
+
+2. **No AI categorization**: I considered it, but for budgeting you need *your* categories, not what an LLM thinks "Starbucks" should be. Manual category mapping takes 30 seconds and is 100% accurate.
+
+3. **SheetJS lazy-loaded**: The XLSX parser is 429KB. It only loads when you actually import a spreadsheet file. First paint doesn't pay for it. Initial bundle is 166KB gzipped.
+
+**Numbers for the curious**: ~4,500 lines of TypeScript, 25 files. Drift detection compares plan vs actual per category and fires warnings at configurable thresholds. What-if simulator clones state and computes projections in ~2ms. Dark/light/system theme, EN/한국어 switcher, keyboard shortcuts (1/2/3 tabs, ? for help).
+
+Feedback I'd especially appreciate:
+- Is the plan-vs-reality flow intuitive on first use?
+- Mobile UX — anything broken or awkward?
+- What export format would you actually use? (currently JSON/CSV/XLSX)
+
+## D-Day Execution Plan (2/24 Tue 23:00 KST = 10:00 ET)
+
+### T-30min: Final QA
+- [ ] DonFlow ?demo loads correctly
+- [ ] All docs pages live (8 pages)
+- [ ] GitHub README renders (badges, links)
+- [ ] OG image loads
+
+### T-0: Submit
+- URL: https://maxmini0214.github.io/donflow/?demo
+- Title: Show HN: DonFlow – Plan vs. reality budget tracker, 100% browser-only
+- Text: Short version (see above)
+- Submit method: URL + Text (both fields)
+
+### T+1min: Maker comment
+- Post the maker comment above immediately
+
+### T+5min to T+2h: GOLDEN TIME
+- Reply to every comment within 5 minutes
+- Use FAQ responses as templates, personalize each one
+- Be honest about limitations
+
+### T+2h to T+24h: Monitor
+- Check every 30 minutes
+- Prioritize new comments over upvote watching
+
+### Emergency scenarios:
+1. **Site down**: Switch to GitHub repo URL immediately
+2. **Stuck at 2pts**: Normal for first hour. Don't panic until hour 3
+3. **"Another budget app" criticism**: Lead with drift detection differentiator + spreadsheet story
 
 ## Prepared FAQ Responses (copy-paste ready)
 
