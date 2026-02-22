@@ -10,7 +10,22 @@ https://maxmini0214.github.io/donflow/?demo
 
 > 💡 ?demo URL 사용 — 클릭 즉시 데모 데이터로 풀 체험 가능
 
-## Text (HN 본문)
+## Text (HN 본문) — COMPRESSED v2
+
+Every few months I'd make a new budget spreadsheet. It looked great for two weeks, then life happened and the plan froze. Fixing a spreadsheet is tedious enough that most people just don't.
+
+DonFlow shows you where you're drifting. Upload bank statements (CSV/XLSX), see plan-vs-actual per category, get drift warnings when spending diverges from your plan.
+
+Zero network requests, no account, no AI, no server. All data in IndexedDB — open DevTools Network tab to verify. MIT licensed.
+
+Try the demo (loads sample data): https://maxmini0214.github.io/donflow/?demo
+
+Source: https://github.com/maxmini0214/donflow
+
+> **📏 5줄. Shuru(41pts)와 같은 밀도. 기술 디테일은 전부 maker comment로.**
+
+<details>
+<summary>이전 긴 버전 (보관용)</summary>
 
 Every few months I'd make a new budget spreadsheet. Income targets, category splits, savings goals — it looked great for two weeks. Then life happened, the plan froze, and three months later plan and reality had completely diverged. Fixing a spreadsheet is tedious enough that most people just don't.
 
@@ -30,6 +45,7 @@ Supports 14+ card statement formats ($, €, £, ¥, ₩), auto-detects columns,
 Try the demo: https://maxmini0214.github.io/donflow/?demo (loads sample data, no setup needed)
 
 Source: https://github.com/maxmini0214/donflow
+</details>
 
 ---
 
