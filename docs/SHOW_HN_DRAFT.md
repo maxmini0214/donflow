@@ -143,7 +143,7 @@ A: A spreadsheet shows you numbers. DonFlow shows you drift. The core feature is
 2. **Title**: `Show HN: DonFlow – See where your budget plan and reality diverge (browser-only)`
 3. **URL**: `https://maxmini0214.github.io/donflow/?demo`
 4. **Text**: 위 본문 복붙 (Show HN은 URL 또는 Text 중 하나만. URL+Text 둘 다 쓰려면 Text에 URL 포함)
-5. ⚠️ HN은 URL 제출이면 Text 안 들어감! → **Text 제출** 방식 사용 (본문 안에 URL 포함)
+5. ✅ **URL + Text 둘 다 입력** — Show HN은 URL+Text 동시 제출 가능 (ntransformer 350pts, Shuru 19pts 모두 이 방식). URL에 ?demo, Text에 설명. 일반 Ask HN만 Text-only.
 
 ### T+1min
 1. 방금 올린 포스트에 **maker comment** 즉시 달기 (위 초안 복붙)
