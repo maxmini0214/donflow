@@ -99,24 +99,26 @@ maker comment에서 "이게 왜 18번째 예산 앱이 아닌지"를 첫 문장�
 ```
 Hey HN, maker here.
 
-I built this because I kept making budget spreadsheets that looked great for two weeks, then diverged from reality. The fix-the-spreadsheet loop was tedious enough that I'd just... stop.
+This isn't a budget tracker — it's a drift detector. I noticed that the actual problem isn't "where did my money go?" (Mint/YNAB solve that). The problem is "my plan said X, reality is Y, and I didn't notice until it was too late." I kept making budget spreadsheets that looked great for two weeks, then diverged silently. Fixing them was tedious enough that I'd just... stop.
 
-A few technical decisions worth explaining:
+DonFlow's core loop: set a plan → upload your actual bank statements → see exactly where and by how much you're drifting. The drift warnings are the whole point.
 
-**Why IndexedDB instead of a server?** I wanted zero excuses for not using it. No signup friction, no "is my data safe" anxiety, no server to maintain. The tradeoff is no cross-device sync, which I think is acceptable for a budgeting tool you check once a week.
+A few technical decisions:
 
-**Why no AI?** I genuinely considered it. But budget planning is a math + discipline problem, not a prediction problem. Your finances don't need a language model — they need a clear diff between what you planned and what happened. Adding AI would've meant sending financial data somewhere, which defeats the whole point.
+**Why IndexedDB instead of a server?** Zero excuses for not using it. No signup friction, no "is my data safe" anxiety. The tradeoff is no cross-device sync — acceptable for something you check weekly.
 
-**Why SheetJS for parsing?** Bank/card statement formats are a mess. I tested 14 Korean card issuers and ~200 merchants. SheetJS handles the encoding/format chaos so users can just drag-drop their bank export.
+**Why no AI?** Budget drift is a math problem, not a prediction problem. Your finances need a clear diff, not a language model. Adding AI would've meant sending financial data somewhere, which defeats the whole point.
 
-The `?demo` link loads sample data so you can try everything without entering real numbers.
+**Why SheetJS?** Bank statement formats are a mess. I tested with 14 card issuers and ~200 merchants across different formats. SheetJS handles encoding chaos so you just drag-drop your bank export. Works with any bank that lets you download CSV or XLSX.
 
-Things I'd love feedback on:
-- Is the plan-vs-actual visualization intuitive?
-- Would you actually use this, or does the lack of mobile app kill it?
-- Any export formats I'm missing?
+The `?demo` link loads sample data so you can try the drift visualization without entering real numbers.
 
-Happy to answer questions about the architecture or anything else.
+Feedback I'd love:
+- Is the plan-vs-actual drift visualization intuitive?
+- Would you use this, or does lack of a mobile app kill it?
+- Any export formats missing?
+
+Happy to discuss architecture or anything else.
 ```
 
 ### 예상 질문 & 답변 준비
