@@ -25,7 +25,7 @@ Architecture decisions:
 
 Built with React, TypeScript, Dexie.js, SheetJS. MIT licensed.
 
-Supports 14+ card statement formats (₩, $, €, £, ¥), auto-detects columns, handles accounting notation.
+Supports 14+ card statement formats ($, €, £, ¥, ₩), auto-detects columns, handles accounting notation.
 
 Try the demo: https://maxmini0214.github.io/donflow/?demo (loads sample data, no setup needed)
 
@@ -125,6 +125,47 @@ A: Near-term: recurring transactions (auto-fill monthly bills), budget templates
 
 **Q: "How is this different from a spreadsheet?"**
 A: A spreadsheet shows you numbers. DonFlow shows you drift. The core feature is the plan-vs-actual comparison — you set a budget structure, upload your actual spending, and see exactly where and by how much you're off. You could build this in a spreadsheet, but you'd spend more time maintaining the spreadsheet than budgeting. I know because I tried for two years.
+
+---
+
+---
+
+## 🚀 D-Day Execution Plan (2/24 화 23:00 KST)
+
+### T-30min (22:30 KST)
+1. Final QA: `?demo` 접속, 각 탭 클릭, export 버튼 테스트
+2. GitHub README 정상 렌더링 확인
+3. docs 서브페이지 1개 랜덤 접속 확인
+4. OG image 확인 (Twitter Card Validator 또는 직접)
+
+### T-0 (23:00 KST = 09:00 ET)
+1. https://news.ycombinator.com/submit 접속
+2. **Title**: `Show HN: DonFlow – See where your budget plan and reality diverge (browser-only)`
+3. **URL**: `https://maxmini0214.github.io/donflow/?demo`
+4. **Text**: 위 본문 복붙 (Show HN은 URL 또는 Text 중 하나만. URL+Text 둘 다 쓰려면 Text에 URL 포함)
+5. ⚠️ HN은 URL 제출이면 Text 안 들어감! → **Text 제출** 방식 사용 (본문 안에 URL 포함)
+
+### T+1min
+1. 방금 올린 포스트에 **maker comment** 즉시 달기 (위 초안 복붙)
+2. 새 탭에서 show HN 페이지 새로고침 → 게시 확인
+
+### T+5min ~ T+2h (골든타임)
+1. **모든 댓글에 5분 이내 응답** — 이게 upvote를 결정
+2. 기술 질문 → FAQ 참고해서 답변
+3. 비판 → 방어하지 말고 "good point, I'll consider that" + 이유 설명
+4. "Why not YNAB?" → 준비된 답변
+5. Dev.to 글 URL도 관련 댓글에 자연스럽게 언급 가능 (단, 스팸처럼 보이면 안 됨)
+
+### T+2h~T+24h
+1. 30분마다 새 댓글 체크
+2. 모든 피드백 기록 → GitHub Issues 또는 memory/
+3. **절대 upvote 요청 금지**
+4. 결과 기록: 포인트, 댓글 수, 피드백 테마
+
+### 비상 시나리오
+- **사이트 다운**: GitHub Pages는 거의 안 죽지만, 만약이면 HN 댓글에 "GitHub Pages seems to be having issues, trying to fix" 즉시 달기
+- **2pts 30min**: 정상. 포기하지 말고 댓글 대응 계속. 많은 Show HN이 느리게 시작해서 2-3시간 후 떠오름
+- **"This is just another budget app"**: 준비된 차별화 포인트 (drift detection) 즉시 설명
 
 ---
 
