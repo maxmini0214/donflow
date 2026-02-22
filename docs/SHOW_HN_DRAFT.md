@@ -56,6 +56,18 @@ Source: https://github.com/maxmini0214/donflow
 - **현재**: 일요일 밤 → 월요일은 HN 트래픽 낮음 → 화~목 대기
 - **추천**: 2/24(화) 또는 2/25(수) 밤 23시~01시 KST
 
+### ⚠️ 경쟁 분석 — 재무앱 Show HN 실적 (2025~2026)
+모든 최근 개인금융 Show HN이 실패함:
+- **Whisper Money** (2026-01-17) — "zero-knowledge, E2E encrypted" → **3pts, 1 comment**
+- **Budgetist** (2025-10-10) — "local-first, double-entry" → **2pts, 0 comments**
+- **Fin Serv Rust** (2025-12-01) → **1pt, 0 comments**
+- **calories.today** (2026-02-23) — "I quit MyNetDiary" → **2pts after 3h** (진행 중)
+
+**교훈**: HN에서 "또 다른 예산 앱"으로 보이면 즉사. 
+DonFlow의 생존 전략 = **drift detection (계획 vs 현실 괴리 감지)**를 전면에.
+"budget app" 아닌 **"budget drift detector"**로 포지셔닝.
+maker comment에서 "이게 왜 18번째 예산 앱이 아닌지"를 첫 문장부터 설명.
+
 ### 주의사항 (HN 가이드라인)
 - 제목에 대문자/느낌표 금지
 - 댓글에 방어적이지 말고 호기심으로 대응
