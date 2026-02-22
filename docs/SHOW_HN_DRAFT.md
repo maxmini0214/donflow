@@ -1,7 +1,9 @@
 # Show HN Draft — DonFlow
 
 ## Title (max 80 chars)
-Show HN: DonFlow – Budget tracker that shows where plan and reality diverge (browser-only)
+Show HN: DonFlow – See where your budget plan and reality diverge (browser-only)
+
+> 79자. 대안: "Show HN: DonFlow – Plan vs. reality budget tracker, 100% in your browser" (73자)
 
 ## URL
 https://maxmini0214.github.io/donflow/?demo
@@ -44,7 +46,7 @@ Source: https://github.com/maxmini0214/donflow
 - [x] OG 태그 + 소셜 이미지
 
 ### 미완 ❌
-- [ ] Cover image for Dev.to 글 (피드 노출 ↑)
+- [x] Cover image for Dev.to 글 ✅ (main_image API로 OG 이미지 반영 완료)
 - [ ] 모바일 스크린샷 (HN 유저 질문 선제 대응)
 - [ ] GitHub Actions CI (PAT workflow scope 필요 → max에게 요청)
 - [x] VitePress docs 배포 ✅ (2/23 02:17 — public/docs/에 빌드, 7페이지 전부 라이브)
@@ -114,7 +116,6 @@ A: A spreadsheet shows you numbers. DonFlow shows you drift. The core feature is
 
 ---
 
-## Dev.to Cover Image Fix (TODO)
-- OG image 라이브: `https://maxmini0214.github.io/donflow/og-image.png` (1200x630)
-- Dev.to API로 cover_image 필드 업데이트 필요 (API 키 필요 → max 또는 다음 세션)
-- cover_image=null이면 Dev.to 피드에서 텍스트만 보임 → 클릭률 현저히 낮음
+## Dev.to Cover Image ✅ DONE
+- `main_image` API 필드로 업데이트 완료 (2/23 03:14)
+- cover_image 정상 표시: `https://maxmini0214.github.io/donflow/og-image.png`
