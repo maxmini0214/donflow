@@ -58,6 +58,24 @@
   border-color: var(--color-border);
 }
 
+/* Mobile UX: prevent pull-to-refresh, text selection on interactive elements */
+html {
+  overscroll-behavior: none;
+}
+
+button, [role="button"], .cursor-pointer, input[type="range"] {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Prevent accidental text selection on drag/tap in data areas */
+table td, table th, .progress-bar, .chart-container {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
