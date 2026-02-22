@@ -104,7 +104,7 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 - If Ledgr gets traction, it primes the audience for DonFlow's Show HN
 - **Do NOT position against Ledgr** — position as complementary (they categorize, we plan)
 
-### HN Front Page Zeitgeist (Feb 20-21)
+### HN Front Page Zeitgeist (Feb 20-22)
 - **"America vs Singapore: You can't save your way out of economic shocks"** — 302pts. Personal finance topic trending on HN front. HN audience is thinking about money, budgets, financial planning RIGHT NOW.
 - **Gemini 3.1 Pro**: 914pts dominating. AI fatigue angle still valid for our "No AI" positioning.
 - **Micasa**: 615pts (still climbing, Feb 21 05:30 KST). Local-first wave confirmed and sustained.
@@ -116,6 +116,16 @@ Would love feedback on the UX — especially the plan-vs-reality flow.
 - **Ledgr (competitor)**: Dead. 1-2pts, 0 comments after 5+ hours. Chase-only + macOS ARM-only = too narrow.
 - **Micasa**: **624pts/198c** (Day 2, still climbing). Local-first terminal tool wave sustained.
 - **Timing validation**: Finance + privacy + local-first = three HN themes converging. Feb 25 launch window looks ideal.
+
+### HN Show Trends (Feb 22, latest scan)
+- **Micasa**: 641pts (still climbing Day 3). Local-first wave SUSTAINED.
+- **#1 today**: "Llama 3.1 70B on single RTX 3090 via NVMe-to-GPU" (298pts) — ML/hardware. Different category, won't compete.
+- **Glitch Art Maker** (22pts): "100% client-side" in title. Client-side positioning still resonates.
+- **Iron-Wolf** (74pts): Rust port of Wolfenstein. Nostalgia + tech craft = HN love.
+- **AI tools flooding Show HN**: ByePhone, CanaryAI, Claude-ts, crypto bots — most at 2-5pts. AI fatigue confirmed. Our "No AI" angle is contrarian gold.
+- **Screenwright** (2pts): "Turn Playwright E2E tests into demo videos" — interesting tool, low traction.
+- **Philosophical thread on Micasa STILL active**: "A product exports the _education_ of that domain" — this is our exact pitch.
+- **Feb 25 (Tue) launch: GREEN LIGHT** — Micasa will have cooled, local-first sentiment primed, no competing finance tool in sight.
 
 ### Key Micasa 615pts Meta-Insight (Feb 21)
 The HN discussion went philosophical: **"Most SaaS = an Excel template with curated CRUD on domain models."** Top commenter argued the real value of a product is "exporting the _education_ and information architecture of that domain."
