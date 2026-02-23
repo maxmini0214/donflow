@@ -379,6 +379,41 @@ export default function Dashboard() {
           ☕ Buy Me a Coffee via PayPal
         </a>
       </div>
+
+      {/* More by MaxMini */}
+      <div className="rounded-xl p-4 space-y-3" style={{background: 'linear-gradient(135deg, rgba(99,102,241,0.08), rgba(168,85,247,0.05))', border: '1px solid rgba(99,102,241,0.15)'}}>
+        <p className="text-sm font-semibold text-center">🛠️ More Free Tools by MaxMini</p>
+        <div className="grid grid-cols-3 gap-2">
+          <a
+            href="https://maxmini0214.github.io/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-secondary/50 transition-colors text-center"
+          >
+            <span className="text-lg">⚡</span>
+            <span className="text-xs font-medium">27+ Dev Tools</span>
+          </a>
+          <a
+            href="https://maxmini0214.github.io/games.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-secondary/50 transition-colors text-center"
+          >
+            <span className="text-lg">🎮</span>
+            <span className="text-xs font-medium">27 Browser Games</span>
+          </a>
+          <a
+            href="https://maxmini0214.github.io/store.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-secondary/50 transition-colors text-center"
+          >
+            <span className="text-lg">📚</span>
+            <span className="text-xs font-medium">Dev Resources</span>
+          </a>
+        </div>
+        <p className="text-[10px] text-muted-foreground text-center">All free, all browser-only, all open source.</p>
+      </div>
     </div>
   )
 }
