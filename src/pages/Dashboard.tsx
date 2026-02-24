@@ -385,7 +385,7 @@ export default function Dashboard() {
         <p className="text-sm font-semibold text-center">🛠️ More Free Tools by MaxMini</p>
         <div className="grid grid-cols-3 gap-2">
           <a
-            href="https://maxmini0214.github.io/"
+            href="https://maxmini0214.github.io/?ref=hn"
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-secondary/50 transition-colors text-center"
@@ -394,7 +394,7 @@ export default function Dashboard() {
             <span className="text-xs font-medium">27+ Dev Tools</span>
           </a>
           <a
-            href="https://maxmini0214.github.io/games.html"
+            href="https://maxmini0214.github.io/games.html?ref=hn"
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-secondary/50 transition-colors text-center"
@@ -403,7 +403,7 @@ export default function Dashboard() {
             <span className="text-xs font-medium">27 Browser Games</span>
           </a>
           <a
-            href="https://maxmini0214.github.io/store.html"
+            href="https://maxmini0214.github.io/store.html?ref=hn"
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-secondary/50 transition-colors text-center"
