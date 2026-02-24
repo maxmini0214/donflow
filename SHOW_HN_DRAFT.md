@@ -175,7 +175,7 @@ Hey, maker here. A few things that might save you time reading the code:
 
 3. **SheetJS lazy-loaded**: The XLSX parser is 429KB. It only loads when you actually import a spreadsheet file. First paint doesn't pay for it. Initial bundle is 166KB gzipped.
 
-**Numbers for the curious**: ~4,700 lines of TypeScript, 28 files, 145 commits. Drift detection compares plan vs actual per category and fires warnings at configurable thresholds. What-if simulator clones state and computes projections in ~2ms. Dark/light/system theme, EN/한국어 switcher, keyboard shortcuts (1/2/3 tabs, ? for help).
+**Numbers for the curious**: ~4,700 lines of TypeScript + CSS, 28 files, 146 commits. Drift detection compares plan vs actual per category and fires warnings at configurable thresholds. What-if simulator clones state and computes projections in ~2ms. Dark/light/system theme, EN/한국어 switcher, keyboard shortcuts (1/2/3 tabs, ? for help).
 
 Feedback I'd especially appreciate:
 - Is the plan-vs-reality flow intuitive on first use?
