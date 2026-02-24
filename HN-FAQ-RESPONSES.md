@@ -27,7 +27,7 @@
 
 ## 6. "What about mobile?"
 
-> It's a responsive web app, so it works on mobile browsers. No native app — that would require app store accounts and maintenance overhead. PWA support is on the roadmap so you can "install" it on your home screen.
+> It's a PWA — works on iPhone Safari and Android Chrome. Add to home screen and it behaves like a native app. The UI is responsive but the sweet spot is tablet/desktop since you're doing financial planning. That said, checking drift alerts on mobile works fine. No app store, no download — just your browser.
 
 ## 7. "Is this a business? What's the monetization plan?"
 
