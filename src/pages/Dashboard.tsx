@@ -391,7 +391,7 @@ export default function Dashboard() {
             className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-secondary/50 transition-colors text-center"
           >
             <span className="text-lg">⚡</span>
-            <span className="text-xs font-medium">27+ Dev Tools</span>
+            <span className="text-xs font-medium">25+ Dev Tools</span>
           </a>
           <a
             href="https://maxmini0214.github.io/games.html?ref=hn"
