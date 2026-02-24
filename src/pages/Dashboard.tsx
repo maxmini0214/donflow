@@ -126,9 +126,9 @@ export default function Dashboard() {
           <p className="text-sm font-bold text-expense mt-1">{formatCurrency(expense)}</p>
         </div>
         <div className="rounded-xl bg-secondary/50 p-3 text-center">
-          <p className="text-xs text-muted-foreground">{t('remainingBudget')}</p>
-          <p className={`text-sm font-bold mt-1 ${remainingBudget >= 0 ? 'text-income' : 'text-destructive'}`}>
-            {hasBudgets ? formatCurrency(remainingBudget) : '-'}
+          <p className="text-xs text-muted-foreground">{t('balance')}</p>
+          <p className={`text-sm font-bold mt-1 ${(income || salary) - expense >= 0 ? 'text-income' : 'text-destructive'}`}>
+            {formatCurrency((income || salary) - expense)}
           </p>
         </div>
       </div>
