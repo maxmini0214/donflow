@@ -53,7 +53,7 @@ export default defineConfig({
 
     footer: {
       message: 'Released under the MIT License.',
-      copyright: '© 2025 DonFlow — Zero AI · Zero Backend · Zero Tracking'
+      copyright: '© 2026 DonFlow — Zero AI · Zero Backend · Zero Tracking'
     },
 
     editLink: {
