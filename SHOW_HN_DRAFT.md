@@ -175,7 +175,7 @@ Hey, maker here. A few things that might save you time reading the code:
 
 3. **SheetJS lazy-loaded**: The XLSX parser is 429KB. It only loads when you actually import a spreadsheet file. First paint doesn't pay for it. Initial bundle is 166KB gzipped.
 
-**Numbers for the curious**: ~4,700 lines of TypeScript + CSS, 28 files, 155+ commits. Drift detection compares plan vs actual per category and fires warnings at configurable thresholds. What-if simulator clones state and computes projections in ~2ms. Dark/light/system theme, EN/한국어 switcher, keyboard shortcuts (1/2/3 tabs, ? for help).
+**Numbers for the curious**: ~4,700 lines of TypeScript + CSS, 28 files, 160+ commits. Drift detection compares plan vs actual per category and fires warnings at configurable thresholds. What-if simulator clones state and computes projections in ~2ms. Dark/light/system theme, EN/한국어 switcher, keyboard shortcuts (1/2/3 tabs, ? for help).
 
 Feedback I'd especially appreciate:
 - Is the plan-vs-reality flow intuitive on first use?
@@ -197,6 +197,12 @@ Feedback I'd especially appreciate:
 **Finance/budget tools**: **STILL ZERO** — clean field confirmed
 **Show HN /newest**: AI spam (design benchmark, dev explainer, PaaS, crypto) — all 1-2pts
 **Zeitgeist**: Anti-AI + privacy + "boring tech" = DonFlow's sweet spot. enveil (hide .env secrets) at 94pts confirms "privacy-first dev tool" resonates tonight.
+
+### D-Day Morning Scan (2/25 05:14 KST)
+**Show HN front**: X86CSS (246pts), Steerling-8B (307pts), enveil (182pts), Emdash (26pts), Chaos Monkey AV (7pts)
+**Finance/budget tools**: **STILL ZERO** — 3일 연속 clean field
+**Show HN /newest**: Claude Code Canvas, 3D Moon WebGPU — AI/graphics. No finance.
+**Verdict**: 🟢 GREEN. max 기상 즉시 발사 가능. enveil(privacy tool) 182pts = "no tracking" 포지셔닝 환영하는 분위기 지속.
 
 ## D-Day Execution Plan (2/24 Tue 23:00 KST = 10:00 ET)
 
