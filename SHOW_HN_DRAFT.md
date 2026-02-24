@@ -182,6 +182,16 @@ Feedback I'd especially appreciate:
 - Mobile UX — anything broken or awkward?
 - What export format would you actually use? (currently JSON/CSV/XLSX)
 
+## HN Competition Scan (2/24 16:48 KST = T-6h)
+
+**Current Front Page**: Firefox "AI Kill Switch" (#1, 121pts), Age Verification privacy (#7, 1393pts still climbing)
+**Show HNs on front**: enveil (hide .env secrets, 35pts), X86CSS (CPU in CSS, 93pts)
+**Finance/budget tools**: **ZERO** — clear field
+**Zeitgeist**: Anti-AI + Privacy = DonFlow's EXACT positioning ("No AI, zero tracking")
+**Show HN /newest**: No competing finance tool in last 24h
+
+**Verdict: GREEN LIGHT 🟢** — timing couldn't be better. Firefox AI Kill Switch at #1 means "no AI" in our title would get instant sympathy.
+
 ## D-Day Execution Plan (2/24 Tue 23:00 KST = 10:00 ET)
 
 ### T-30min: Final QA
