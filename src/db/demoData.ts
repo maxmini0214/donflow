@@ -85,7 +85,7 @@ const KO_LOCALE: DemoLocale = {
     { category: '기타', merchant: '카카오페이 이체', minAmt: 10000, maxAmt: 30000 },
     { category: '기타', merchant: '모바일이즐 선불', minAmt: 10000, maxAmt: 15000 },
   ],
-  salary: 2500000,
+  salary: 5000000,
   salaryMerchant: '급여 입금',
   salaryMemo: '월급',
   accountName: '직장인우대통장',
