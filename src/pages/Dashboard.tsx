@@ -32,11 +32,13 @@ export default function Dashboard() {
   const [isDemo, setIsDemo] = useState(false)
   const [demoLoading, setDemoLoading] = useState(false)
 
-  // Auto-load demo data when ?demo is in the URL
+  // Auto-load demo data when ?demo is in the URL or visitor comes from Hacker News
   useEffect(() => {
     isDemoLoaded().then(async (loaded) => {
       setIsDemo(loaded)
-      if (!loaded && window.location.search.includes('demo')) {
+      const isHNReferrer = document.referrer.includes('news.ycombinator.com')
+      const hasDemoParam = window.location.search.includes('demo')
+      if (!loaded && (hasDemoParam || isHNReferrer)) {
         setDemoLoading(true)
         try {
           await loadDemoData()
