@@ -334,10 +334,10 @@ export default function Structure() {
                 autoFocus
                 onKeyDown={e => e.key === 'Enter' && saveSalary()}
               />
-              <Button size="icon" variant="ghost" onClick={saveSalary}>
+              <Button size="icon" variant="ghost" onClick={saveSalary} aria-label="Save salary">
                 <Check className="w-4 h-4" />
               </Button>
-              <Button size="icon" variant="ghost" onClick={() => setEditingSalary(false)}>
+              <Button size="icon" variant="ghost" onClick={() => setEditingSalary(false)} aria-label="Cancel editing">
                 <X className="w-4 h-4" />
               </Button>
             </div>
@@ -463,6 +463,7 @@ export default function Structure() {
                   className="h-7 w-7"
                   onClick={() => openAddDialog(groupName)}
                   title={t('addCategoryToGroup')}
+                  aria-label={`Add category to ${groupName}`}
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </Button>
@@ -470,6 +471,7 @@ export default function Structure() {
                   size="icon"
                   variant="ghost"
                   className="h-7 w-7 text-destructive hover:text-destructive"
+                  aria-label={`Delete group ${groupName}`}
                   onClick={() => {
                     if (confirm(`"${groupName}" — ${t('confirmDeleteGroup')}`)) {
                       deleteGroup(groupName)
@@ -548,6 +550,7 @@ export default function Structure() {
                           variant="ghost"
                           className="h-7 w-7"
                           onClick={() => openEditDialog(cat)}
+                          aria-label={`Edit ${cat.name}`}
                         >
                           <Pencil className="w-3.5 h-3.5" />
                         </Button>
