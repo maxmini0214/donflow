@@ -72,6 +72,11 @@ export default function Layout() {
         <Outlet />
       </main>
 
+      {/* Privacy Trust Badge */}
+      <div className="fixed bottom-12 left-0 right-0 flex justify-center pointer-events-none z-40">
+        <span className="text-[10px] text-muted-foreground/50 pointer-events-auto">{t('privacyBadge')}</span>
+      </div>
+
       {/* Bottom Nav — 3 tabs */}
       <nav className="fixed bottom-0 left-0 right-0 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50" aria-label="Main navigation">
         <div className="flex justify-around max-w-4xl mx-auto">
