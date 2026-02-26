@@ -54,6 +54,28 @@ export function useBudgetComparison(monthKey: string) {
   }).sort((a, b) => b.percentage - a.percentage)
 }
 
+export function useMonthlyTrend(months: number = 6) {
+  return useLiveQuery(async () => {
+    const now = new Date()
+    const results: { month: string; label: string; income: number; expense: number }[] = []
+    for (let i = months - 1; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+      const { start, end } = getMonthRange(key)
+      const txs = await db.transactions.where('date').between(start, end, true, true).toArray()
+      const income = txs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0)
+      const expense = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
+      results.push({
+        month: key,
+        label: `${d.getMonth() + 1}${d.getFullYear() === now.getFullYear() ? '' : `/${d.getFullYear() % 100}`}`,
+        income,
+        expense,
+      })
+    }
+    return results
+  }, [months]) ?? []
+}
+
 export function useMonthlySalary() {
   return useLiveQuery(async () => {
     const setting = await db.appSettings.where('key').equals('monthlySalary').first()

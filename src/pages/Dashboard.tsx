@@ -6,6 +6,7 @@ import {
   useBudgetComparison,
   useMonthlySalary,
   useCategories,
+  useMonthlyTrend,
 } from '@/hooks/useDB'
 import { formatCurrency, formatNumber, getMonthKey } from '@/lib/utils'
 import { useNavigate } from 'react-router-dom'
@@ -87,6 +88,7 @@ export default function Dashboard() {
     : expense
   const projectionDiff = totalBudget - projectedExpense
 
+  const trend = useMonthlyTrend(6)
   const sortedBudgets = [...budgetComparison].sort((a, b) => b.planned - a.planned)
 
   return (
@@ -171,6 +173,52 @@ export default function Dashboard() {
           )
         })()
       )}
+
+      {/* 6-Month Spending Trend */}
+      {trend.length > 0 && trend.some(m => m.expense > 0 || m.income > 0) && (() => {
+        const maxVal = Math.max(...trend.map(m => Math.max(m.expense, m.income)), 1)
+        const barWidth = 100 / trend.length
+        const chartH = 120
+        const labelH = 20
+        const svgH = chartH + labelH
+        return (
+          <div className="rounded-xl bg-secondary/30 p-4 space-y-2">
+            <div className="flex justify-between items-center">
+              <p className="text-sm font-medium text-muted-foreground">{t('monthlyTrend') || '📈 Monthly Trend'}</p>
+              <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-sm bg-emerald-500" /> {t('income')}</span>
+                <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-sm bg-indigo-500" /> {t('expense')}</span>
+              </div>
+            </div>
+            <svg viewBox={`0 0 ${trend.length * 60} ${svgH}`} className="w-full" role="img" aria-label="Monthly spending trend chart">
+              {trend.map((m, i) => {
+                const x = i * 60
+                const incomeH = (m.income / maxVal) * chartH
+                const expenseH = (m.expense / maxVal) * chartH
+                const bw = 20
+                return (
+                  <g key={m.month}>
+                    {/* Income bar */}
+                    <rect x={x + 10} y={chartH - incomeH} width={bw} height={incomeH} rx={3} fill="#10b981" opacity={0.7} />
+                    {/* Expense bar */}
+                    <rect x={x + 32} y={chartH - expenseH} width={bw} height={expenseH} rx={3} fill="#6366f1" opacity={0.8} />
+                    {/* Month label */}
+                    <text x={x + 30} y={svgH - 4} textAnchor="middle" className="fill-muted-foreground" style={{ fontSize: '10px' }}>{m.label}</text>
+                    {/* Expense value on top */}
+                    {m.expense > 0 && (
+                      <text x={x + 42} y={chartH - expenseH - 4} textAnchor="middle" className="fill-muted-foreground" style={{ fontSize: '8px' }}>
+                        {m.expense >= 1000000 ? `${(m.expense / 1000000).toFixed(1)}M` : m.expense >= 1000 ? `${Math.round(m.expense / 1000)}K` : m.expense}
+                      </text>
+                    )}
+                  </g>
+                )
+              })}
+              {/* Zero line */}
+              <line x1="0" y1={chartH} x2={trend.length * 60} y2={chartH} stroke="currentColor" strokeOpacity={0.1} />
+            </svg>
+          </div>
+        )
+      })()}
 
       {/* Pace Projection Banner */}
       {hasBudgets && monthOffset === 0 && daysRemaining > 0 && (
