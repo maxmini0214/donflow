@@ -1,0 +1,1 @@
+module.exports = ['KB', 'NH', 'Shinhan', 'Kakao'];
