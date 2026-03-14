@@ -464,6 +464,25 @@ export default function Dashboard() {
         </div>
         <p className="text-[10px] text-muted-foreground text-center">All free, all browser-only, all open source.</p>
       </div>
+
+      {/* Korean Budget Planner CTA */}
+      <div className="mt-6 mb-20 px-4">
+        <a
+          href="https://maxmini.gumroad.com/l/kr-budget-planner-2026?utm_source=donflow&utm_medium=app-cta&utm_campaign=budget-planner"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block p-4 rounded-xl border border-indigo-500/20 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 hover:from-indigo-500/20 hover:to-purple-500/20 transition-all"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">📋</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold">2026 재테크 플래너 PDF</p>
+              <p className="text-xs text-muted-foreground mt-0.5">월별 트래커 + 50/30/20 워크시트 + 적금 vs ETF 비교표 — 프린트해서 냉장고에 붙이세요 📌</p>
+            </div>
+            <span className="text-xs font-medium text-indigo-400 whitespace-nowrap">$3+ →</span>
+          </div>
+        </a>
+      </div>
     </div>
   )
 }
